@@ -1249,8 +1249,13 @@ body.tha-bericht {
 	z-index: 60;
 }
 
-.tha.tha .tha-nav__list li:hover > .sub-menu,
-.tha.tha .tha-nav__list li:focus-within > .sub-menu {
+/* Aufklappen beim Zeigen — und zwar MIT demselben `:is(#left-area, body)`
+   wie die Regel darüber, die das Untermenü versteckt. Ohne das Präfix wiegt
+   diese Regel fünf Klassen, jene eine ID und vier Klassen; eine ID schlägt
+   jede Zahl von Klassen. Das Untermenü bliebe unsichtbar, und «Mitwirkende»
+   und «Rückblick» liessen sich am Rechner nicht mehr öffnen. */
+:is(#left-area, body) .tha.tha .tha-nav__list li:hover > .sub-menu,
+:is(#left-area, body) .tha.tha .tha-nav__list li:focus-within > .sub-menu {
 	opacity: 1;
 	visibility: visible;
 	transform: translateY(0);

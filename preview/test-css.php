@@ -256,6 +256,124 @@ if ( preg_match_all( '/([^{}]+)\{([^{}]*)\}/s', $css_text, $bloecke, PREG_SET_OR
 
 $fails += $id_fails;
 
+// ---------------------------------------------------------------------
+// Zustandsregeln muessen ihre Grundregel schlagen.
+//
+// «Beim Zeigen aufklappen», «wenn offen, anders aussehen» — solche Regeln
+// haben nur einen Zweck: eine Grundregel zu ueberschreiben. Wiegen sie
+// weniger als jene, tun sie nichts, und niemand sieht es dem Stylesheet an.
+//
+// Genau so ging das Aufklappen der Untermenues verloren: die Regel, die sie
+// versteckt, bekam ein `:is(#left-area, body)` und damit eine ID; die Regel
+// fuer `:hover` behielt ihre Klassen. Eine ID schlaegt jede Zahl von Klassen —
+// «Mitwirkende» und «Rueckblick» klappten am Rechner nicht mehr auf.
+//
+// Geprueft wird nur diese eine Richtung. Dass eine Grundregel eine
+// Zustandsregel nicht schlaegt, ist normal und richtig; und Regeln in
+// verschiedenen Media Queries gelten ohnehin nie gleichzeitig.
+// ---------------------------------------------------------------------
+
+echo "\nZustandsregeln gegen ihre Grundregel:\n\n";
+
+/** Traegt der Selektor einen Zustand — Zeigen, Fokus, «offen»? */
+function ist_zustand( $sel ) {
+	return (bool) preg_match( '/:hover|:focus|:active|:target|:checked|\[aria-|\.is-[a-z-]+/i', $sel );
+}
+
+/**
+ * Auf welches Element zielt der Selektor?
+ *
+ * Die letzte Klasse des letzten Gliedes — ohne Zustaende. `.tha-nav__menu`
+ * und `.tha-nav__menu.is-open` zielen auf dasselbe.
+ */
+function ziel_klasse( $sel ) {
+	$glieder = preg_split( '/[\s>+~]+/', trim( $sel ) );
+	$letztes = (string) end( $glieder );
+	$letztes = preg_replace( '/:[a-z-]+(\([^)]*\))?/i', '', $letztes ); // Pseudoklassen
+	$letztes = preg_replace( '/\[[^\]]*\]/', '', $letztes );            // Attribute
+	$letztes = preg_replace( '/\.is-[a-z0-9_-]+/i', '', $letztes );     // Zustandsklassen
+	if ( preg_match_all( '/\.([a-z0-9_-]+)/i', $letztes, $m ) ) {
+		return end( $m[1] );
+	}
+	return '';
+}
+
+$regeln = array();
+if ( preg_match_all( '/([^{}]+)\{([^{}]*)\}/s', $css_text, $bloecke, PREG_SET_ORDER ) ) {
+	$nr = 0;
+	foreach ( $bloecke as $block ) {
+		$props = array();
+		foreach ( explode( ';', $block[2] ) as $decl ) {
+			if ( false !== strpos( $decl, ':' ) ) {
+				$name = strtolower( trim( substr( $decl, 0, strpos( $decl, ':' ) ) ) );
+				if ( preg_match( '/^[a-z-]+$/', $name ) ) {
+					$props[ $name ] = true;
+				}
+			}
+		}
+		if ( ! $props ) {
+			continue;
+		}
+		foreach ( split_selectors( trim( $block[1] ) ) as $sel ) {
+			$sel  = trim( $sel );
+			$ziel = $sel && 0 !== strpos( $sel, '@' ) ? ziel_klasse( $sel ) : '';
+			if ( '' === $ziel ) {
+				continue;
+			}
+			$regeln[] = array(
+				'sel'   => $sel,
+				'ziel'  => $ziel,
+				'spec'  => specificity( $sel ),
+				'props' => $props,
+				'stand' => ist_zustand( $sel ),
+				'nr'    => $nr++,
+			);
+		}
+	}
+}
+
+$zustand_fails = 0;
+$zustand_ok    = 0;
+
+foreach ( $regeln as $zustand ) {
+	if ( ! $zustand['stand'] ) {
+		continue;
+	}
+	foreach ( array_keys( $zustand['props'] ) as $prop ) {
+		$verloren = null;
+		foreach ( $regeln as $grund ) {
+			if ( $grund['stand'] || $grund['ziel'] !== $zustand['ziel'] || ! isset( $grund['props'][ $prop ] ) ) {
+				continue;
+			}
+			// Die Grundregel gewinnt, wenn sie schwerer wiegt — oder gleich
+			// schwer, aber weiter unten im Stylesheet steht.
+			$cmp = spec_cmp( $grund['spec'], $zustand['spec'] );
+			if ( $cmp > 0 || ( 0 === $cmp && $grund['nr'] > $zustand['nr'] ) ) {
+				$verloren = $grund;
+				break;
+			}
+		}
+		if ( $verloren ) {
+			printf(
+				"FAIL  %-52s %s  `%s` bleibt bei %s\n",
+				$zustand['sel'],
+				spec_str( $zustand['spec'] ),
+				$prop,
+				spec_str( $verloren['spec'] )
+			);
+			$zustand_fails++;
+		} else {
+			$zustand_ok++;
+		}
+	}
+}
+
+printf( "%d Zustands-Deklarationen geprüft, %d ohne Wirkung\n", $zustand_ok + $zustand_fails, $zustand_fails );
+
+$reihenfolge_fails = $zustand_fails;
+
+$fails += $reihenfolge_fails;
+
 printf( "\n%d Regeln geprüft, %d in Ordnung, %d zu schwach\n", $ok + $id_ok + $fails, $ok + $id_ok, $fails );
 
 if ( $fails > 0 ) {

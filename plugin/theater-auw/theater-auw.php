@@ -3,7 +3,7 @@
  * Plugin Name:       Theater Auw
  * Plugin URI:        https://stvauw.ch/theater/
  * Description:       Die Theater-Seite des STV Auw mit vier Saison-Phasen (Vorbereitung, Vorverkauf, Spielzeit, Danke). Einbinden mit dem Shortcode [theater_auw] oder dem Block «Theater Auw».
- * Version:           1.9.2
+ * Version:           1.9.3
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            Theater Auw
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'THA_VERSION', '1.9.2' );
+define( 'THA_VERSION', '1.9.3' );
 define( 'THA_FILE', __FILE__ );
 define( 'THA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'THA_URL', plugin_dir_url( __FILE__ ) );
