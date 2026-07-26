@@ -1,0 +1,533 @@
+{
+    "schema_version": 1,
+    "phase_mode": "auto",
+    "phase_manual": "vorbereitung",
+    "phase_schedule": {
+        "vorverkauf_start": "2026-09-15 09:00",
+        "spielzeit_start": "2026-11-14 00:00",
+        "danke_start": "2026-11-29 00:00"
+    },
+    "ticket_sale_start": "2026-09-15 09:00",
+    "ticket_cta_mode": "reservieren",
+    "ticket_url": "https://reservation.ticketleo.com/event/33310/karriere",
+    "ticket_note": "An der Abendkasse: Bargeld, Karte oder Twint.",
+    "season_year": 2026,
+    "next_year": 2027,
+    "founded_year": 1937,
+    "play_title": "s'Jubiläum",
+    "play_author": "Dieter Gygli",
+    "play_genre": "Lustspiel in 3 Akten",
+    "play_director": "Christine Jauner",
+    "play_synopsis": "Die Rollen sind fast alle verteilt und die Proben laufen — wir sind gespannt, was uns diese Komödie alles zu bieten hat. Mehr möchten wir hier noch nicht verraten.\n\nMit Christine Jauner konnten wir eine erfahrene, seit 15 Jahren tätige Theaterpädagogin als Regisseurin engagieren. Sie betreibt ein eigenes Kinder- und Jugendtheater und freut sich, mit uns das Theater 2026 zu erarbeiten.",
+    "venue_name": "Mehrzweckhalle Auw",
+    "venue_maps_url": "",
+    "doors_time": "18.30",
+    "food_from": "18.45",
+    "food_to": "19.30",
+    "food_note": "Unser Küchenteam ist bei den Abendaufführungen bereit, dich kulinarisch zu verwöhnen. Am Sonntag servieren wir nach der Vorstellung.",
+    "tombola_note": "Auch dieses Jahr gibt es unsere beliebte Tombola. Beim Loskauf wünschen wir dir das nötige Glück zum Soforttreffer — tolle Preise warten auf dich.",
+    "dates": [
+        {
+            "date": "2026-11-14",
+            "time": "20.00",
+            "label": "Premiere",
+            "note": "Sponsoren-Abend",
+            "status": "offen",
+            "ticket_url": ""
+        },
+        {
+            "date": "2026-11-18",
+            "time": "20.00",
+            "label": "",
+            "note": "",
+            "status": "offen",
+            "ticket_url": ""
+        },
+        {
+            "date": "2026-11-21",
+            "time": "20.00",
+            "label": "",
+            "note": "",
+            "status": "offen",
+            "ticket_url": ""
+        },
+        {
+            "date": "2026-11-22",
+            "time": "14.00",
+            "label": "",
+            "note": "",
+            "status": "offen",
+            "ticket_url": ""
+        },
+        {
+            "date": "2026-11-26",
+            "time": "20.00",
+            "label": "",
+            "note": "",
+            "status": "offen",
+            "ticket_url": ""
+        },
+        {
+            "date": "2026-11-28",
+            "time": "20.00",
+            "label": "Derniere",
+            "note": "",
+            "status": "offen",
+            "ticket_url": ""
+        }
+    ],
+    "nav_menu_id": 1,
+    "nav_sticky": true,
+    "rueckblick_source": "auto",
+    "rueckblick_post_type": "project",
+    "rueckblick_count": 8,
+    "rueckblick_archive_url": "https://stvauw.ch/theater/2025-2008/",
+    "groups": [
+        {
+            "key": "schauspieler",
+            "title": "Die Schauspieler",
+            "kicker": "Auf der Bühne",
+            "intro": "Die drei Freunde Gusti, Max und Heiri wohnen in einem alten Lagerschuppen der Bademodenfirma Klotzinger. Der bescheidene Mietzins und die gutmütige Unterstützung von Roswitha ermöglichen ihnen ein relativ sorgloses Leben.",
+            "type": "personen",
+            "columns": 4,
+            "dark": false,
+            "ids": [
+                101,
+                102,
+                103,
+                104,
+                105,
+                106,
+                107,
+                108,
+                109,
+                110,
+                111,
+                112
+            ],
+            "lead_image_id": 501,
+            "lead_caption": "Das Ensemble 2026",
+            "lead_layout": "neben",
+            "labels": [],
+            "wide": []
+        },
+        {
+            "key": "kulissen",
+            "title": "Hinter den Kulissen",
+            "kicker": "Ohne sie geht nichts",
+            "intro": "",
+            "type": "personen",
+            "columns": 3,
+            "dark": false,
+            "ids": [
+                201,
+                202,
+                203,
+                204,
+                205,
+                206,
+                207
+            ],
+            "lead_image_id": 502,
+            "lead_caption": "Das Team hinter der Bühne",
+            "lead_layout": "neben",
+            "labels": {
+                "201": "Gabi und Gertrud Leu | Kostüme"
+            },
+            "wide": [
+                207
+            ]
+        },
+        {
+            "key": "ok",
+            "title": "Organisation Komitee",
+            "kicker": "Das OK-Team",
+            "intro": "",
+            "type": "bilder",
+            "columns": 2,
+            "dark": false,
+            "ids": [],
+            "lead_image_id": 301,
+            "lead_caption": "Das OK-Team 2026",
+            "lead_layout": "neben",
+            "labels": [],
+            "wide": []
+        },
+        {
+            "key": "sponsoren",
+            "title": "Sponsoren",
+            "kicker": "Ein herzliches Dankeschön",
+            "intro": "Ohne die Unterstützung dieser Firmen und Betriebe gäbe es unser Theater nicht. Herzlichen Dank!",
+            "type": "logos",
+            "columns": 5,
+            "dark": false,
+            "ids": [
+                401,
+                402,
+                403,
+                404,
+                405,
+                406,
+                407,
+                408,
+                409,
+                410,
+                411,
+                412,
+                413,
+                414,
+                415
+            ],
+            "lead_image_id": 0,
+            "lead_caption": "",
+            "lead_layout": "neben",
+            "labels": [],
+            "wide": []
+        }
+    ],
+    "stueck_image_id": 0,
+    "logo_id": 0,
+    "rueckblick": [
+        {
+            "year": "2025",
+            "title": "Karriere",
+            "image_id": 0,
+            "url": ""
+        },
+        {
+            "year": "2024",
+            "title": "",
+            "image_id": 0,
+            "url": ""
+        },
+        {
+            "year": "2023",
+            "title": "",
+            "image_id": 0,
+            "url": ""
+        },
+        {
+            "year": "2022",
+            "title": "",
+            "image_id": 0,
+            "url": ""
+        }
+    ],
+    "contact_email": "theaterauw@bluewin.ch",
+    "page_id": 0,
+    "width_mode": "auto",
+    "isolation": "normal",
+    "font_source": "google",
+    "sticky_cta": true,
+    "prices": [
+        {
+            "group": "Vorpremiere",
+            "label": "Kinder bis 16 Jahre",
+            "amount": "Fr. 2.–",
+            "note": ""
+        },
+        {
+            "group": "Vorpremiere",
+            "label": "Erwachsene",
+            "amount": "Fr. 10.–",
+            "note": "am Samstagnachmittag"
+        },
+        {
+            "group": "Sonntag",
+            "label": "Kinder bis 16 Jahre",
+            "amount": "Fr. 12.–",
+            "note": ""
+        },
+        {
+            "group": "Sonntag",
+            "label": "Erwachsene",
+            "amount": "Fr. 20.–",
+            "note": ""
+        },
+        {
+            "group": "",
+            "label": "Abendaufführung",
+            "amount": "Fr. 20.–",
+            "note": ""
+        },
+        {
+            "group": "",
+            "label": "Premiere",
+            "amount": "Fr. 60.–",
+            "note": "inkl. 4-Gang-Menü"
+        }
+    ],
+    "price_hint": "",
+    "seatmap_image_id": 0,
+    "seatmap_note": "Reihen 1–6 gehören zur Kategorie A.",
+    "documents": [
+        {
+            "label": "Speisekarte",
+            "url": "https://stvauw.ch/theater/speisekarte",
+            "file_id": 0
+        },
+        {
+            "label": "Getränkekarte",
+            "url": "https://stvauw.ch/theater/getraenke",
+            "file_id": 0
+        },
+        {
+            "label": "Programmheft 2026",
+            "url": "https://stvauw.ch/theater/programm",
+            "file_id": 0
+        }
+    ],
+    "openings": [
+        {
+            "label": "Vorpremiere",
+            "time": "ab 13.00 Uhr"
+        },
+        {
+            "label": "Abendaufführungen",
+            "time": "ab 18.30 Uhr"
+        },
+        {
+            "label": "Sonntag",
+            "time": "ab 13.00 Uhr"
+        }
+    ],
+    "menu_title": "Speisekarte",
+    "menu_kicker": "Aus unserer Küche",
+    "menu_intro": "Die warme Küche gibt es nur vor der Aufführung. Sandwiches sind immer erhältlich, der kleine Blattsalat auch nach der Aufführung — solange es hat.",
+    "menu_note": "Fleisch von der Metzgerei Huwyler, Beinwil. Brot und Butterpastetli von Emma’s Bäckerei, Sins. Süsse Backwaren von Kreyenbühl, Muri und Auw. Wein und Getränke von der Staubli-Banz Getränke AG, Muri/Sins.",
+    "menu": [
+        {
+            "kind": "speisen",
+            "group": "Warme Küche",
+            "label": "Kleiner Blattsalat mit Brot",
+            "note": "auch nach der Aufführung, solange es hat",
+            "amount": "Fr. 6.–"
+        },
+        {
+            "kind": "speisen",
+            "group": "Warme Küche",
+            "label": "Pommes frites mit Ketchup",
+            "note": "",
+            "amount": "Fr. 6.–"
+        },
+        {
+            "kind": "speisen",
+            "group": "Warme Küche",
+            "label": "1 Pastetli mit hausgemachter Füllung",
+            "note": "mit Pommes frites und Mischgemüse",
+            "amount": "Fr. 16.–"
+        },
+        {
+            "kind": "speisen",
+            "group": "Warme Küche",
+            "label": "Plus 1 Pastetli auf gleichem Teller",
+            "note": "",
+            "amount": "Fr. 4.–"
+        },
+        {
+            "kind": "speisen",
+            "group": "Warme Küche",
+            "label": "Schweinshalsbraten",
+            "note": "mit Pommes frites und Mischgemüse",
+            "amount": "Fr. 20.–"
+        },
+        {
+            "kind": "speisen",
+            "group": "Für den kleinen Hunger",
+            "label": "Sandwich mit Käse oder Schinken",
+            "note": "immer erhältlich",
+            "amount": "Fr. 7.50"
+        },
+        {
+            "kind": "speisen",
+            "group": "Für den kleinen Hunger",
+            "label": "Sandwich mit Braten",
+            "note": "wenns no hed",
+            "amount": "Fr. 9.50"
+        },
+        {
+            "kind": "speisen",
+            "group": "Dessert",
+            "label": "Huus-Nussgipfel",
+            "note": "",
+            "amount": "Fr. 4.–"
+        },
+        {
+            "kind": "speisen",
+            "group": "Dessert",
+            "label": "Linzerschnitte",
+            "note": "",
+            "amount": "Fr. 4.50"
+        },
+        {
+            "kind": "speisen",
+            "group": "Dessert",
+            "label": "Cremeschnitte",
+            "note": "",
+            "amount": "Fr. 5.50"
+        },
+        {
+            "kind": "speisen",
+            "group": "Dessert",
+            "label": "Torte",
+            "note": "Schwarzwälder oder Himbeer-Joghurt",
+            "amount": "Fr. 7.50"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Kaffee und Diverses",
+            "label": "Kaffee Crème oder Espresso",
+            "note": "",
+            "amount": "Fr. 3.50"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Kaffee und Diverses",
+            "label": "Kafi-Schnaps",
+            "note": "Zwetschge, Chrüter oder Träsch",
+            "amount": "Fr. 6.–"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Kaffee und Diverses",
+            "label": "Theater-Kafi",
+            "note": "Caramel Vodka mit Schlagrahm",
+            "amount": "Fr. 7.50"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Kaffee und Diverses",
+            "label": "Kafi Baileys",
+            "note": "mit Schlagrahm",
+            "amount": "Fr. 7.50"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Kaffee und Diverses",
+            "label": "Kafi Amaretto",
+            "note": "mit Schlagrahm",
+            "amount": "Fr. 7.50"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Kaffee und Diverses",
+            "label": "Tee",
+            "note": "Minze, Früchte, Hagebutte oder Verbena",
+            "amount": "Fr. 3.50"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Rotwein",
+            "label": "Pinot noir du Valais",
+            "note": "F.J. Mathier, CH · 5 dl",
+            "amount": "Fr. 18.–"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Rotwein",
+            "label": "Primitivo Puglia Festivo",
+            "note": "IT · 5 dl",
+            "amount": "Fr. 18.–"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Rotwein",
+            "label": "Cabernet Jura Aargau",
+            "note": "Bruno Hartmann, Remigen · 1 dl / 7 dl",
+            "amount": "Fr. 7.– / 36.–"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Rotwein",
+            "label": "Valpolicella Ripasso Terre di Verona",
+            "note": "IT · 7 dl",
+            "amount": "Fr. 33.–"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Weisswein",
+            "label": "St. Saphorin blanc Chappuis",
+            "note": "CH · 5 dl",
+            "amount": "Fr. 20.–"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Weisswein",
+            "label": "Sauvignon blanc Aargau",
+            "note": "Bruno Hartmann, Remigen · 1 dl / 7 dl",
+            "amount": "Fr. 6.– / 34.–"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Mineral, Bier und Most",
+            "label": "Mineral",
+            "note": "mit oder ohne Kohlensäure · 3 dl / 1 Liter",
+            "amount": "Fr. 4.– / 8.–"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Mineral, Bier und Most",
+            "label": "Coca-Cola, Zero, Citro, Apfelschorle, Rivella rot",
+            "note": "3 dl",
+            "amount": "Fr. 4.50"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Mineral, Bier und Most",
+            "label": "Feldschlösschen",
+            "note": "mit und ohne Alkohol · 3 dl",
+            "amount": "Fr. 4.50"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Mineral, Bier und Most",
+            "label": "Feldschlösschen",
+            "note": "5 dl",
+            "amount": "Fr. 5.50"
+        },
+        {
+            "kind": "getraenke",
+            "group": "Mineral, Bier und Most",
+            "label": "Möhl, klarer Most",
+            "note": "mit und ohne Alkohol · 5 dl",
+            "amount": "Fr. 5.50"
+        }
+    ],
+    "updates_title": "Updates",
+    "updates_kicker": "Neues vom Theater",
+    "updates_intro": "Was rund um die Produktion 2026 gerade passiert — der jüngste Eintrag steht oben.",
+    "updates": [
+        {
+            "date": "2026-09-15",
+            "title": "Der Vorverkauf läuft",
+            "text": "Ab heute lassen sich Plätze über Ticketleo reservieren. Wer telefonisch reservieren möchte, erreicht uns Mittwoch bis Freitag von 18 bis 19.30 Uhr.",
+            "image_id": 0,
+            "url": "https://reservation.ticketleo.com/event/33310/karriere",
+            "link": "Zu Ticketleo"
+        },
+        {
+            "date": "2026-07-01",
+            "title": "Die Rollen sind verteilt",
+            "text": "Zehn Rollen, zehn Namen — und ab August stehen wir zweimal pro Woche auf der Bühne.",
+            "image_id": 0,
+            "url": "",
+            "link": ""
+        },
+        {
+            "date": "2026-04-20",
+            "title": "Regie und Stück stehen fest",
+            "text": "Christine Jauner führt Regie, gespielt wird «s'Jubiläum» von Dieter Gygli.",
+            "image_id": 0,
+            "url": "",
+            "link": ""
+        },
+        {
+            "date": "",
+            "title": "Sponsoring",
+            "text": "Wer die Produktion unterstützen möchte, findet die Pakete unter «Anmeldung Sponsoring».",
+            "image_id": 0,
+            "url": "",
+            "link": ""
+        }
+    ]
+}

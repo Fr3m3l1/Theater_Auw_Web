@@ -1,0 +1,39 @@
+<!-- @dsCard group="Website" viewport="1280x800" name="theaterauw.ch — modern" subtitle="Alle vier Saison-Phasen, umschaltbar oben rechts" -->
+<!-- @startingPoint section="Website" subtitle="Moderne Theater-Auw-Website mit vier Saison-Phasen" viewport="1280x800" -->
+<!DOCTYPE html><html lang="de"><head><meta charset="utf-8"><title>Theater Auw</title><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{margin:0;background:var(--surface-page)}</style></head>
+<body><div id="root"></div>
+<script type="text/babel">
+const {SiteHeader,SiteFooter,Hero,Spieldaten,Stueck,Weiteres,Rueckblick,TicketFlow}=window.TheaterAuwDesignSystem_6e6558;
+const PHASES=[['vorbereitung','Vorbereitung'],['vorverkauf','Vorverkauf'],['spielzeit','Spielzeit'],['danke','Danke']];
+function PhaseSwitch({phase,setPhase}){
+  return <div style={{position:'fixed',top:76,right:16,zIndex:60,display:'flex',gap:4,background:'var(--ink-900)',padding:4,borderRadius:'var(--radius-pill)',boxShadow:'var(--shadow-raised)'}}>
+    {PHASES.map(([id,label])=><button key={id} onClick={()=>setPhase(id)}
+      style={{padding:'6px 13px',borderRadius:'var(--radius-pill)',border:'none',cursor:'pointer',fontFamily:'var(--font-body)',fontSize:12.5,fontWeight:600,
+      background:phase===id?'var(--red-600)':'transparent',color:phase===id?'#fff':'var(--text-onstage-muted)',transition:'all var(--dur-fast)'}}>{label}</button>)}
+  </div>;
+}
+function App(){
+  const [phase,setPhase]=React.useState(localStorage.getItem('ta-phase')||'vorverkauf');
+  const [tickets,setTickets]=React.useState(false);
+  const pick=p=>{setPhase(p);localStorage.setItem('ta-phase',p);};
+  const openT=()=>setTickets(true);
+  const toDates=()=>{const el=document.getElementById('daten');if(el)window.scrollTo({top:el.offsetTop-64,behavior:'smooth'});};
+  return <>
+    <PhaseSwitch phase={phase} setPhase={pick}/>
+    <SiteHeader phase={phase} onTickets={openT}/>
+    <Hero phase={phase} onTickets={openT} onDates={toDates}/>
+    <Spieldaten phase={phase} onTickets={openT}/>
+    <Stueck/>
+    <Weiteres/>
+    <Rueckblick/>
+    <SiteFooter/>
+    <TicketFlow open={tickets} onClose={()=>setTickets(false)}/>
+  </>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script></body></html>

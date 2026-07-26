@@ -1,0 +1,8 @@
+<?php
+/**
+ * Lucide-Style «external link», stroke 2, currentColor. Ikonografie ist
+ * bewusst funktional — dekorative Icons gibt es in diesem System nicht.
+ */
+defined( 'ABSPATH' ) || exit;
+?>
+<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>

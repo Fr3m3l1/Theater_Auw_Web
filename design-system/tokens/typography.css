@@ -1,0 +1,14 @@
+:root{
+--font-display:'Big Shoulders',ui-sans-serif,sans-serif;
+--font-body:'Libre Franklin',ui-sans-serif,system-ui,sans-serif;
+/* Display sizes (Big Shoulders, uppercase, 600–700) */
+--text-poster:clamp(56px,8vw,104px);--text-display:56px;--text-h1:40px;--text-h2:28px;--text-h3:21px;
+/* Body sizes (Libre Franklin) */
+--text-lead:19px;--text-body-size:15.5px;--text-small:14px;--text-caption:12.5px;
+--leading-display:.96;--leading-tight:1.15;--leading-body:1.55;
+--tracking-display:.01em;--tracking-caps:.09em;
+}
+body{font-family:var(--font-body);font-size:var(--text-body-size);line-height:var(--leading-body);color:var(--text-body)}
+h1,h2,h3,.display{font-family:var(--font-display);font-weight:600;line-height:var(--leading-tight);letter-spacing:var(--tracking-display);text-transform:uppercase;margin:0}
+a{color:var(--link);text-decoration-thickness:1px;text-underline-offset:2px}
+a:hover{color:var(--link-hover)}

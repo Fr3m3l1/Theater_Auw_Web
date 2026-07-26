@@ -1,0 +1,22 @@
+:root{
+/* Brand red — sampled from Logo_theaterauw_transparent.png */
+--red-500:#ef3b3b;--red-600:#e02424;--red-700:#b91c1c;--red-800:#8f1616;--red-100:#fbe3e3;--red-50:#fdf1f1;
+/* Stage darks (warm near-black) */
+--ink-950:#151112;--ink-900:#1e1a1b;--ink-800:#2b2627;--ink-700:#3d3738;
+/* Paper neutrals (warm) */
+--paper-0:#ffffff;--paper-50:#faf8f4;--paper-100:#f2efe8;--paper-200:#e5e1d8;
+--gray-400:#a09a96;--gray-500:#7d7672;--gray-600:#5f5955;--gray-700:#453f3c;
+/* Spotlight gold — secondary accent, Spielzeit only */
+--gold-400:#e3b04b;--gold-500:#d19a2f;--gold-100:#f9efd9;
+/* Semantic */
+--green-600:#2f8a5d;--green-100:#e0f1e8;--amber-600:#c47a12;--amber-100:#faeed6;
+/* Aliases */
+--surface-page:var(--paper-50);--surface-card:var(--paper-0);--surface-sunken:var(--paper-100);
+--surface-stage:var(--ink-950);--surface-stage-raised:var(--ink-900);
+--text-body:var(--ink-900);--text-muted:var(--gray-500);--text-onstage:#f8f6f2;--text-onstage-muted:#b5aeaa;
+--accent:var(--red-600);--accent-hover:var(--red-700);--accent-press:var(--red-800);--text-onaccent:#fff;
+--border-subtle:var(--paper-200);--border-strong:var(--gray-400);--border-onstage:rgba(248,246,242,.16);
+--focus-ring:0 0 0 3px rgba(224,36,36,.35);
+--success:var(--green-600);--success-bg:var(--green-100);--warning:var(--amber-600);--warning-bg:var(--amber-100);
+--link:var(--red-600);--link-hover:var(--red-700);
+}

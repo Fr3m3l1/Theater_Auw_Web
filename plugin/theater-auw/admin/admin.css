@@ -1,0 +1,321 @@
+/* Backend-Stile — nur auf der Theater-Auw-Einstellungsseite geladen. */
+
+.tha-status {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-left: 6px solid #8c8f94;
+	border-radius: 4px;
+	padding: 18px 20px;
+	margin: 16px 0 20px;
+}
+
+.tha-status--vorbereitung { border-left-color: #8c8f94; }
+.tha-status--vorverkauf   { border-left-color: #e02424; }
+.tha-status--spielzeit    { border-left-color: #d19a2f; }
+.tha-status--danke        { border-left-color: #2f8a5d; }
+
+.tha-status__kicker {
+	display: block;
+	font-size: 11px;
+	letter-spacing: .09em;
+	text-transform: uppercase;
+	color: #646970;
+}
+
+.tha-status__phase {
+	display: block;
+	font-size: 24px;
+	line-height: 1.2;
+	margin: 2px 0 4px;
+}
+
+.tha-status__hint {
+	color: #50575e;
+	font-size: 13px;
+}
+
+.tha-status__why {
+	max-width: 46ch;
+	font-size: 13px;
+	color: #50575e;
+}
+
+.tha-status__why p { margin: 0 0 6px; }
+
+.tha-status__links a { margin-right: 10px; }
+
+.tha-radio {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+	margin-bottom: 12px;
+	max-width: 62ch;
+}
+
+.tha-repeat { margin-top: 12px; }
+.tha-repeat th { font-weight: 600; }
+.tha-repeat td { vertical-align: middle; }
+.tha-repeat input[type="text"],
+.tha-repeat input[type="url"] { width: 100%; }
+
+.tha-drop { color: #b32d2e; }
+
+.tha-media-field__preview img {
+	max-width: 220px;
+	height: auto;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	margin-bottom: 8px;
+	display: block;
+}
+
+.tha-media-field__preview--sm img {
+	max-width: 64px;
+	margin-bottom: 4px;
+}
+
+.tha-media-cell { white-space: nowrap; }
+
+/* Bildergruppen */
+
+.tha-group {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-left: 4px solid #e02424;
+	border-radius: 4px;
+	padding: 4px 20px 12px;
+	margin: 0 0 18px;
+}
+
+.tha-group .form-table th {
+	width: 140px;
+}
+
+.tha-gallery-field__preview {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-bottom: 10px;
+}
+
+.tha-gallery-field__preview img {
+	width: 56px;
+	height: 56px;
+	object-fit: cover;
+	border: 1px solid #dcdcde;
+	border-radius: 3px;
+}
+
+.tha-gallery-field__preview:empty::before {
+	content: attr(data-empty);
+	color: #646970;
+	font-style: italic;
+}
+
+/* Seiten-Übersicht */
+
+.tha-badge-ok,
+.tha-badge-todo {
+	display: inline-block;
+	padding: 2px 9px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.tha-badge-ok {
+	background: #e0f1e8;
+	color: #2f8a5d;
+}
+
+.tha-badge-todo {
+	background: #faeed6;
+	color: #c47a12;
+}
+
+.tha-pages textarea.code {
+	font-size: 12px;
+	background: #f6f7f7;
+}
+
+/* Bilder einer Gruppe: eine Karte je Bild.
+   Jede Karte ist für sich bedienbar — ziehen, Bild tauschen, entfernen. */
+
+.tha-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 10px;
+	margin: 10px 0;
+	max-width: 1000px;
+}
+
+.tha-card {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 8px;
+}
+
+/* Der Griff. Drei Punktreihen, wie sie WordPress an Widgets kennt — gemalt
+   statt als Bild, damit keine Datei dafür ausgeliefert werden muss. */
+.tha-card__grip {
+	flex: 0 0 auto;
+	align-self: stretch;
+	width: 10px;
+	min-height: 44px;
+	cursor: grab;
+	background-image: radial-gradient(#c3c4c7 1px, transparent 1px);
+	background-size: 4px 4px;
+	background-position: 1px 4px;
+	background-repeat: repeat;
+}
+
+.tha-card__grip:active {
+	cursor: grabbing;
+}
+
+/* Das Bild ist der Knopf zum Austauschen — klicken, neues wählen, fertig. */
+.tha-card__thumb {
+	flex: 0 0 auto;
+	padding: 0;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+	background: #fff;
+	cursor: pointer;
+	line-height: 0;
+	position: relative;
+}
+
+.tha-card__thumb:hover,
+.tha-card__thumb:focus {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 1px #2271b1;
+	outline: none;
+}
+
+.tha-card__thumb img {
+	width: 56px;
+	height: 56px;
+	object-fit: cover;
+	border-radius: 2px;
+	display: block;
+}
+
+.tha-card__missing {
+	width: 56px;
+	height: 56px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 9px;
+	line-height: 1.2;
+	color: #b32d2e;
+	text-align: center;
+}
+
+.tha-cards:empty::before {
+	content: attr(data-empty);
+	color: #646970;
+	font-style: italic;
+}
+
+.tha-card__fields {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.tha-card__f {
+	width: 100%;
+	min-width: 0;
+}
+
+.tha-card__f--role,
+.tha-card__f--text {
+	font-size: 12px;
+}
+
+/* Steht in der Mediathek schon etwas, ist der Platzhalter kein Feldname,
+   sondern der Wert, der ohne Zutun erscheint. Der darf lesbarer sein. */
+.tha-card__f--auto::placeholder {
+	color: #50575e;
+	opacity: 1;
+}
+
+/* Das Zitat-Feld nur, wenn es gebraucht wird — sonst steht in jeder Karte
+   eine leere Zeile, die man beim zwanzigsten Sponsor nicht mehr sieht. */
+.tha-card .tha-card__f--text {
+	display: none;
+}
+
+.tha-card--text .tha-card__f--text {
+	display: block;
+}
+
+.tha-card__tools {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 10px;
+	font-size: 11px;
+}
+
+.tha-card__wide {
+	font-size: 11px;
+	color: #646970;
+	white-space: nowrap;
+}
+
+.tha-card__wide input {
+	margin: 0 3px 0 0;
+}
+
+.tha-card__more,
+.tha-card__drop {
+	font-size: 11px;
+	color: #646970;
+}
+
+.tha-card__drop:hover {
+	color: #b32d2e;
+}
+
+.tha-card--text .tha-card__more {
+	color: #2271b1;
+}
+
+/* Kein Feld wird je nach Gruppentyp ausgeblendet: die Ausgabe zeigt Rolle und
+   Text bei ALLEN Typen an. Bei den Sponsoren steht in der Rolle der Ort — ein
+   verstecktes Feld hiesse, dass auf der Seite etwas steht, das sich hier nicht
+   ändern lässt. Unterschiedlich ist nur die Beschriftung. */
+
+/* Der Platz, an dem die gezogene Karte landen wird. */
+.tha-card__placeholder {
+	border: 1px dashed #2271b1;
+	border-radius: 4px;
+	background: #f0f6fc;
+}
+
+/* Shortcode-Spalte im Tab «Seiten».
+   Ein `[theater_auw_seite titel="…" gruppe="…"]` ist laenger als die Spalte
+   breit ist. Als Block statt inline steht jeder Shortcode auf eigener Zeile
+   und bricht dort um, wo Platz fehlt, statt die Tabelle zu sprengen. */
+.tha-pages code.tha-code-line {
+	display: block;
+	margin-bottom: 4px;
+	padding: 4px 8px;
+	background: #f6f7f7;
+	border-radius: 3px;
+	word-break: break-word;
+}

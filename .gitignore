@@ -1,0 +1,10 @@
+# Zwischenablage des Build-Skripts. Entsteht bei jedem Lauf neu.
+build/stage/
+
+# Die fertigen ZIPs bleiben drin: das Plugin wird nur über «Plugin hochladen»
+# verteilt, es gibt keinen anderen Bezugsort. Wenn eine neue Version auf der
+# Live-Seite Ärger macht, ist die vorherige damit noch da und in zwei Minuten
+# wieder installiert.
+
+.DS_Store
+node_modules/
