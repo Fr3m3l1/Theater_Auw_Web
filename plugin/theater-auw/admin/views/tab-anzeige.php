@@ -104,6 +104,22 @@ $menus = wp_get_nav_menus();
 				<input type="checkbox" name="<?php echo esc_attr( Tha_Admin::name( 'nav_sticky' ) ); ?>" value="1" <?php checked( ! empty( $settings['nav_sticky'] ) ); ?>>
 				<?php esc_html_e( 'Die Leiste beim Scrollen oben stehen lassen', 'theater-auw' ); ?>
 			</label>
+
+			<p style="margin-left:24px">
+				<input type="hidden" name="<?php echo esc_attr( Tha_Admin::name( 'nav_sticky_top_present' ) ); ?>" value="1">
+				<label>
+					<input type="checkbox" name="<?php echo esc_attr( Tha_Admin::name( 'nav_sticky_top' ) ); ?>" value="1"
+						<?php checked( ! empty( $settings['nav_sticky_top'] ) ); ?>
+						<?php disabled( empty( $settings['nav_sticky'] ) ); ?>>
+					<?php esc_html_e( 'Ganz oben, an der Bildschirmkante', 'theater-auw' ); ?>
+				</label>
+			</p>
+			<p class="description" style="margin-left:24px;max-width:74ch">
+				<?php esc_html_e( 'Ohne diesen Haken hält die Theater-Leiste Abstand: über ihr hängen die graue Vereinsleiste und die Kopfzeile des Themes, beide fest verankert — ohne Abstand verschwände sie beim Scrollen dahinter. Mit Haken scrollen jene weg und die Theater-Leiste klebt an der Oberkante des Bildschirms.', 'theater-auw' ); ?>
+			</p>
+			<p class="description" style="margin-left:24px;max-width:74ch">
+				<?php esc_html_e( 'Am Handy ist das meist die bessere Wahl — dort ist der Platz oben knapp und zwei Leisten übereinander fressen den halben Bildschirm. Die Admin-Leiste von WordPress bleibt in jedem Fall frei; sonst käme man als Angemeldete nicht mehr aus der Seite heraus.', 'theater-auw' ); ?>
+			</p>
 		</td>
 	</tr>
 

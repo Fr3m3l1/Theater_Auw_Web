@@ -184,7 +184,11 @@ foreach ( $rules as $sel ) {
 // Vorlagen gelesen. Kommt morgen eine neue Liste dazu, faellt sie hier auf.
 // ---------------------------------------------------------------------
 
-$listen = array();
+// `sub-menu` steht in keiner Vorlage: die Liste baut WordPress selbst, wenn
+// ein Menuepunkt Unterpunkte hat. Sie ist trotzdem eine <ul> unter `.tha` und
+// faellt damit unter dieselbe Regel.
+$listen = array( 'sub-menu' => true );
+
 foreach ( glob( dirname( __DIR__ ) . '/plugin/theater-auw/public/views/*.php' ) as $view ) {
 	if ( preg_match_all( '/<(?:ul|ol)\s+class="([^"]+)"/i', file_get_contents( $view ), $m ) ) {
 		foreach ( $m[1] as $klassen ) {
@@ -211,7 +215,13 @@ $css_text = preg_replace( '!/\*.*?\*/!s', '', $css_text );
 if ( preg_match_all( '/([^{}]+)\{([^{}]*)\}/s', $css_text, $bloecke, PREG_SET_ORDER ) ) {
 	foreach ( $bloecke as $block ) {
 		$rumpf = $block[2];
-		if ( ! preg_match( '/(^|[;\s])(padding|margin)\b/', $rumpf ) ) {
+		// Nicht nur Innen- und Aussenmass: die Grundregel von `.tha-people`
+		// traegt selbst eine ID und setzt ausserdem das Raster. Jede spaetere
+		// Regel, die eines dieser Masse anfasst, muss deshalb ebenfalls
+		// ID-Staerke haben — sonst steht sie da und tut nichts. Genau so
+		// standen die Sponsoren am Handy in fuenf Spalten: die Regeln fuer
+		// schmale Viewports waren geschrieben, aber zu schwach.
+		if ( ! preg_match( '/(^|[;\s])(padding|margin|gap|grid-template-columns|grid-template|display)\b/', $rumpf ) ) {
 			continue;
 		}
 		foreach ( split_selectors( trim( $block[1] ) ) as $sel ) {
@@ -222,7 +232,9 @@ if ( preg_match_all( '/([^{}]+)\{([^{}]*)\}/s', $css_text, $bloecke, PREG_SET_OR
 			// Trifft der Selektor eine unserer Listen als LETZTES Glied?
 			$treffer = false;
 			foreach ( array_keys( $listen ) as $klasse ) {
-				if ( preg_match( '/\.' . preg_quote( $klasse, '/' ) . '\s*$/', $sel ) ) {
+				// Auch die Spielarten: `.tha-people--logos` ist dieselbe Liste
+				// wie `.tha-people` und verliert genauso gegen `#left-area ul`.
+				if ( preg_match( '/\.' . preg_quote( $klasse, '/' ) . '(--[a-z0-9-]+)?\s*$/', $sel ) ) {
 					$treffer = true;
 					break;
 				}

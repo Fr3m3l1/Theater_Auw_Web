@@ -223,6 +223,19 @@ class Tha_Settings {
 			// weiterhin unter Design → Menüs gepflegt, wie gewohnt.
 			'nav_menu_id' => 0,
 			'nav_sticky'  => true,
+			// Ganz oben kleben statt unter den Leisten des Themes.
+			//
+			// Normalerweise haelt die Theater-Leiste Abstand: ueber ihr haengen
+			// die graue Vereinsleiste und Divis Kopfzeile, beide fest verankert
+			// und mit einem z-index um 100000. Ohne Abstand verschwaende sie
+			// beim Scrollen dahinter.
+			//
+			// Wer die Theater-Leiste lieber ganz oben haben moechte, schaltet
+			// das hier ein: dann scrollen die Leisten des Themes weg und die
+			// Theater-Leiste klebt an der Oberkante. Aus bleibt die Vorgabe —
+			// eine Leiste, die eine andere verdeckt, waere schlimmer als eine,
+			// die etwas tiefer haengt.
+			'nav_sticky_top' => false,
 			// Blendet die Navigation des Themes auf den Theater-Seiten aus.
 			// Sinnvoll NUR, wenn oben ein Menue gewaehlt ist — sonst bliebe die
 			// Seite ohne jede Navigation zurueck. Genau das prueft der Sanitizer.
@@ -486,6 +499,10 @@ class Tha_Settings {
 		}
 		if ( $has( 'nav_sticky_present' ) ) {
 			$out['nav_sticky'] = ! empty( $input['nav_sticky'] );
+		}
+		if ( $has( 'nav_sticky_top_present' ) ) {
+			// Ohne Mitscrollen ist «ganz oben» gegenstandslos.
+			$out['nav_sticky_top'] = ! empty( $input['nav_sticky_top'] ) && ! empty( $out['nav_sticky'] );
 		}
 		if ( $has( 'nav_replace_present' ) ) {
 			$out['nav_replace'] = ! empty( $input['nav_replace'] );

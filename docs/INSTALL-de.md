@@ -206,6 +206,18 @@ Die Seite ist sofort wieder so, wie sie vorher war. Nichts geht verloren, die Ei
 
 ---
 
+## Die Navigationsleiste
+
+Unter **Darstellung → Mitscrollen** stehen zwei Haken übereinander.
+
+Der erste lässt die Leiste beim Scrollen oben stehen. Der zweite — **«Ganz oben, an der Bildschirmkante»** — entscheidet, *wo* oben.
+
+Ohne den zweiten Haken hält die Theater-Leiste Abstand. Über ihr hängen die graue Vereinsleiste und die Kopfzeile des Themes, beide fest verankert; ohne Abstand verschwände sie beim Scrollen dahinter. Mit dem Haken scrollen jene weg und die Theater-Leiste klebt an der Oberkante.
+
+**Am Handy lohnt sich der Haken meist.** Dort ist der Platz oben knapp, und zwei Leisten übereinander fressen den halben Bildschirm. Die Admin-Leiste von WordPress bleibt in jedem Fall frei — sonst käme man als Angemeldete nicht mehr aus der Seite heraus.
+
+---
+
 ## Die Unterseiten
 
 Schauspieler, Hinter den Kulissen, OK-Team und Sponsoren bleiben **eigene Seiten** — sie verschwinden nicht in der Hauptseite.

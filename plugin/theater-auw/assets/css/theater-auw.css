@@ -1118,6 +1118,32 @@ body.tha-bericht {
 	top: var(--tha-sticky-top, 0px);
 }
 
+/* Ganz oben statt unter den Leisten des Themes.
+
+   Der Abstand allein genuegt nicht: Divis Kopfzeile und die graue
+   Vereinsleiste liegen bei z-index 100000, unsere Leiste bei 50. Ohne Abstand
+   verschwaende sie schlicht dahinter. Wer sie ganz oben haben will, braucht
+   sie deshalb auch VOR ihnen. Der Abstand nach oben bleibt trotzdem — er ist
+   dann nur noch die Admin-Leiste von WordPress, die niemand verdecken soll,
+   weil man sonst nicht mehr aus der Seite herauskommt. */
+.tha.tha .tha-nav--ganzoben {
+	z-index: 100001;
+}
+
+/* Notnagel, wenn `sticky` nicht kleben KANN.
+
+   Steht über der Leiste irgendwo ein `overflow: hidden` — Divi setzt das auf
+   schmalen Viewports gegen waagrechtes Scrollen —, dann klebt sie an einem
+   Kasten, der selbst nie scrollt, und wandert beim Scrollen aus dem Bild. Das
+   JavaScript sieht nach und setzt diese Klasse; ein Platzhalter davor hält
+   die Höhe frei, damit der Inhalt nicht nach oben springt. */
+.tha.tha .tha-nav--fest {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: var(--tha-sticky-top, 0px);
+}
+
 .tha.tha .tha-nav__inner {
 	display: flex;
 	align-items: center;
@@ -1204,7 +1230,7 @@ body.tha-bericht {
 
 /* --- Untermenüs: Desktop als Aufklapper --- */
 
-.tha.tha .tha-nav__list .sub-menu {
+:is(#left-area, body) .tha.tha .tha-nav__list .sub-menu {
 	list-style: none;
 	margin: 0;
 	padding: var(--sp-1);
@@ -1333,23 +1359,67 @@ body.tha-bericht {
 		display: inline-flex;
 	}
 
+	/* Die Leiste bleibt EINE Zeile: Wortmarke links, Ticketknopf und Menü
+	   rechts. Vorher durfte sie umbrechen, und eine klebende Leiste, die
+	   zweizeilig wird, frisst am Handy den halben Bildschirm.
+
+	   Das `auto` sitzt an der Wortmarke, nicht am Knopf: so wird alles nach
+	   rechts geschoben, egal ob der Ticketknopf gerade da ist oder nicht. */
 	.tha.tha .tha-nav__inner {
-		flex-wrap: wrap;
-		padding-top: var(--sp-2);
-		padding-bottom: var(--sp-2);
+		flex-wrap: nowrap;
+		gap: var(--sp-3);
+		min-height: 56px;
 	}
 
-	/* Menü eingeklappt; die Sticky-Leiste soll nicht die halbe Seite füllen. */
+	.tha.tha .tha-nav__brand {
+		margin-right: auto;
+	}
+
+	.tha.tha .tha-nav__cta {
+		margin-left: 0;
+		order: 0;
+	}
+
+	.tha.tha .tha-nav__toggle {
+		margin-left: 0;
+		order: 1;
+		padding: 9px var(--sp-3);
+	}
+
+	/* Das Menü als Blatt UNTER der Leiste, nicht als Teil von ihr.
+
+	   `absolute` statt im Fluss: die Leiste bleibt 56 px hoch, egal wie lang
+	   das Menü ist, und das Blatt legt sich über die Seite statt sie
+	   auseinanderzuschieben. Es scrollt für sich; `overscroll-behavior`
+	   verhindert, dass am Ende der Liste plötzlich die Seite dahinter
+	   weiterscrollt. */
 	.tha.tha .tha-nav__menu {
-		flex: 1 0 100%;
-		display: none;
-		max-height: min(70vh, 520px);
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		display: block;
+		/* `100%` ist die Höhe der Leiste — das Blatt darf also genau bis zum
+		   unteren Bildrand reichen. Die `vh`-Zeile ist für ältere Browser, die
+		   `dvh` noch nicht kennen; sonst hätte das Blatt gar keinen Deckel. */
+		max-height: calc(100vh - 100%);
+		max-height: calc(100dvh - 100%);
 		overflow-y: auto;
-		padding-bottom: var(--sp-3);
+		overscroll-behavior: contain;
+		background: var(--ink-950);
+		border-top: 1px solid var(--border-onstage);
+		box-shadow: var(--shadow-raised);
+		padding: var(--sp-2) var(--sp-5) calc(var(--sp-4) + env(safe-area-inset-bottom, 0px));
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(-6px);
+		transition: opacity var(--dur-fast), transform var(--dur-fast), visibility var(--dur-fast);
 	}
 
 	.tha.tha .tha-nav__menu.is-open {
-		display: block;
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
 	}
 
 	.tha.tha .tha-nav__list {
@@ -1358,15 +1428,40 @@ body.tha-bericht {
 		gap: 0;
 	}
 
+	/* Fingerbreite Ziele: 48 px ist das Mass, unter dem man danebentippt. */
 	.tha.tha .tha-nav__list a {
-		padding: 12px var(--sp-2);
-		border-bottom: 1px solid var(--border-onstage);
+		display: flex;
+		align-items: center;
+		min-height: 48px;
+		padding: 11px var(--sp-2);
 		border-radius: 0;
+		font-size: 17px;
+		color: var(--text-onstage);
+	}
+
+	.tha.tha .tha-nav__list > li + li {
+		border-top: 1px solid var(--border-onstage);
+	}
+
+	/* Die aktuelle Seite bekommt einen roten Balken an der Seite. Der
+	   Unterstrich vom Desktop geht in einer senkrechten Liste unter — er sieht
+	   dort aus wie eine weitere Trennlinie. */
+	.tha.tha .tha-nav__list .current-menu-item > a,
+	.tha.tha .tha-nav__list .current-menu-ancestor > a,
+	.tha.tha .tha-nav__list .current_page_item > a {
+		box-shadow: inset 3px 0 0 var(--red-600);
+		padding-left: var(--sp-4);
 	}
 
 	/* Untermenüs auf dem Handy immer offen und eingerückt — ein Aufklapper,
-	   der auf Hover reagiert, ist per Finger nicht bedienbar. */
-	.tha.tha .tha-nav__list .sub-menu {
+	   der auf Hover reagiert, ist per Finger nicht bedienbar.
+
+	   Das `:is(#left-area, body)` ist Pflicht: Divi gibt jeder <ul> unter
+	   `#left-area` ein eigenes Innenmass, und eine ID schlägt jede Klasse.
+	   Ohne das Präfix blieb die Einrückung wirkungslos — Unterpunkte standen
+	   genau gleich weit links wie ihre Eltern, und die Liste war eine
+	   Aneinanderreihung von vierzehn gleich aussehenden Zeilen. */
+	:is(#left-area, body) .tha.tha .tha-nav__list .sub-menu {
 		position: static;
 		opacity: 1;
 		visibility: visible;
@@ -1376,18 +1471,112 @@ body.tha-bericht {
 		border-radius: 0;
 		box-shadow: none;
 		background: transparent;
-		padding: 0 0 0 var(--sp-4);
+		margin: 0 0 var(--sp-2) var(--sp-2);
+		padding: 0 0 0 var(--sp-3);
+		border-left: 1px solid var(--border-onstage);
+	}
+
+	/* Unterpunkte sind leiser als ihre Eltern — sonst liest sich das Menü als
+	   eine einzige lange Liste ohne Gefälle. */
+	.tha.tha .tha-nav__list .sub-menu a {
+		min-height: 44px;
+		font-size: 15px;
+		color: var(--text-onstage-muted);
+	}
+
+	.tha.tha .tha-nav__list .sub-menu li + li {
+		border-top: 1px solid var(--border-onstage);
+	}
+
+	.tha.tha .tha-nav__list .menu-item-has-children > a {
+		font-weight: 600;
 	}
 
 	.tha.tha .tha-nav__list .menu-item-has-children > a::after {
 		display: none;
 	}
 
-	.tha.tha .tha-nav__cta {
-		margin-left: 0;
-		order: -1;
+	/* Der Hintergrund hinter dem offenen Blatt. Er verdeckt die Seite, damit
+	   klar ist, dass gerade das Menü dran ist — und fängt den Fingertipp
+	   daneben ab. */
+	.tha.tha .tha-nav__backdrop {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, .55);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity var(--dur-fast);
+	}
+
+	.tha.tha .tha-nav--offen .tha-nav__backdrop {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	/* Innerhalb der Leiste: der Hintergrund ganz unten, darüber die Leiste
+	   selbst, zuoberst das Blatt. Alle drei liegen im Stapel der Navigation
+	   und damit über der Seite. */
+	.tha.tha .tha-nav__inner {
+		position: relative;
+		z-index: 1;
+	}
+
+	.tha.tha .tha-nav__menu {
+		z-index: 2;
+	}
+
+	.tha.tha .tha-nav__toggle-label--offen,
+	.tha.tha .tha-nav__icon--offen {
+		display: none;
+	}
+
+	.tha.tha .tha-nav__toggle[aria-expanded="true"] .tha-nav__toggle-label--zu,
+	.tha.tha .tha-nav__toggle[aria-expanded="true"] .tha-nav__icon--zu {
+		display: none;
+	}
+
+	.tha.tha .tha-nav__toggle[aria-expanded="true"] .tha-nav__toggle-label--offen,
+	.tha.tha .tha-nav__toggle[aria-expanded="true"] .tha-nav__icon--offen {
+		display: inline;
+	}
+
+	.tha.tha .tha-nav__toggle[aria-expanded="true"] {
+		background: rgba(248, 246, 242, .1);
 	}
 }
+
+/* Über der Breite gibt es kein Blatt und keinen Hintergrund — dort steht das
+   Menü ohnehin offen in der Leiste. */
+@media (min-width: 861px) {
+
+	.tha.tha .tha-nav__backdrop,
+	.tha.tha .tha-nav__toggle-label--offen,
+	.tha.tha .tha-nav__icon--offen {
+		display: none;
+	}
+}
+
+/* Wer Bewegung abbestellt hat, bekommt das Menü ohne Überblendung. */
+@media (prefers-reduced-motion: reduce) {
+
+	.tha.tha .tha-nav__menu,
+	.tha.tha .tha-nav__backdrop {
+		transition: none;
+		transform: none;
+	}
+}
+
+/* KEIN `overflow: hidden` auf <html>, solange das Menü offen ist.
+
+   Das waere der uebliche Griff, um die Seite dahinter stillzustellen — und er
+   nimmt der klebenden Leiste genau den Kasten weg, an dem sie klebt. Sie
+   rutscht dann dorthin, wo sie im Dokument steht: ganz nach oben, aus dem Bild.
+   Auf einer weit heruntergescrollten Seite verschwand mit dem Antippen des
+   Menues die Leiste samt Menue.
+
+   Stattdessen faengt das JavaScript Wisch und Rad ueber dem Hintergrund ab;
+   das Blatt selbst scrollt fuer sich, `overscroll-behavior: contain` haelt den
+   Schwung am Listenende bei ihm. */
 
 @media (max-width: 640px) {
 
@@ -1493,8 +1682,14 @@ body.tha-bericht {
 }
 
 /* Logos stehen fast immer auf Weiss. Deshalb eine helle Karte, `contain`
-   statt `cover` und etwas Luft — sonst werden sie beschnitten. */
-.tha.tha .tha-people--logos {
+   statt `cover` und etwas Luft — sonst werden sie beschnitten.
+
+   Das `:is(#left-area, body)` davor ist Pflicht, nicht Zierde: die Grundregel
+   von `.tha-people` traegt es auch, und damit eine ID. Ohne dasselbe Praefix
+   ist diese Regel schwaecher als die, die sie ueberschreiben soll — sie stuende
+   im Stylesheet, taete aber nichts. Genau daran haben die Spaltenzahlen fuer
+   schmale Viewports jahrelang gelitten. */
+:is(#left-area, body) .tha.tha .tha-people--logos {
 	gap: var(--sp-4);
 	align-items: stretch;
 }
@@ -1646,7 +1841,7 @@ body.tha-full-content .tha-host {
 
 /* Auch zu zweit oder zu dritt sollen Gruppenfotos nicht briefmarkengross
    werden — deshalb weniger, dafür breitere Spalten. */
-.tha.tha .tha-people--bilder {
+:is(#left-area, body) .tha.tha .tha-people--bilder {
 	gap: var(--sp-6);
 }
 
@@ -1757,19 +1952,25 @@ body.tha-full-content .tha-host {
    Die eingestellte Spaltenzahl gilt als OBERGRENZE: `min()` senkt sie auf
    schmalen Viewports, hebt sie aber nie an. Wer zwei Spalten eingestellt hat,
    bekommt nie plötzlich drei.
+
+   JEDE Regel hier traegt `:is(#left-area, body)`. Die Grundregel von
+   `.tha-people` traegt es auch — und damit eine ID, die jede Klassenregel
+   schlaegt, Media Query hin oder her. Ohne das Praefix standen die Sponsoren
+   am Handy in fuenf Spalten, 119 px breit, und die Seite ragte ueber den
+   rechten Rand hinaus. Die Regeln waren da; sie kamen nur nie zum Zug.
    -------------------------------------------------------------------------- */
 
 @media (max-width: 1080px) {
 
-	.tha.tha .tha-people--personen {
+	:is(#left-area, body) .tha.tha .tha-people--personen {
 		grid-template-columns: repeat(min(var(--tha-cols, 4), 3), 1fr);
 	}
 
-	.tha.tha .tha-people--logos {
+	:is(#left-area, body) .tha.tha .tha-people--logos {
 		grid-template-columns: repeat(min(var(--tha-cols, 5), 4), 1fr);
 	}
 
-	.tha.tha .tha-people--bilder {
+	:is(#left-area, body) .tha.tha .tha-people--bilder {
 		grid-template-columns: repeat(min(var(--tha-cols, 2), 2), 1fr);
 	}
 
@@ -1780,16 +1981,16 @@ body.tha-full-content .tha-host {
 
 @media (max-width: 820px) {
 
-	.tha.tha .tha-people--personen {
+	:is(#left-area, body) .tha.tha .tha-people--personen {
 		grid-template-columns: repeat(min(var(--tha-cols, 4), 2), 1fr);
 	}
 
-	.tha.tha .tha-people--logos {
+	:is(#left-area, body) .tha.tha .tha-people--logos {
 		grid-template-columns: repeat(min(var(--tha-cols, 5), 3), 1fr);
 	}
 
 	/* Gruppenfotos untereinander — nebeneinander erkennt man niemanden mehr. */
-	.tha.tha .tha-people--bilder {
+	:is(#left-area, body) .tha.tha .tha-people--bilder {
 		grid-template-columns: 1fr;
 	}
 
@@ -1802,8 +2003,8 @@ body.tha-full-content .tha-host {
 
 	/* Zwei Porträts nebeneinander bleiben auch auf dem Handy lesbar —
 	   eines pro Reihe wäre eine sehr lange Seite. */
-	.tha.tha .tha-people--personen,
-	.tha.tha .tha-people--logos,
+	:is(#left-area, body) .tha.tha .tha-people--personen,
+	:is(#left-area, body) .tha.tha .tha-people--logos,
 	:is(#left-area, body) .tha.tha .tha-years {
 		grid-template-columns: repeat(2, 1fr);
 		gap: var(--sp-4);

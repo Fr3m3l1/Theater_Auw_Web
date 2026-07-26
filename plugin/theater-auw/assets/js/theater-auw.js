@@ -185,20 +185,82 @@
 
 		var navToggle = root.querySelector( '[data-tha-nav-toggle]' );
 		var navPanel = root.querySelector( '[data-tha-nav-panel]' );
+		var navBar = root.querySelector( '.tha-nav' );
+		var navBackdrop = root.querySelector( '[data-tha-nav-backdrop]' );
 
 		if ( navToggle && navPanel ) {
-			navToggle.addEventListener( 'click', function () {
-				var open = navPanel.classList.toggle( 'is-open' );
+
+			var setNav = function ( open ) {
+				navPanel.classList.toggle( 'is-open', open );
 				navToggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+				if ( navBar ) {
+					navBar.classList.toggle( 'tha-nav--offen', open );
+				}
+			};
+
+			var istOffen = function () {
+				return navPanel.classList.contains( 'is-open' );
+			};
+
+			navToggle.addEventListener( 'click', function () {
+				setNav( ! istOffen() );
 			} );
 
-			// Nach einem Sprung innerhalb der Seite wieder schliessen, sonst
-			// verdeckt das offene Menü das angesprungene Ziel.
+			// Daneben tippen schliesst — so wie in jeder App.
+			if ( navBackdrop ) {
+				navBackdrop.addEventListener( 'click', function () {
+					setNav( false );
+				} );
+
+			}
+
+			// Wischen und Radeln über dem offenen Menü bewegt die Seite
+			// dahinter nicht. Stillgestellt wird sie NICHT über
+			// `overflow: hidden` auf <html> — das nähme der klebenden Leiste
+			// den Kasten, an dem sie klebt, und sie verschwände nach oben aus
+			// dem Bild.
+			//
+			// Durchgelassen wird nur, was das Blatt selbst scrollt: passt die
+			// Liste ganz hinein, gibt es dort nichts zu scrollen, und ohne
+			// diese Bremse scrollte stattdessen die Seite darunter weiter.
+			if ( navBar ) {
+				var haltAn = function ( e ) {
+					if ( ! istOffen() ) {
+						return;
+					}
+					var imBlatt = navPanel.contains( e.target );
+					var scrollbar = navPanel.scrollHeight > navPanel.clientHeight + 1;
+					if ( ! imBlatt || ! scrollbar ) {
+						e.preventDefault();
+					}
+				};
+				navBar.addEventListener( 'wheel', haltAn, { passive: false } );
+				navBar.addEventListener( 'touchmove', haltAn, { passive: false } );
+			}
+
+			document.addEventListener( 'keydown', function ( e ) {
+				if ( 'Escape' === e.key && istOffen() ) {
+					setNav( false );
+					navToggle.focus();
+				}
+			} );
+
+			// Jeder Menüpunkt schliesst. Bei einem Sprung innerhalb der Seite
+			// verdeckt das offene Menü sonst genau das angesprungene Ziel; bei
+			// einem echten Wechsel bleibt es beim Zurückblättern sonst offen
+			// stehen, weil der Browser die Seite aus dem Cache holt.
 			navPanel.addEventListener( 'click', function ( e ) {
 				var link = e.target.closest ? e.target.closest( 'a' ) : null;
-				if ( link && 0 === ( link.getAttribute( 'href' ) || '' ).indexOf( '#' ) ) {
-					navPanel.classList.remove( 'is-open' );
-					navToggle.setAttribute( 'aria-expanded', 'false' );
+				if ( link ) {
+					setNav( false );
+				}
+			} );
+
+			// Wird das Fenster breit genug, gibt es kein Blatt mehr — dann darf
+			// auch die Seite nicht mehr festgehalten werden.
+			window.addEventListener( 'resize', function () {
+				if ( window.innerWidth > 860 && istOffen() ) {
+					setNav( false );
 				}
 			} );
 		}
@@ -244,6 +306,23 @@
 		var breite = window.innerWidth;
 		var alle = document.body ? document.body.querySelectorAll( '*' ) : [];
 
+		// «Ganz oben» eingeschaltet: die Leisten des Themes zaehlen nicht mehr,
+		// sie scrollen weg und die Theater-Leiste liegt darueber. Nur die
+		// Admin-Leiste von WordPress bleibt — sie zu verdecken hiesse, dass
+		// Angemeldete nicht mehr aus der Seite herauskommen. Fuer Besucher gibt
+		// es sie nicht, und am Handy scrollt sie mit; dann ist es glatt 0.
+		if ( document.querySelector( '.tha-nav--ganzoben' ) ) {
+			var adminbar = document.getElementById( 'wpadminbar' );
+			if ( ! adminbar ) {
+				return 0;
+			}
+			var abcs = window.getComputedStyle( adminbar );
+			if ( 'fixed' !== abcs.position || 'none' === abcs.display ) {
+				return 0;
+			}
+			return Math.max( 0, Math.round( adminbar.getBoundingClientRect().bottom ) );
+		}
+
 		Array.prototype.forEach.call( alle, function ( el ) {
 			// Nichts aus unserem eigenen Baum — sonst misst sich die
 			// Navigation an sich selbst.
@@ -283,9 +362,68 @@
 		document.documentElement.style.setProperty( '--tha-sticky-top', stickyOffset() + 'px' );
 	}
 
+	/* --- Klebt die Leiste überhaupt? -------------------------------------
+	 *
+	 * `position: sticky` klebt nur innerhalb des nächsten Vorfahren, der
+	 * scrollt. Sitzt irgendwo darüber ein `overflow: hidden` — und Divi setzt
+	 * genau das auf schmalen Viewports, um waagrechtes Scrollen zu
+	 * unterbinden —, dann klebt die Leiste an einem Kasten, der selbst nie
+	 * scrollt. Sie sieht aus wie normal mitgescrollt: am Handy war sie oben
+	 * weg, am Desktop blieb sie stehen.
+	 *
+	 * Dagegen hilft kein CSS, nur Nachsehen: findet sich so ein Vorfahre,
+	 * wird die Leiste `fixed` und ein Platzhalter hält ihre Höhe frei, damit
+	 * der Inhalt nicht darunter springt.
+	 */
+	function stickyGeklemmt( el ) {
+		var p = el.parentElement;
+		while ( p && p !== document.body && p !== document.documentElement ) {
+			var cs = window.getComputedStyle( p );
+			var ov = cs.overflow + ' ' + cs.overflowX + ' ' + cs.overflowY;
+			if ( ov.indexOf( 'hidden' ) !== -1 || ov.indexOf( 'clip' ) !== -1 ) {
+				return true;
+			}
+			p = p.parentElement;
+		}
+		return false;
+	}
+
+	function pruefeSticky() {
+		var navs = document.querySelectorAll( '.tha-nav--sticky' );
+
+		Array.prototype.forEach.call( navs, function ( nav ) {
+			var platzhalter = nav.previousElementSibling;
+			if ( ! platzhalter || ! platzhalter.hasAttribute( 'data-tha-nav-platz' ) ) {
+				platzhalter = document.createElement( 'div' );
+				platzhalter.setAttribute( 'data-tha-nav-platz', '' );
+				platzhalter.hidden = true;
+				nav.parentNode.insertBefore( platzhalter, nav );
+			}
+
+			// Zum Messen kurz zurück in den Normalzustand — sonst misst man
+			// die eigene Reparatur.
+			nav.classList.remove( 'tha-nav--fest' );
+			platzhalter.hidden = true;
+
+			if ( ! stickyGeklemmt( nav ) ) {
+				return;
+			}
+
+			platzhalter.style.height = nav.offsetHeight + 'px';
+			platzhalter.hidden = false;
+			nav.classList.add( 'tha-nav--fest' );
+		} );
+	}
+
 	if ( document.querySelector( '.tha-nav--sticky' ) ) {
 		applyStickyOffset();
-		window.addEventListener( 'resize', applyStickyOffset );
+		pruefeSticky();
+		window.addEventListener( 'resize', function () {
+			applyStickyOffset();
+			// Der klemmende Vorfahre ist oft eine Regel aus einer Media Query:
+			// am Handy da, am Desktop nicht. Also bei jeder Breitenänderung neu.
+			pruefeSticky();
+		} );
 		// Divi tauscht seine Kopfzeile beim Scrollen aus. Nicht bei jedem
 		// Scrollschritt nachmessen — einmal, wenn es zur Ruhe gekommen ist.
 		var timer = null;

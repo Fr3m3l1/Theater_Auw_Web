@@ -33,14 +33,18 @@
 
 		<button type="button" class="tha-nav__toggle" data-tha-nav-toggle
 			aria-expanded="false" aria-controls="tha-nav-menu">
-			<span class="tha-nav__toggle-label">Menü</span>
-			<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+			<span class="tha-nav__toggle-label tha-nav__toggle-label--zu">Menü</span>
+			<span class="tha-nav__toggle-label tha-nav__toggle-label--offen">Schliessen</span>
+			<svg class="tha-nav__icon tha-nav__icon--zu" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+			<svg class="tha-nav__icon tha-nav__icon--offen" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
 		</button>
 
 		<div class="tha-nav__menu" id="tha-nav-menu" data-tha-nav-panel>
 			<ul class="tha-nav__list"><li class="menu-item menu-item-has-children current-menu-item"><a href="#">Home</a><ul class="sub-menu"><li class="menu-item"><a href="#daten">Spieldaten</a></li></ul></li><li class="menu-item menu-item-has-children"><a href="#">TheaterAuw</a><ul class="sub-menu"><li class="menu-item"><a href="#stueck">Theater 2026</a></li><li class="menu-item"><a href="#">Die Schauspieler</a></li><li class="menu-item"><a href="#">Hinter den Kulissen</a></li><li class="menu-item"><a href="#">Organisation Komitee</a></li></ul></li><li class="menu-item menu-item-has-children"><a href="#">Sponsoren</a><ul class="sub-menu"><li class="menu-item"><a href="#">Sponsoren 2026</a></li></ul></li><li class="menu-item menu-item-has-children"><a href="#">Rückblick</a><ul class="sub-menu"><li class="menu-item"><a href="#rueckblick">2026 – 2008</a></li><li class="menu-item"><a href="#">2007 – 1987</a></li><li class="menu-item"><a href="#">1975 – 1937</a></li></ul></li><li class="menu-item"><a href="#">Berichte</a></li></ul>		</div>
 
 			</div>
+
+		<div class="tha-nav__backdrop" data-tha-nav-backdrop></div>
 </nav>
 <section class="tha-hero tha-hero--stage">
 	<div class="tha-hero__inner tha-wrap">
