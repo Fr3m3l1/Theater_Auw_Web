@@ -388,6 +388,33 @@
 		return false;
 	}
 
+	/* --- Hat die Leiste ueberhaupt Weg zum Kleben? ------------------------
+	 *
+	 * Der zweite Grund, aus dem `sticky` nichts tut — und der auf stvauw.ch
+	 * zutrifft: eine klebende Leiste bewegt sich NUR innerhalb des Kastens
+	 * ihres Elternteils. Steht sie in Divis Theme-Builder-Kopfbereich, ist
+	 * dieser Kasten genau so hoch wie sie selbst (gemessen: 65 px, Unterkante
+	 * bei 97 px) — waehrend die Seite 4719 px lang ist. Weg zum Kleben: null.
+	 * Sie scrollt mit, als stuende `position: static` da, und kein Blick auf
+	 * `overflow` haette das gezeigt.
+	 *
+	 * Faustregel: geht die Seite nach dem Elternteil noch nennenswert weiter,
+	 * hoert das Kleben lange vor dem Seitenende auf. Dann ist `fixed` das
+	 * ehrlichere Mittel.
+	 */
+	function stickyOhneWeg( nav ) {
+		var eltern = nav.parentElement;
+		if ( ! eltern ) {
+			return false;
+		}
+		var unten = eltern.getBoundingClientRect().bottom + window.pageYOffset;
+		var seite = Math.max(
+			document.body ? document.body.scrollHeight : 0,
+			document.documentElement.scrollHeight
+		);
+		return ( seite - unten ) > 200;
+	}
+
 	function pruefeSticky() {
 		var navs = document.querySelectorAll( '.tha-nav--sticky' );
 
@@ -405,7 +432,7 @@
 			nav.classList.remove( 'tha-nav--fest' );
 			platzhalter.hidden = true;
 
-			if ( ! stickyGeklemmt( nav ) ) {
+			if ( ! stickyGeklemmt( nav ) && ! stickyOhneWeg( nav ) ) {
 				return;
 			}
 
