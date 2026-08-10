@@ -55,6 +55,7 @@ if command -v php >/dev/null 2>&1; then
 	php "$ROOT/preview/test-phase.php"    >/dev/null || { echo "FEHLER: Phasentest fehlgeschlagen. Details: php preview/test-phase.php" >&2; exit 1; }
 	php "$ROOT/preview/test-settings.php" >/dev/null || { echo "FEHLER: Einstellungstest fehlgeschlagen. Details: php preview/test-settings.php" >&2; exit 1; }
 	php "$ROOT/preview/test-seiten.php"   >/dev/null || { echo "FEHLER: Test der Shortcode-Vorschlaege fehlgeschlagen. Details: php preview/test-seiten.php" >&2; exit 1; }
+	php "$ROOT/preview/test-seo.php"      >/dev/null || { echo "FEHLER: SEO-Test fehlgeschlagen. Details: php preview/test-seo.php" >&2; exit 1; }
 fi
 
 # --- 3. Stagen ------------------------------------------------------------
