@@ -12,7 +12,7 @@ class Tha_Settings {
 
 	const OPTION         = 'theater_auw_settings';
 	const GROUP          = 'theater_auw';
-	const SCHEMA_VERSION = 8;
+	const SCHEMA_VERSION = 9;
 
 	const PHASES   = array( 'vorbereitung', 'vorverkauf', 'spielzeit', 'danke' );
 	const STATUSES = array( 'offen', 'wenige', 'ausverkauft', 'vorbei' );
@@ -100,11 +100,12 @@ class Tha_Settings {
 			'prices'        => array(
 				array( 'group' => 'Vorpremiere', 'label' => 'Kinder bis 16 Jahre', 'amount' => 'Fr. 2.–', 'note' => '' ),
 				array( 'group' => 'Vorpremiere', 'label' => 'Erwachsene', 'amount' => 'Fr. 10.–', 'note' => 'am Samstagnachmittag' ),
-				array( 'group' => 'Sonntag', 'label' => 'Kinder bis 16 Jahre', 'amount' => 'Fr. 12.–', 'note' => '' ),
-				array( 'group' => 'Sonntag', 'label' => 'Erwachsene', 'amount' => 'Fr. 20.–', 'note' => '' ),
-				// Ohne Gruppe: eine Aufführungsart mit nur einem Preis braucht
-				// keine Zwischenüberschrift, unter der eine einzige Zeile steht.
-				array( 'group' => '', 'label' => 'Abendaufführung', 'amount' => 'Fr. 20.–', 'note' => '' ),
+				// EIN Preis statt einer Tabelle je Aufführungsart: Abend und
+				// Sonntag kosten dasselbe, also steht das auch so da. Die
+				// einzige Ausnahme — Kinder am Sonntagnachmittag — ist eine
+				// eigene Zeile, kein eigenes Kapitel.
+				array( 'group' => '', 'label' => 'Abendaufführung und Sonntag', 'amount' => 'Fr. 20.–', 'note' => '' ),
+				array( 'group' => '', 'label' => 'Kinder bis 16 Jahre', 'amount' => 'Fr. 12.–', 'note' => 'am Sonntag' ),
 				array( 'group' => '', 'label' => 'Premiere', 'amount' => 'Fr. 60.–', 'note' => 'inkl. 4-Gang-Menü' ),
 			),
 			'price_hint'    => '',
@@ -985,8 +986,65 @@ class Tha_Settings {
 			$stored = self::strip_retired( $stored );
 		}
 
+		// v9 — die Eintrittspreise neu gegliedert: Abend und Sonntag kosten
+		// dasselbe und stehen jetzt als EINE Zeile da; die Kinder am Sonntag
+		// sind die Ausnahme darunter. Umgeschrieben wird nur, was noch exakt
+		// so dasteht, wie eine frühere Version es ausgeliefert hat — wer
+		// eigene Preise erfasst hat, behält sie. Dieselbe Regel wie in v3.
+		if ( $version < 9 && self::prices_match_shipped( isset( $stored['prices'] ) ? $stored['prices'] : array() ) ) {
+			$stored['prices'] = self::defaults()['prices'];
+		}
+
 		$stored['schema_version'] = self::SCHEMA_VERSION;
 		update_option( self::OPTION, wp_parse_args( $stored, self::defaults() ) );
+	}
+
+	/**
+	 * Stehen die Preise noch exakt so da, wie eine frühere Version sie
+	 * ausgeliefert hat?
+	 *
+	 * Zwei Fassungen waren im Umlauf: bis 1.5.x hiess die Abendzeile
+	 * «Abendaufführung / alle» und die Premiere trug ihr Menü als
+	 * Bezeichnung; ab 1.6.0 standen beide ohne Gruppe da. Beide gelten als
+	 * unberührt. Schon EINE geänderte Zelle heisst: das sind eigene Preise,
+	 * Finger weg.
+	 */
+	private static function prices_match_shipped( $prices ) {
+		$shipped = array(
+			// Bis 1.5.x.
+			array(
+				array( 'Vorpremiere', 'Kinder bis 16 Jahre', 'Fr. 2.–', '' ),
+				array( 'Vorpremiere', 'Erwachsene', 'Fr. 10.–', 'am Samstagnachmittag' ),
+				array( 'Sonntag', 'Kinder bis 16 Jahre', 'Fr. 12.–', '' ),
+				array( 'Sonntag', 'Erwachsene', 'Fr. 20.–', '' ),
+				array( 'Abendaufführung', 'alle', 'Fr. 20.–', '' ),
+				array( 'Premiere', 'inkl. 4-Gang-Menü', 'Fr. 60.–', '' ),
+			),
+			// 1.6.0 bis 1.9.x.
+			array(
+				array( 'Vorpremiere', 'Kinder bis 16 Jahre', 'Fr. 2.–', '' ),
+				array( 'Vorpremiere', 'Erwachsene', 'Fr. 10.–', 'am Samstagnachmittag' ),
+				array( 'Sonntag', 'Kinder bis 16 Jahre', 'Fr. 12.–', '' ),
+				array( 'Sonntag', 'Erwachsene', 'Fr. 20.–', '' ),
+				array( '', 'Abendaufführung', 'Fr. 20.–', '' ),
+				array( '', 'Premiere', 'Fr. 60.–', 'inkl. 4-Gang-Menü' ),
+			),
+		);
+
+		$ist = array();
+		foreach ( (array) $prices as $row ) {
+			if ( ! is_array( $row ) ) {
+				return false;
+			}
+			$ist[] = array(
+				isset( $row['group'] ) ? (string) $row['group'] : '',
+				isset( $row['label'] ) ? (string) $row['label'] : '',
+				isset( $row['amount'] ) ? (string) $row['amount'] : '',
+				isset( $row['note'] ) ? (string) $row['note'] : '',
+			);
+		}
+
+		return in_array( $ist, $shipped, true );
 	}
 
 	/**

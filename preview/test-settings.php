@@ -430,18 +430,15 @@ $res = Tha_Settings::sanitize( array(
 
 check( 'Preiszeilen ohne Bezeichnung fallen weg', '3', (string) count( $res['prices'] ) );
 
-// Die echten Zahlen aus dem Programmheft 2025
+// Die echten Zahlen aus dem Programmheft 2025 — seit 1.9.5 als EIN Preis
+// mit Ausnahme statt einer Tabelle je Aufführungsart.
 $d3 = Tha_Settings::defaults();
 $map = array();
 foreach ( $d3['prices'] as $r ) { $map[ $r['group'] . '/' . $r['label'] ] = $r['amount']; }
 check( 'Vorpremiere Kinder',        'Fr. 2.–',  $map['Vorpremiere/Kinder bis 16 Jahre'] );
 check( 'Vorpremiere Erwachsene',    'Fr. 10.–', $map['Vorpremiere/Erwachsene'] );
-check( 'Sonntag Kinder',            'Fr. 12.–', $map['Sonntag/Kinder bis 16 Jahre'] );
-check( 'Sonntag Erwachsene',        'Fr. 20.–', $map['Sonntag/Erwachsene'] );
-// Abendaufführung und Premiere kennen nur EINEN Preis und stehen darum
-// ohne Gruppe da — sonst bekämen sie eine Zwischenüberschrift, unter der
-// eine einzige Zeile steht.
-check( 'Abendaufführung',           'Fr. 20.–', $map['/Abendaufführung'] );
+check( 'Abend und Sonntag: ein Preis', 'Fr. 20.–', $map['/Abendaufführung und Sonntag'] );
+check( 'Sonntagskinder als Ausnahme',  'Fr. 12.–', $map['/Kinder bis 16 Jahre'] );
 check( 'Premiere',                  'Fr. 60.–', $map['/Premiere'] );
 $menue = '';
 foreach ( $d3['prices'] as $r ) { if ( 'Premiere' === $r['label'] ) { $menue = $r['note']; } }
@@ -464,7 +461,7 @@ $leer['openings'] = array();
 update_option( Tha_Settings::OPTION, $leer );
 Tha_Settings::upgrade();
 $n = get_option( Tha_Settings::OPTION );
-check( 'leeres Gerüst bekommt echte Preise', '6', (string) count( $n['prices'] ) );
+check( 'leeres Gerüst bekommt echte Preise', '5', (string) count( $n['prices'] ) );
 check( 'und die Kassaöffnungszeiten',        '3', (string) count( $n['openings'] ) );
 
 // Installation mit eigenen Beträgen — darf NICHT überschrieben werden.
@@ -476,6 +473,39 @@ Tha_Settings::upgrade();
 $e = get_option( Tha_Settings::OPTION );
 check( 'eigene Preise bleiben unangetastet', 'Fr. 99.–', $e['prices'][0]['amount'] );
 check( 'und werden nicht ergänzt',           '1', (string) count( $e['prices'] ) );
+
+echo "\nMigration der Preise (Schema 9):\n\n";
+
+// Installation, die noch die alten Standardzeilen von 1.5.0 trägt
+// («Abendaufführung / alle», «Sonntag» als Gruppe) — bekommt die neue
+// Gliederung: ein Preis, die Sonntagskinder als Ausnahme.
+$alt = Tha_Settings::defaults();
+$alt['schema_version'] = 8;
+$alt['prices'] = array(
+	array( 'group' => 'Vorpremiere', 'label' => 'Kinder bis 16 Jahre', 'amount' => 'Fr. 2.–', 'note' => '' ),
+	array( 'group' => 'Vorpremiere', 'label' => 'Erwachsene', 'amount' => 'Fr. 10.–', 'note' => 'am Samstagnachmittag' ),
+	array( 'group' => 'Sonntag', 'label' => 'Kinder bis 16 Jahre', 'amount' => 'Fr. 12.–', 'note' => '' ),
+	array( 'group' => 'Sonntag', 'label' => 'Erwachsene', 'amount' => 'Fr. 20.–', 'note' => '' ),
+	array( 'group' => 'Abendaufführung', 'label' => 'alle', 'amount' => 'Fr. 20.–', 'note' => '' ),
+	array( 'group' => 'Premiere', 'label' => 'inkl. 4-Gang-Menü', 'amount' => 'Fr. 60.–', 'note' => '' ),
+);
+update_option( Tha_Settings::OPTION, $alt );
+Tha_Settings::upgrade();
+$n9 = get_option( Tha_Settings::OPTION );
+check( 'alte Standardzeilen werden umgebaut', '5', (string) count( $n9['prices'] ) );
+check( 'ein Preis für Abend und Sonntag',     'Abendaufführung und Sonntag', $n9['prices'][2]['label'] );
+check( 'Sonntagskinder als Ausnahme',         'Fr. 12.–', $n9['prices'][3]['amount'] );
+
+// Dieselben Zeilen, aber ein Betrag von Hand geändert — Finger weg.
+$eigen9 = Tha_Settings::defaults();
+$eigen9['schema_version'] = 8;
+$eigen9['prices'] = $alt['prices'];
+$eigen9['prices'][4]['amount'] = 'Fr. 25.–';
+update_option( Tha_Settings::OPTION, $eigen9 );
+Tha_Settings::upgrade();
+$e9 = get_option( Tha_Settings::OPTION );
+check( 'geänderte Preise bleiben stehen',     '6', (string) count( $e9['prices'] ) );
+check( 'samt dem eigenen Betrag',             'Fr. 25.–', $e9['prices'][4]['amount'] );
 
 echo "\nKeine doppelten Preisangaben:\n\n";
 
