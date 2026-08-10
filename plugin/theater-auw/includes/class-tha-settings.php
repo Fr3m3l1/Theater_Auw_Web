@@ -329,10 +329,11 @@ class Tha_Settings {
 	 * Gespeicherte Werte, immer über die Defaults gelegt — ein Teil-Save kann
 	 * so nie Schlüssel verlieren.
 	 */
+	private static $cache = null;
+
 	public static function get() {
-		static $cache = null;
-		if ( null !== $cache ) {
-			return $cache;
+		if ( null !== self::$cache ) {
+			return self::$cache;
 		}
 		$stored = get_option( self::OPTION, array() );
 		if ( ! is_array( $stored ) ) {
@@ -340,11 +341,19 @@ class Tha_Settings {
 		}
 		$cache = self::strip_retired( wp_parse_args( $stored, self::defaults() ) );
 
+		// Auch beim Lesen sortieren, nicht nur beim Speichern: eine Liste, die
+		// vor dieser Version gespeichert wurde, stand bei zwei Vorstellungen am
+		// selben Tag sonst in Eingabe- statt in Spielreihenfolge.
+		if ( is_array( $cache['dates'] ) ) {
+			$cache['dates'] = self::sort_dates( $cache['dates'] );
+		}
+
 		// Verschachteltes Array separat mergen — wp_parse_args geht nicht tief.
 		$cache['phase_schedule'] = wp_parse_args(
 			isset( $stored['phase_schedule'] ) && is_array( $stored['phase_schedule'] ) ? $stored['phase_schedule'] : array(),
 			self::defaults()['phase_schedule']
 		);
+		self::$cache = $cache;
 		return $cache;
 	}
 
@@ -365,6 +374,7 @@ class Tha_Settings {
 
 	public static function flush_cache() {
 		// get() cached statisch; nach dem Speichern einmal neu laden.
+		self::$cache = null;
 		wp_cache_delete( self::OPTION, 'options' );
 	}
 
@@ -484,13 +494,7 @@ class Tha_Settings {
 					'ticket_url' => self::clean_url( isset( $row['ticket_url'] ) ? $row['ticket_url'] : '' ),
 				);
 			}
-			usort(
-				$dates,
-				static function ( $a, $b ) {
-					return strcmp( $a['date'], $b['date'] );
-				}
-			);
-			$out['dates'] = $dates;
+			$out['dates'] = self::sort_dates( $dates );
 		}
 
 		// --- Navigation ------------------------------------------------------
@@ -1065,6 +1069,33 @@ class Tha_Settings {
 		$limit = absint( $limit );
 
 		return $limit ? array_slice( $rows, 0, $limit ) : $rows;
+	}
+
+	/**
+	 * Spieldaten in Spielreihenfolge: erst Datum, dann Uhrzeit.
+	 *
+	 * Nur nach Datum reicht nicht — bei zwei Vorstellungen am selben Tag
+	 * (Vorpremiere am Nachmittag, Premiere am Abend) bliebe sonst die
+	 * Eingabereihenfolge stehen. Die Uhrzeit «H.MM» wird als Zahl verglichen,
+	 * damit «9.00» vor «14.00» kommt.
+	 */
+	private static function sort_dates( array $dates ) {
+		usort(
+			$dates,
+			static function ( $a, $b ) {
+				$cmp = strcmp(
+					isset( $a['date'] ) ? (string) $a['date'] : '',
+					isset( $b['date'] ) ? (string) $b['date'] : ''
+				);
+				if ( 0 !== $cmp ) {
+					return $cmp;
+				}
+				$ta = (float) str_replace( ':', '.', isset( $a['time'] ) ? (string) $a['time'] : '' );
+				$tb = (float) str_replace( ':', '.', isset( $b['time'] ) ? (string) $b['time'] : '' );
+				return $ta <=> $tb;
+			}
+		);
+		return $dates;
 	}
 
 	/**

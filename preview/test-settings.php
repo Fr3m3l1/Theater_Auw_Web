@@ -626,5 +626,32 @@ $anderer_tab = Tha_Settings::sanitize( array( 'play_title' => 'Etwas anderes' ) 
 check( 'Karte ueberlebt fremdes Speichern',   '4', (string) count( $anderer_tab['menu'] ) );
 check( 'Updates ueberleben ebenso',           '5', (string) count( $anderer_tab['updates'] ) );
 
+echo "\nSpieldaten — zwei Vorstellungen am selben Tag:\n\n";
+
+$dd = Tha_Settings::sanitize( array(
+	'dates' => array(
+		array( 'date' => '2026-11-18', 'time' => '20.00' ),
+		array( 'date' => '2026-11-14', 'time' => '20.00', 'label' => 'Premiere' ),
+		array( 'date' => '2026-11-14', 'time' => '14.00', 'label' => 'Vorpremiere' ),
+		array( 'date' => '2026-11-14', 'time' => '9.00', 'label' => 'Schulvorstellung' ),
+	),
+) );
+check( 'gleicher Tag: 9.00 vor 14.00',   'Schulvorstellung', $dd['dates'][0]['label'] );
+check( 'dann die Vorpremiere um 14.00',  'Vorpremiere',      $dd['dates'][1]['label'] );
+check( 'dann die Premiere um 20.00',     'Premiere',         $dd['dates'][2]['label'] );
+check( 'anderer Tag ans Ende',           '2026-11-18',       $dd['dates'][3]['date'] );
+
+// Eine vor dieser Version gespeicherte Liste steht evtl. unsortiert in der
+// Datenbank — get() sortiert deshalb auch beim Lesen.
+update_option( Tha_Settings::OPTION, array_merge( Tha_Settings::defaults(), array(
+	'dates' => array(
+		array( 'date' => '2026-11-14', 'time' => '20.00', 'label' => 'Premiere', 'note' => '', 'status' => 'offen', 'ticket_url' => '' ),
+		array( 'date' => '2026-11-14', 'time' => '14.00', 'label' => 'Vorpremiere', 'note' => '', 'status' => 'offen', 'ticket_url' => '' ),
+	),
+) ) );
+Tha_Settings::flush_cache();
+$gelesen = Tha_Settings::get();
+check( 'gelesen: Vorpremiere zuerst',    'Vorpremiere', $gelesen['dates'][0]['label'] );
+
 printf( "\n%d Prüfungen, %d Fehler\n", $runs, $fails );
 exit( $fails > 0 ? 1 : 0 );
