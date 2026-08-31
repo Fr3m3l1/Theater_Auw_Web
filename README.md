@@ -72,7 +72,9 @@ Kein npm, kein Build-Toolchain. Das hier ist die Website eines Dorfvereins — s
 
 **Vergangene Daten pflegen sich selbst.** Eine Vorstellung, deren Datum vorbei ist, zeigt automatisch «Vorbei» und ist nicht mehr buchbar. Niemand muss am Sonntagmorgen Häkchen umstellen.
 
-**Speisekarte und Updates sind eigene Seitentypen, kein Rahmen um fremden Inhalt.** Beide Seiten lagen als Divi-Module vor — dort sieht das Plugin nichts von seinem Shortcode, und eine Navigationsleiste über der Schrift des Themes ist eine halb umgestellte Seite. Der Inhalt liegt deshalb im Backend (`[theater_auw_karte]`, `[theater_auw_updates]`) und wird als echte Zeilen ausgegeben: durchsuchbar, vorlesbar, auf dem Handy lesbar. Die Karte ist mit den 28 Zeilen aus `docs/Speise und Getränkekarte_2025.pdf` vorbelegt, wie die Eintrittspreise mit denen aus dem Programmheft. Bei den Updates sortiert das Plugin — neuestes zuerst, undatiertes ans Ende.
+**Die Anmeldeseite wird umgestaltet, nicht umgebaut.** «Anmeldung Sponsoring» trägt ein echtes Formular, das Anmeldungen entgegennimmt — ein Shortcode-Rahmen würde dem Formular die Theme-Stile nehmen. Das Plugin erkennt die Seite deshalb über ihre Nummer, setzt ihr den dunklen Seitenkopf vor und übernimmt die Theater-Schrift; das Formular selbst bleibt unangetastet. Eine Anmeldefrist (dieses Jahr: 8. Oktober) schliesst beides automatisch: nach dem Stichtag verschwindet der Hinweis auf der Hauptseite, und das Formular wird ausgeblendet. Alles unter «Theater Auw → Sponsoring».
+
+**Kleine Knöpfe, grosse Wirkung verlangen nach einer Frist.** Solange gesammelt wird, steht auf der Hauptseite eine dunkle Sektion «Sponsoren gesucht» mit einem Knopf auf die Anmeldeseite. Sie rechnet mit dem Kalender — niemand muss am Tag nach dem Stichtag daran denken, sie abzuschalten.
 
 **`ß` ist ein Build-Fehler.** `build.sh` bricht ab, wenn im Quelltext ein Eszett auftaucht, und der Sanitizer ersetzt es in allen Backend-Eingaben durch «ss». Schweizer Rechtschreibung, automatisch durchgesetzt.
 

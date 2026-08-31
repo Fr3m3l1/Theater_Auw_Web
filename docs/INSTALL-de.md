@@ -340,11 +340,18 @@ Und die alten Divi-Module mit der abgetippten Karte beziehungsweise den alten Me
 
 Beide Shortcodes lassen sich auch umschliessend verwenden, wenn zusätzlicher Text unter die Karte gehört:
 
-```
-[theater_auw_karte]
-Am Sonntag servieren wir nach der Vorstellung.
-[/theater_auw_karte]
-```
+### Sponsoring-Anmeldung
+
+Die Seite "Anmeldung Sponsoring" ist eine Formularseite — sie nimmt Anmeldungen zu den Premierenabend- und Spenderpaketen entgegen. Deshalb wird sie nicht in einen Shortcode eingeschlossen (das würde dem Formular seine Theme-Stile nehmen), sondern von aussen gestaltet: das Plugin setzt ihr den dunklen Seitenkopf vor, übernimmt die Theater-Schrift und blendet das Formular nach Ablauf der Frist automatisch aus.
+
+**Theater Auw → Sponsoring.** Dort steht alles, was diese Seite betrifft:
+
+- **Anmeldung** — der Haken zeigt den Hinweis "Sponsoren gesucht" auf der Hauptseite.
+- **Anmeldeseite** — welche Seite den Seitenkopf tragen soll (üblicherweise "Anmeldung Sponsoring").
+- **Titel, Kicker, Vorspann** — die Texte des Seitenkopfs.
+- **Anmeldefrist** — das Datum, bis zu dem man sich anmelden kann. Wer bis zu diesem Tag anmeldet, ist dabei; am Tag danach ist die Anmeldung zu: der Hinweis auf der Hauptseite verschwindet und das Formular wird ausgeblendet, ganz ohne Zutun. Ohne Datum bleibt die Anmeldung offen.
+
+Der Inhalt der Seite selbst — Paketpreise, Menü, Bankverbindung, Formular — bleibt unberührt und wird wie bisher im Seiten-Editor gepflegt.
 
 Für einen Auszug der neuesten Meldungen auf einer anderen Seite:
 

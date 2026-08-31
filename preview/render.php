@@ -25,6 +25,7 @@ require THA_DIR . 'includes/class-tha-groups.php';
 require THA_DIR . 'includes/class-tha-rueckblick.php';
 require THA_DIR . 'includes/class-tha-renderer.php';
 require THA_DIR . 'includes/class-tha-assets.php';
+require THA_DIR . 'includes/class-tha-anmeldung.php';
 
 // Fixtures = exakt die Form von theater_auw_settings.
 $fixtures = json_decode( file_get_contents( __DIR__ . '/fixtures.json' ), true );
@@ -96,6 +97,25 @@ foreach ( $seiten as $slug => $seite ) {
 	$written[] = basename( $file );
 }
 
+/**
+ * Die Anmeldeseite. Die Stubs kennen nur eine Seitennummer (0) — die
+ * Einstellung der Vorschau wird deshalb auf 0 gesetzt, damit die Erkennung
+ * zugreift. Gezeigt wird der Seitenkopf über einer Attrappe des Divi-
+ * Inhalts; das echte Formular kann die Vorschau nicht nachbauen.
+ */
+$fix['anmeldung_page_id'] = 0;
+update_option( Tha_Settings::OPTION, $fix );
+Tha_Settings::flush_cache();
+
+$anmelde_inhalt = '<h2>Sponsor Anmeldung</h2>'
+	. '<p>Platzhalter für das Divi-Formular — auf der echten Seite steht hier das Anmeldeformular.</p>'
+	. '<p><input type="text" placeholder="Vorname"></p>';
+
+$body = Tha_Anmeldung::render_pagehead( $anmelde_inhalt );
+$html = tha_preview_shell( 'Anmeldung', 'anmeldung', $body, '2026-10-01 12:00' );
+file_put_contents( __DIR__ . '/anmeldung.html', $html );
+$written[] = 'anmeldung.html';
+
 echo "Gerendert: " . implode( ', ', $written ) . "\n";
 
 // ---------------------------------------------------------------------
@@ -110,7 +130,7 @@ function tha_preview_set_now( $datetime ) {
 
 function tha_preview_shell( $label, $slug, $body, $when ) {
 	$nav = '';
-	foreach ( array( 'vorbereitung' => 'Vorbereitung', 'vorverkauf' => 'Vorverkauf', 'spielzeit' => 'Spielzeit', 'danke' => 'Danke', 'karte' => 'Speisekarte', 'updates' => 'Updates' ) as $s => $l ) {
+	foreach ( array( 'vorbereitung' => 'Vorbereitung', 'vorverkauf' => 'Vorverkauf', 'spielzeit' => 'Spielzeit', 'danke' => 'Danke', 'karte' => 'Speisekarte', 'updates' => 'Updates', 'anmeldung' => 'Anmeldung' ) as $s => $l ) {
 		$active = $s === $slug ? ' class="on"' : '';
 		$nav   .= '<a href="' . $s . '.html"' . $active . '>' . $l . '</a>';
 	}

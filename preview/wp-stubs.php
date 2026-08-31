@@ -189,6 +189,17 @@ function current_user_can( $cap ) {
 function get_queried_object_id() {
 	return 0;
 }
+// Template-Abfragen: die Vorschau steht immer mitten auf einer Seite im Loop.
+// Das genuegt fuer die Anmeldeseite, deren Seitenkopf sich daran orientiert.
+function is_singular() {
+	return true;
+}
+function in_the_loop() {
+	return true;
+}
+function is_main_query() {
+	return true;
+}
 function get_post_field() {
 	return '';
 }

@@ -55,6 +55,14 @@ if ( $ctx['is_preview'] ) {
 	if ( in_array( 'weiteres', $ctx['sections'], true ) ) {
 		Tha_Renderer::part( 'section-weiteres', $ctx );
 	}
+
+	// Der Sponsoring-Hinweis — eine eigene Sektion, kein Einschub in
+	// «Weiteres»: er ist kein Rund-um-die-Vorstellung-Thema, sondern ein
+	// Aufruf — und er muss ohne Eingriff wieder verschwinden können, wenn
+	// die Anmeldefrist abgelaufen ist (siehe Tha_Anmeldung).
+	if ( ! empty( $settings['anmeldung_enabled'] ) && class_exists( 'Tha_Anmeldung' ) ) {
+		Tha_Renderer::part( 'section-anmeldung', $ctx );
+	}
 	if ( in_array( 'details', $ctx['sections'], true ) ) {
 		Tha_Renderer::part( 'section-details', $ctx );
 	}

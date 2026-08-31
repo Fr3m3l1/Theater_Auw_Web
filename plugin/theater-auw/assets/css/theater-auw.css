@@ -38,7 +38,8 @@
 
 .tha,
 body.tha-typo,
-body.tha-bericht {
+body.tha-bericht,
+body.tha-anmeldung {
 	/* Brand red — aus dem Logo gesampelt */
 	--red-500: #ef3b3b;
 	--red-600: #e02424;
@@ -1726,11 +1727,78 @@ body.tha-bericht {
 	color: var(--text-muted);
 }
 
+/* ==========================================================================
+   22. Sponsoring-Anmeldung
+
+   Der Seitenkopf der Anmeldeseite («Anmeldung Sponsoring») wird in einer
+   `.tha`-Wurzel gerendert — dieselbe wie auf den übrigen Seiten, damit er
+   Seitenkopf-Stile, Tokens und Schrift erbt. Der Seiteninhalt daneben
+   (das echte Divi-Formular) liegt ausserhalb der Wurzel und behält seine
+   Theme-Stile. Nur das Ausblenden nach der Frist greift von aussen, als
+   Regel gegen das Theme — gebunden an die Körperklasse `tha-anmeldung-zu`.
+   ========================================================================== */
+
+/* Der kleine Hinweis im Seitenkopf: «Anmeldung bis …» */
+
+.tha.tha .tha-pagehead__badge {
+	display: inline-block;
+	margin: var(--sp-6) 0 0;
+	padding: var(--sp-2) var(--sp-4);
+	background: rgba(248, 246, 242, .08);
+	border: 1px solid var(--border-onstage);
+	border-radius: var(--radius-pill);
+	color: var(--text-onstage);
+	font-size: var(--text-small);
+	font-weight: 600;
+}
+
+.tha.tha .tha-pagehead__badge--zu {
+	background: transparent;
+	border-color: var(--red-600);
+	color: var(--red-100);
+}
+
+/* Der Aufruf auf der Hauptseite — Text und Knopf in einer Zeile. */
+
+.tha.tha .tha-anmeldung-cta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-8);
+	flex-wrap: wrap;
+}
+
+.tha.tha .tha-anmeldung-cta__copy {
+	max-width: 62ch;
+}
+
+.tha.tha .tha-anmeldung-cta__meta {
+	color: var(--text-onstage-muted);
+	margin: var(--sp-2) 0 0;
+}
+
 @media (max-width: 640px) {
 
-	.tha.tha .tha-pagehead {
-		padding: var(--sp-8) 0 var(--sp-6);
+	.tha.tha .tha-anmeldung-cta {
+		gap: var(--sp-4);
 	}
+
+	.tha.tha .tha-anmeldung-cta .tha-btn {
+		flex: 1 1 auto;
+	}
+}
+
+/* --- Nach Ablauf der Frist: das Formular verschwindet ----------------------
+   Das Formular liegt ausserhalb der `.tha`-Wurzel; ausgeblendet wird es
+   deshalb wie der Seitenrahmen in Abschnitt 23 über die Körperklasse,
+   die `Tha_Anmeldung` nur auf dieser Seite setzt. */
+
+body.tha-anmeldung.tha-anmeldung-zu .tha-anmeldung-content .et_pb_contact_form_container {
+	display: none !important;
+}
+
+body.tha-anmeldung.tha-anmeldung-zu .tha-anmeldung-content .et_pb_contact_form_container * {
+	display: none !important;
 }
 
 /* ==========================================================================

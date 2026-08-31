@@ -8,3 +8,8 @@ build/stage/
 
 .DS_Store
 node_modules/
+
+# Rohbilder der Saison — ein Ordner mit Originalaufnahmen, teils über 20 MB
+# pro Datei. In ein Repo gehören die nicht; aufgearbeitet fürs Web landen
+# sie einzeln in der WordPress-Mediathek.
+pictures/

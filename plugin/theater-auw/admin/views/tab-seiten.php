@@ -227,7 +227,7 @@ $suggest_for = static function ( $title ) use ( $suggestions, $ist_funktionsseit
 						<?php endforeach; ?>
 					<?php elseif ( $funktion ) : ?>
 						<p class="description">
-							<?php esc_html_e( 'Hier gehört kein Shortcode hin. Auf dieser Seite steht ein Formular — sie soll etwas entgegennehmen, nicht etwas ausstellen. Sie bleibt bewusst im bisherigen Design.', 'theater-auw' ); ?>
+							<?php esc_html_e( 'Hier gehört kein Shortcode hin. Auf dieser Seite steht ein Formular — sie soll etwas entgegennehmen, nicht etwas ausstellen. Sie wird deshalb nicht umgebaut, sondern von aussen gestaltet: Seitenkopf, Schrift und Anmeldefrist stellst du unter «Sponsoring» ein.', 'theater-auw' ); ?>
 						</p>
 					<?php else : ?>
 						<textarea readonly rows="2" class="large-text code" onclick="this.select()"><?php echo esc_textarea( $suggest ); ?></textarea>

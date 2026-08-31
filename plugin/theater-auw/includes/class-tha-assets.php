@@ -92,6 +92,14 @@ class Tha_Assets {
 			return true;
 		}
 
+		// Die Anmeldeseite. Sie traegt weder Shortcode noch Block — ihr
+		// Aufbau kommt aus dem Divi-Builder und sie wird von aussen
+		// umgestaltet (siehe Tha_Anmeldung). Dieselbe Erkennung wie fuer
+		// `page_id`, damit sie dieselben Rahmen-Klassen und Stile bekommt.
+		if ( ! empty( $settings['anmeldung_page_id'] ) && (int) $settings['anmeldung_page_id'] === $post_id ) {
+			return true;
+		}
+
 		// Die Jahrgangsseiten des Rueckblicks. Sie tragen keinen Shortcode —
 		// ihr Aufbau kommt aus einer Theme-Builder-Vorlage, und sechzehnmal
 		// von Hand etwas einzusetzen waere keine Loesung. Erkannt wird hier

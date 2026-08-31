@@ -3,7 +3,7 @@
  * Plugin Name:       Theater Auw
  * Plugin URI:        https://stvauw.ch/theater/
  * Description:       Die Theater-Seite des STV Auw mit vier Saison-Phasen (Vorbereitung, Vorverkauf, Spielzeit, Danke). Einbinden mit dem Shortcode [theater_auw] oder dem Block «Theater Auw».
- * Version:           1.10.0
+ * Version:           1.11.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            Theater Auw
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'THA_VERSION', '1.10.0' );
+define( 'THA_VERSION', '1.11.0' );
 define( 'THA_FILE', __FILE__ );
 define( 'THA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'THA_URL', plugin_dir_url( __FILE__ ) );
@@ -26,6 +26,7 @@ require_once THA_DIR . 'includes/class-tha-pagechrome.php';
 require_once THA_DIR . 'includes/class-tha-groups.php';
 require_once THA_DIR . 'includes/class-tha-rueckblick.php';
 require_once THA_DIR . 'includes/class-tha-chronik.php';
+require_once THA_DIR . 'includes/class-tha-anmeldung.php';
 require_once THA_DIR . 'includes/class-tha-renderer.php';
 require_once THA_DIR . 'includes/class-tha-assets.php';
 require_once THA_DIR . 'includes/class-tha-shortcode.php';
@@ -64,6 +65,7 @@ function tha_bootstrap() {
 	Tha_Shortcode::init();
 	Tha_Block::init();
 	Tha_Seo::init();
+	Tha_Anmeldung::init();
 
 	if ( is_admin() ) {
 		Tha_Admin::init();

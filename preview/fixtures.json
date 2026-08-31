@@ -1,31 +1,11 @@
 {
-    "schema_version": 1,
-    "phase_mode": "auto",
-    "phase_manual": "vorbereitung",
-    "phase_schedule": {
-        "vorverkauf_start": "2026-09-15 09:00",
-        "spielzeit_start": "2026-11-14 00:00",
-        "danke_start": "2026-11-29 00:00"
-    },
-    "ticket_sale_start": "2026-09-15 09:00",
-    "ticket_cta_mode": "reservieren",
-    "ticket_url": "https://reservation.ticketleo.com/event/33310/karriere",
-    "ticket_note": "An der Abendkasse: Bargeld, Karte oder Twint.",
-    "season_year": 2026,
-    "next_year": 2027,
-    "founded_year": 1937,
-    "play_title": "s'Jubiläum",
-    "play_author": "Dieter Gygli",
-    "play_genre": "Lustspiel in 3 Akten",
-    "play_director": "Christine Jauner",
-    "play_synopsis": "Die Rollen sind fast alle verteilt und die Proben laufen — wir sind gespannt, was uns diese Komödie alles zu bieten hat. Mehr möchten wir hier noch nicht verraten.\n\nMit Christine Jauner konnten wir eine erfahrene, seit 15 Jahren tätige Theaterpädagogin als Regisseurin engagieren. Sie betreibt ein eigenes Kinder- und Jugendtheater und freut sich, mit uns das Theater 2026 zu erarbeiten.",
-    "venue_name": "Mehrzweckhalle Auw",
-    "venue_maps_url": "",
-    "doors_time": "18.30",
-    "food_from": "18.45",
-    "food_to": "19.30",
-    "food_note": "Unser Küchenteam ist bei den Abendaufführungen bereit, dich kulinarisch zu verwöhnen. Am Sonntag servieren wir nach der Vorstellung.",
-    "tombola_note": "Auch dieses Jahr gibt es unsere beliebte Tombola. Beim Loskauf wünschen wir dir das nötige Glück zum Soforttreffer — tolle Preise warten auf dich.",
+    "anmeldung_deadline": "2026-10-08",
+    "anmeldung_enabled": true,
+    "anmeldung_kicker": "Premierenabend- & Spenderpakete",
+    "anmeldung_lead": "Gold, Silber und Spenderpakete — mit reservierten Plätzen am Premierenabend und feinem Nachtessen.",
+    "anmeldung_page_id": 1829,
+    "anmeldung_title": "Anmeldung Sponsoring",
+    "contact_email": "theaterauw@bluewin.ch",
     "dates": [
         {
             "date": "2026-11-14",
@@ -76,12 +56,29 @@
             "ticket_url": ""
         }
     ],
-    "nav_menu_id": 1,
-    "nav_sticky": true,
-    "rueckblick_source": "auto",
-    "rueckblick_post_type": "project",
-    "rueckblick_count": 8,
-    "rueckblick_archive_url": "https://stvauw.ch/theater/2025-2008/",
+    "documents": [
+        {
+            "label": "Speisekarte",
+            "url": "https://stvauw.ch/theater/speisekarte",
+            "file_id": 0
+        },
+        {
+            "label": "Getränkekarte",
+            "url": "https://stvauw.ch/theater/getraenke",
+            "file_id": 0
+        },
+        {
+            "label": "Programmheft 2026",
+            "url": "https://stvauw.ch/theater/programm",
+            "file_id": 0
+        }
+    ],
+    "doors_time": "18.30",
+    "font_source": "google",
+    "food_from": "18.45",
+    "food_note": "Unser Küchenteam ist bei den Abendaufführungen bereit, dich kulinarisch zu verwöhnen. Am Sonntag servieren wir nach der Vorstellung.",
+    "food_to": "19.30",
+    "founded_year": 1937,
     "groups": [
         {
             "key": "schauspieler",
@@ -185,116 +182,8 @@
             "wide": []
         }
     ],
-    "stueck_image_id": 0,
-    "logo_id": 0,
-    "rueckblick": [
-        {
-            "year": "2025",
-            "title": "Karriere",
-            "image_id": 0,
-            "url": ""
-        },
-        {
-            "year": "2024",
-            "title": "",
-            "image_id": 0,
-            "url": ""
-        },
-        {
-            "year": "2023",
-            "title": "",
-            "image_id": 0,
-            "url": ""
-        },
-        {
-            "year": "2022",
-            "title": "",
-            "image_id": 0,
-            "url": ""
-        }
-    ],
-    "contact_email": "theaterauw@bluewin.ch",
-    "page_id": 0,
-    "width_mode": "auto",
     "isolation": "normal",
-    "font_source": "google",
-    "sticky_cta": true,
-    "prices": [
-        {
-            "group": "Vorpremiere",
-            "label": "Kinder bis 16 Jahre",
-            "amount": "Fr. 2.–",
-            "note": ""
-        },
-        {
-            "group": "Vorpremiere",
-            "label": "Erwachsene",
-            "amount": "Fr. 10.–",
-            "note": "am Samstagnachmittag"
-        },
-        {
-            "group": "Sonntag",
-            "label": "Kinder bis 16 Jahre",
-            "amount": "Fr. 12.–",
-            "note": ""
-        },
-        {
-            "group": "Sonntag",
-            "label": "Erwachsene",
-            "amount": "Fr. 20.–",
-            "note": ""
-        },
-        {
-            "group": "",
-            "label": "Abendaufführung",
-            "amount": "Fr. 20.–",
-            "note": ""
-        },
-        {
-            "group": "",
-            "label": "Premiere",
-            "amount": "Fr. 60.–",
-            "note": "inkl. 4-Gang-Menü"
-        }
-    ],
-    "price_hint": "",
-    "seatmap_image_id": 0,
-    "seatmap_note": "Reihen 1–6 gehören zur Kategorie A.",
-    "documents": [
-        {
-            "label": "Speisekarte",
-            "url": "https://stvauw.ch/theater/speisekarte",
-            "file_id": 0
-        },
-        {
-            "label": "Getränkekarte",
-            "url": "https://stvauw.ch/theater/getraenke",
-            "file_id": 0
-        },
-        {
-            "label": "Programmheft 2026",
-            "url": "https://stvauw.ch/theater/programm",
-            "file_id": 0
-        }
-    ],
-    "openings": [
-        {
-            "label": "Vorpremiere",
-            "time": "ab 13.00 Uhr"
-        },
-        {
-            "label": "Abendaufführungen",
-            "time": "ab 18.30 Uhr"
-        },
-        {
-            "label": "Sonntag",
-            "time": "ab 13.00 Uhr"
-        }
-    ],
-    "menu_title": "Speisekarte",
-    "menu_kicker": "Aus unserer Küche",
-    "menu_intro": "Die warme Küche gibt es nur vor der Aufführung. Sandwiches sind immer erhältlich, der kleine Blattsalat auch nach der Aufführung — solange es hat.",
-    "menu_note": "Fleisch von der Metzgerei Huwyler, Beinwil. Brot und Butterpastetli von Emma’s Bäckerei, Sins. Süsse Backwaren von Kreyenbühl, Muri und Auw. Wein und Getränke von der Staubli-Banz Getränke AG, Muri/Sins.",
+    "logo_id": 0,
     "menu": [
         {
             "kind": "speisen",
@@ -493,9 +382,120 @@
             "amount": "Fr. 5.50"
         }
     ],
-    "updates_title": "Updates",
-    "updates_kicker": "Neues vom Theater",
-    "updates_intro": "Was rund um die Produktion 2026 gerade passiert — der jüngste Eintrag steht oben.",
+    "menu_intro": "Die warme Küche gibt es nur vor der Aufführung. Sandwiches sind immer erhältlich, der kleine Blattsalat auch nach der Aufführung — solange es hat.",
+    "menu_kicker": "Aus unserer Küche",
+    "menu_note": "Fleisch von der Metzgerei Huwyler, Beinwil. Brot und Butterpastetli von Emma’s Bäckerei, Sins. Süsse Backwaren von Kreyenbühl, Muri und Auw. Wein und Getränke von der Staubli-Banz Getränke AG, Muri/Sins.",
+    "menu_title": "Speisekarte",
+    "nav_menu_id": 1,
+    "nav_sticky": true,
+    "next_year": 2027,
+    "openings": [
+        {
+            "label": "Vorpremiere",
+            "time": "ab 13.00 Uhr"
+        },
+        {
+            "label": "Abendaufführungen",
+            "time": "ab 18.30 Uhr"
+        },
+        {
+            "label": "Sonntag",
+            "time": "ab 13.00 Uhr"
+        }
+    ],
+    "page_id": 0,
+    "phase_manual": "vorbereitung",
+    "phase_mode": "auto",
+    "phase_schedule": {
+        "vorverkauf_start": "2026-09-15 09:00",
+        "spielzeit_start": "2026-11-14 00:00",
+        "danke_start": "2026-11-29 00:00"
+    },
+    "play_author": "Dieter Gygli",
+    "play_director": "Christine Jauner",
+    "play_genre": "Lustspiel in 3 Akten",
+    "play_synopsis": "Die Rollen sind fast alle verteilt und die Proben laufen — wir sind gespannt, was uns diese Komödie alles zu bieten hat. Mehr möchten wir hier noch nicht verraten.\n\nMit Christine Jauner konnten wir eine erfahrene, seit 15 Jahren tätige Theaterpädagogin als Regisseurin engagieren. Sie betreibt ein eigenes Kinder- und Jugendtheater und freut sich, mit uns das Theater 2026 zu erarbeiten.",
+    "play_title": "s'Jubiläum",
+    "price_hint": "",
+    "prices": [
+        {
+            "group": "Vorpremiere",
+            "label": "Kinder bis 16 Jahre",
+            "amount": "Fr. 2.–",
+            "note": ""
+        },
+        {
+            "group": "Vorpremiere",
+            "label": "Erwachsene",
+            "amount": "Fr. 10.–",
+            "note": "am Samstagnachmittag"
+        },
+        {
+            "group": "Sonntag",
+            "label": "Kinder bis 16 Jahre",
+            "amount": "Fr. 12.–",
+            "note": ""
+        },
+        {
+            "group": "Sonntag",
+            "label": "Erwachsene",
+            "amount": "Fr. 20.–",
+            "note": ""
+        },
+        {
+            "group": "",
+            "label": "Abendaufführung",
+            "amount": "Fr. 20.–",
+            "note": ""
+        },
+        {
+            "group": "",
+            "label": "Premiere",
+            "amount": "Fr. 60.–",
+            "note": "inkl. 4-Gang-Menü"
+        }
+    ],
+    "rueckblick": [
+        {
+            "year": "2025",
+            "title": "Karriere",
+            "image_id": 0,
+            "url": ""
+        },
+        {
+            "year": "2024",
+            "title": "",
+            "image_id": 0,
+            "url": ""
+        },
+        {
+            "year": "2023",
+            "title": "",
+            "image_id": 0,
+            "url": ""
+        },
+        {
+            "year": "2022",
+            "title": "",
+            "image_id": 0,
+            "url": ""
+        }
+    ],
+    "rueckblick_archive_url": "https://stvauw.ch/theater/2025-2008/",
+    "rueckblick_count": 8,
+    "rueckblick_post_type": "project",
+    "rueckblick_source": "auto",
+    "schema_version": 1,
+    "season_year": 2026,
+    "seatmap_image_id": 0,
+    "seatmap_note": "Reihen 1–6 gehören zur Kategorie A.",
+    "sticky_cta": true,
+    "stueck_image_id": 0,
+    "ticket_cta_mode": "reservieren",
+    "ticket_note": "An der Abendkasse: Bargeld, Karte oder Twint.",
+    "ticket_sale_start": "2026-09-15 09:00",
+    "ticket_url": "https://reservation.ticketleo.com/event/33310/karriere",
+    "tombola_note": "Auch dieses Jahr gibt es unsere beliebte Tombola. Beim Loskauf wünschen wir dir das nötige Glück zum Soforttreffer — tolle Preise warten auf dich.",
     "updates": [
         {
             "date": "2026-09-15",
@@ -529,5 +529,11 @@
             "url": "",
             "link": ""
         }
-    ]
+    ],
+    "updates_intro": "Was rund um die Produktion 2026 gerade passiert — der jüngste Eintrag steht oben.",
+    "updates_kicker": "Neues vom Theater",
+    "updates_title": "Updates",
+    "venue_maps_url": "",
+    "venue_name": "Mehrzweckhalle Auw",
+    "width_mode": "auto"
 }

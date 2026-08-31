@@ -197,6 +197,7 @@ class Tha_Admin {
 			'karte'      => __( 'Speisekarte', 'theater-auw' ),
 			'updates'    => __( 'Updates', 'theater-auw' ),
 			'gruppen'    => __( 'Unterseiten', 'theater-auw' ),
+			'anmeldung'  => __( 'Sponsoring', 'theater-auw' ),
 			'rueckblick' => __( 'Rückblick', 'theater-auw' ),
 
 			// Alles, was mit dem Theme zu tun hat und nicht mit dem Theater.

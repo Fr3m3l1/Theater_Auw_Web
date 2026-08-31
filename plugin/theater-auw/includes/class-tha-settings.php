@@ -12,7 +12,7 @@ class Tha_Settings {
 
 	const OPTION         = 'theater_auw_settings';
 	const GROUP          = 'theater_auw';
-	const SCHEMA_VERSION = 9;
+	const SCHEMA_VERSION = 10;
 
 	const PHASES   = array( 'vorbereitung', 'vorverkauf', 'spielzeit', 'danke' );
 	const STATUSES = array( 'offen', 'wenige', 'ausverkauft', 'vorbei' );
@@ -305,6 +305,21 @@ class Tha_Settings {
 
 			// ---- Kontakt ---------------------------------------------------
 			'contact_email' => 'theaterauw@bluewin.ch',
+
+			// ---- Sponsoring-Anmeldung ---------------------------------------
+			// Die Anmeldeseite («Anmeldung Sponsoring») ist im Divi-Builder
+			// gebaut und trägt ein echtes Formular — sie lässt sich nicht in
+			// einen Shortcode einschliessen, ohne dem Formular die
+			// Theme-Stile zu nehmen. Das Plugin gestaltet sie deshalb von
+			// aussen (Seitenkopf, Typografie, Frist) und schaltet nach
+			// Ablauf der Frist automatisch ab: der Hinweis auf der
+			// Hauptseite verschwindet, das Formular wird ausgeblendet.
+			'anmeldung_enabled'  => true,
+			'anmeldung_page_id'  => 1829, // «Anmeldung Sponsoring» auf stvauw.ch/theater
+			'anmeldung_title'    => 'Anmeldung Sponsoring',
+			'anmeldung_kicker'   => 'Premierenabend- & Spenderpakete',
+			'anmeldung_lead'     => 'Gold, Silber und Spenderpakete — mit reservierten Plätzen am Premierenabend und feinem Nachtessen.',
+			'anmeldung_deadline' => '2026-10-08',
 
 			// ---- Darstellung ------------------------------------------------
 			'page_id'     => 0,           // Theater-Seite; fängt Page-Builder ab
@@ -748,6 +763,22 @@ class Tha_Settings {
 		if ( $has( 'page_id' ) ) {
 			$out['page_id'] = absint( $input['page_id'] );
 		}
+
+		// --- Sponsoring-Anmeldung -------------------------------------------
+		if ( $has( 'anmeldung_present' ) ) {
+			$out['anmeldung_enabled'] = ! empty( $input['anmeldung_enabled'] );
+		}
+		if ( $has( 'anmeldung_page_id' ) ) {
+			$out['anmeldung_page_id'] = absint( $input['anmeldung_page_id'] );
+		}
+		foreach ( array( 'anmeldung_title', 'anmeldung_kicker', 'anmeldung_lead' ) as $key ) {
+			if ( $has( $key ) ) {
+				$out[ $key ] = self::clean_text( $input[ $key ] );
+			}
+		}
+		if ( $has( 'anmeldung_deadline' ) ) {
+			$out['anmeldung_deadline'] = self::clean_date( $input['anmeldung_deadline'] );
+		}
 		if ( $has( 'cleanup_present' ) ) {
 			$out['hide_page_title']    = ! empty( $input['hide_page_title'] );
 			$out['hide_sidebar']       = ! empty( $input['hide_sidebar'] );
@@ -994,6 +1025,13 @@ class Tha_Settings {
 		if ( $version < 9 && self::prices_match_shipped( isset( $stored['prices'] ) ? $stored['prices'] : array() ) ) {
 			$stored['prices'] = self::defaults()['prices'];
 		}
+
+		// v10 — die Sponsoring-Anmeldung. Kein Umbau nötig: die neuen Felder
+		// stammen aus den Defaults, die weiter unten daruebergelegt werden.
+		// Der Fristwert faellt NICHT in die Migration — die Frist 2026
+		// (8. Oktober) soll ein Jahr spaeter nicht stillschweigend die
+		// naechste Saison drosseln. Sie bleibt stehen, bis sie in den
+		// Einstellungen geaendert oder die Verlaengerung abgeschaltet wird.
 
 		$stored['schema_version'] = self::SCHEMA_VERSION;
 		update_option( self::OPTION, wp_parse_args( $stored, self::defaults() ) );

@@ -21,6 +21,7 @@ require THA_DIR . 'includes/helpers.php';
 require THA_DIR . 'includes/class-tha-settings.php';
 require THA_DIR . 'includes/class-tha-groups.php';
 require THA_DIR . 'includes/class-tha-rueckblick.php';
+require THA_DIR . 'includes/class-tha-anmeldung.php';
 
 $fails = 0;
 $runs  = 0;
@@ -682,6 +683,55 @@ update_option( Tha_Settings::OPTION, array_merge( Tha_Settings::defaults(), arra
 Tha_Settings::flush_cache();
 $gelesen = Tha_Settings::get();
 check( 'gelesen: Vorpremiere zuerst',    'Vorpremiere', $gelesen['dates'][0]['label'] );
+
+// --- Sponsoring-Anmeldung ----------------------------------------------
+
+echo "\nSponsoring-Anmeldung:\n";
+
+$anmelden = Tha_Settings::defaults();
+update_option( Tha_Settings::OPTION, $anmelden );
+Tha_Settings::flush_cache();
+
+$at = static function ( $when ) {
+	return new DateTimeImmutable( $when, new DateTimeZone( 'Europe/Zurich' ) );
+};
+
+check( 'Frist 2026 ist der 8. Oktober', '8. Oktober 2026', Tha_Anmeldung::deadline_label() );
+
+// Wer bis zum 8. Oktober anmeldet, ist dabei — der 8. selbst noch.
+check( 'letzter Tag ist offen', 'offen', Tha_Anmeldung::is_open( null, $at( '2026-10-08 23:59' ) ) ? 'offen' : 'zu' );
+check( 'Tag danach ist zu',     'zu',    Tha_Anmeldung::is_open( null, $at( '2026-10-09 00:00' ) ) ? 'offen' : 'zu' );
+check( 'Ende Oktober zu',       'zu',    Tha_Anmeldung::is_open( null, $at( '2026-10-31 12:00' ) ) ? 'offen' : 'zu' );
+
+// Ohne Frist bleibt die Anmeldung offen.
+$ohne_frist = Tha_Settings::defaults();
+$ohne_frist['anmeldung_deadline'] = '';
+check( 'ohne Frist immer offen', 'offen', Tha_Anmeldung::is_open( $ohne_frist, $at( '2030-01-01 12:00' ) ) ? 'offen' : 'zu' );
+
+// Sanitize: abschalten, Datum saeubern.
+$eingabe = array(
+	'anmeldung_present'  => '1',
+	'anmeldung_enabled'  => '0',
+	'anmeldung_deadline' => '2026-10-08',
+);
+$geputzt = Tha_Settings::sanitize( $eingabe );
+check( 'Anmeldung abschaltbar', 'aus', $geputzt['anmeldung_enabled'] ? 'an' : 'aus' );
+check( 'Frist bleibt erhalten', '2026-10-08', $geputzt['anmeldung_deadline'] );
+
+$kaputt = array( 'anmeldung_deadline' => '2026-99-99' );
+$geputzt2 = Tha_Settings::sanitize( $kaputt );
+check( 'kaputtes Datum faellt weg', '', $geputzt2['anmeldung_deadline'] );
+
+// v10: eine Installation vor der Anmeldung bekommt Seite und Frist.
+$vor10 = Tha_Settings::defaults();
+unset( $vor10['anmeldung_page_id'] );
+unset( $vor10['anmeldung_deadline'] );
+$vor10['schema_version'] = 9;
+update_option( Tha_Settings::OPTION, $vor10 );
+Tha_Settings::upgrade();
+$nach10 = get_option( Tha_Settings::OPTION );
+check( 'v10 ergaenzt die Anmeldeseite', '1829', (string) $nach10['anmeldung_page_id'] );
+check( 'und die Frist', '2026-10-08', $nach10['anmeldung_deadline'] );
 
 printf( "\n%d Prüfungen, %d Fehler\n", $runs, $fails );
 exit( $fails > 0 ? 1 : 0 );
