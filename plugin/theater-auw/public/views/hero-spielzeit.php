@@ -74,6 +74,7 @@ if ( $today ) {
 				</a>
 			<?php endif; ?>
 			<a class="tha-btn tha-btn--stage tha-btn--lg" href="#daten<?php echo esc_attr( $ctx['uid'] ); ?>"><?php esc_html_e( 'Alle Spieldaten', 'theater-auw' ); ?></a>
+			<?php Tha_Renderer::part( 'partial-anmeldung-cta', $ctx, array( 'cta_class' => 'tha-btn--ghost-stage' ) ); ?>
 		</div>
 
 		<?php Tha_Renderer::part( 'partial-countdown', $ctx ); ?>

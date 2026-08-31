@@ -61,6 +61,7 @@ $premiere = Tha_Phase::premiere( $settings );
 		<div class="tha-hero__actions">
 			<a class="tha-btn tha-btn--stage tha-btn--lg" href="#daten<?php echo esc_attr( $ctx['uid'] ); ?>"><?php esc_html_e( 'Spieldaten ansehen', 'theater-auw' ); ?></a>
 			<a class="tha-btn tha-btn--ghost-stage tha-btn--lg" href="#stueck<?php echo esc_attr( $ctx['uid'] ); ?>"><?php esc_html_e( 'Zum Stück', 'theater-auw' ); ?></a>
+			<?php Tha_Renderer::part( 'partial-anmeldung-cta', $ctx, array( 'cta_class' => 'tha-btn--ghost-stage' ) ); ?>
 		</div>
 
 		<?php Tha_Renderer::part( 'partial-countdown', $ctx ); ?>

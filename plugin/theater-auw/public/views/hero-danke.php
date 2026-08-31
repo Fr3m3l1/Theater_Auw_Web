@@ -46,6 +46,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<div class="tha-hero__actions">
 			<a class="tha-btn tha-btn--stage tha-btn--lg" href="#rueckblick<?php echo esc_attr( $ctx['uid'] ); ?>"><?php esc_html_e( 'Rückblick ansehen', 'theater-auw' ); ?></a>
+			<?php Tha_Renderer::part( 'partial-anmeldung-cta', $ctx, array( 'cta_class' => 'tha-btn--stage' ) ); ?>
 		</div>
 
 		<p class="tha-hero__signoff">
