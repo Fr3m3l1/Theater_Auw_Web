@@ -1,6 +1,6 @@
 <?php
 /**
- * «Zur Anmeldung»-Knopf für den Hero der Hauptseite.
+ * «Zur Sponsoren-Anmeldung»-Knopf für den Hero der Hauptseite.
  *
  * Erscheint, solange die Anmeldung aktiv ist (eingeschaltet, Seite gesetzt,
  * Frist nicht abgelaufen) — also genau so lange, wie die Sektion weiter
@@ -22,5 +22,5 @@ if ( ! $url || ! Tha_Anmeldung::is_open( $settings ) ) {
 $cta_class = isset( $cta_class ) && $cta_class ? $cta_class : 'tha-btn--stage';
 ?>
 <a class="tha-btn <?php echo esc_attr( $cta_class ); ?> tha-btn--lg" href="<?php echo esc_url( $url ); ?>">
-	<?php esc_html_e( 'Zur Anmeldung', 'theater-auw' ); ?>
+	<?php esc_html_e( 'Zur Sponsoren-Anmeldung', 'theater-auw' ); ?>
 </a>

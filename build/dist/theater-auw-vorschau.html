@@ -62,7 +62,9 @@ body{margin:0;background:#faf8f4}
    -------------------------------------------------------------------------- */
 
 .tha,
-body.tha-typo {
+body.tha-typo,
+body.tha-bericht,
+body.tha-anmeldung {
 	/* Brand red — aus dem Logo gesampelt */
 	--red-500: #ef3b3b;
 	--red-600: #e02424;
@@ -1142,6 +1144,32 @@ body.tha-typo {
 	top: var(--tha-sticky-top, 0px);
 }
 
+/* Ganz oben statt unter den Leisten des Themes.
+
+   Der Abstand allein genuegt nicht: Divis Kopfzeile und die graue
+   Vereinsleiste liegen bei z-index 100000, unsere Leiste bei 50. Ohne Abstand
+   verschwaende sie schlicht dahinter. Wer sie ganz oben haben will, braucht
+   sie deshalb auch VOR ihnen. Der Abstand nach oben bleibt trotzdem — er ist
+   dann nur noch die Admin-Leiste von WordPress, die niemand verdecken soll,
+   weil man sonst nicht mehr aus der Seite herauskommt. */
+.tha.tha .tha-nav--ganzoben {
+	z-index: 100001;
+}
+
+/* Notnagel, wenn `sticky` nicht kleben KANN.
+
+   Steht über der Leiste irgendwo ein `overflow: hidden` — Divi setzt das auf
+   schmalen Viewports gegen waagrechtes Scrollen —, dann klebt sie an einem
+   Kasten, der selbst nie scrollt, und wandert beim Scrollen aus dem Bild. Das
+   JavaScript sieht nach und setzt diese Klasse; ein Platzhalter davor hält
+   die Höhe frei, damit der Inhalt nicht nach oben springt. */
+.tha.tha .tha-nav--fest {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: var(--tha-sticky-top, 0px);
+}
+
 .tha.tha .tha-nav__inner {
 	display: flex;
 	align-items: center;
@@ -1228,7 +1256,7 @@ body.tha-typo {
 
 /* --- Untermenüs: Desktop als Aufklapper --- */
 
-.tha.tha .tha-nav__list .sub-menu {
+:is(#left-area, body) .tha.tha .tha-nav__list .sub-menu {
 	list-style: none;
 	margin: 0;
 	padding: var(--sp-1);
@@ -1247,8 +1275,13 @@ body.tha-typo {
 	z-index: 60;
 }
 
-.tha.tha .tha-nav__list li:hover > .sub-menu,
-.tha.tha .tha-nav__list li:focus-within > .sub-menu {
+/* Aufklappen beim Zeigen — und zwar MIT demselben `:is(#left-area, body)`
+   wie die Regel darüber, die das Untermenü versteckt. Ohne das Präfix wiegt
+   diese Regel fünf Klassen, jene eine ID und vier Klassen; eine ID schlägt
+   jede Zahl von Klassen. Das Untermenü bliebe unsichtbar, und «Mitwirkende»
+   und «Rückblick» liessen sich am Rechner nicht mehr öffnen. */
+:is(#left-area, body) .tha.tha .tha-nav__list li:hover > .sub-menu,
+:is(#left-area, body) .tha.tha .tha-nav__list li:focus-within > .sub-menu {
 	opacity: 1;
 	visibility: visible;
 	transform: translateY(0);
@@ -1357,23 +1390,67 @@ body.tha-typo {
 		display: inline-flex;
 	}
 
+	/* Die Leiste bleibt EINE Zeile: Wortmarke links, Ticketknopf und Menü
+	   rechts. Vorher durfte sie umbrechen, und eine klebende Leiste, die
+	   zweizeilig wird, frisst am Handy den halben Bildschirm.
+
+	   Das `auto` sitzt an der Wortmarke, nicht am Knopf: so wird alles nach
+	   rechts geschoben, egal ob der Ticketknopf gerade da ist oder nicht. */
 	.tha.tha .tha-nav__inner {
-		flex-wrap: wrap;
-		padding-top: var(--sp-2);
-		padding-bottom: var(--sp-2);
+		flex-wrap: nowrap;
+		gap: var(--sp-3);
+		min-height: 56px;
 	}
 
-	/* Menü eingeklappt; die Sticky-Leiste soll nicht die halbe Seite füllen. */
+	.tha.tha .tha-nav__brand {
+		margin-right: auto;
+	}
+
+	.tha.tha .tha-nav__cta {
+		margin-left: 0;
+		order: 0;
+	}
+
+	.tha.tha .tha-nav__toggle {
+		margin-left: 0;
+		order: 1;
+		padding: 9px var(--sp-3);
+	}
+
+	/* Das Menü als Blatt UNTER der Leiste, nicht als Teil von ihr.
+
+	   `absolute` statt im Fluss: die Leiste bleibt 56 px hoch, egal wie lang
+	   das Menü ist, und das Blatt legt sich über die Seite statt sie
+	   auseinanderzuschieben. Es scrollt für sich; `overscroll-behavior`
+	   verhindert, dass am Ende der Liste plötzlich die Seite dahinter
+	   weiterscrollt. */
 	.tha.tha .tha-nav__menu {
-		flex: 1 0 100%;
-		display: none;
-		max-height: min(70vh, 520px);
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		display: block;
+		/* `100%` ist die Höhe der Leiste — das Blatt darf also genau bis zum
+		   unteren Bildrand reichen. Die `vh`-Zeile ist für ältere Browser, die
+		   `dvh` noch nicht kennen; sonst hätte das Blatt gar keinen Deckel. */
+		max-height: calc(100vh - 100%);
+		max-height: calc(100dvh - 100%);
 		overflow-y: auto;
-		padding-bottom: var(--sp-3);
+		overscroll-behavior: contain;
+		background: var(--ink-950);
+		border-top: 1px solid var(--border-onstage);
+		box-shadow: var(--shadow-raised);
+		padding: var(--sp-2) var(--sp-5) calc(var(--sp-4) + env(safe-area-inset-bottom, 0px));
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(-6px);
+		transition: opacity var(--dur-fast), transform var(--dur-fast), visibility var(--dur-fast);
 	}
 
 	.tha.tha .tha-nav__menu.is-open {
-		display: block;
+		opacity: 1;
+		visibility: visible;
+		transform: translateY(0);
 	}
 
 	.tha.tha .tha-nav__list {
@@ -1382,15 +1459,40 @@ body.tha-typo {
 		gap: 0;
 	}
 
+	/* Fingerbreite Ziele: 48 px ist das Mass, unter dem man danebentippt. */
 	.tha.tha .tha-nav__list a {
-		padding: 12px var(--sp-2);
-		border-bottom: 1px solid var(--border-onstage);
+		display: flex;
+		align-items: center;
+		min-height: 48px;
+		padding: 11px var(--sp-2);
 		border-radius: 0;
+		font-size: 17px;
+		color: var(--text-onstage);
+	}
+
+	.tha.tha .tha-nav__list > li + li {
+		border-top: 1px solid var(--border-onstage);
+	}
+
+	/* Die aktuelle Seite bekommt einen roten Balken an der Seite. Der
+	   Unterstrich vom Desktop geht in einer senkrechten Liste unter — er sieht
+	   dort aus wie eine weitere Trennlinie. */
+	.tha.tha .tha-nav__list .current-menu-item > a,
+	.tha.tha .tha-nav__list .current-menu-ancestor > a,
+	.tha.tha .tha-nav__list .current_page_item > a {
+		box-shadow: inset 3px 0 0 var(--red-600);
+		padding-left: var(--sp-4);
 	}
 
 	/* Untermenüs auf dem Handy immer offen und eingerückt — ein Aufklapper,
-	   der auf Hover reagiert, ist per Finger nicht bedienbar. */
-	.tha.tha .tha-nav__list .sub-menu {
+	   der auf Hover reagiert, ist per Finger nicht bedienbar.
+
+	   Das `:is(#left-area, body)` ist Pflicht: Divi gibt jeder <ul> unter
+	   `#left-area` ein eigenes Innenmass, und eine ID schlägt jede Klasse.
+	   Ohne das Präfix blieb die Einrückung wirkungslos — Unterpunkte standen
+	   genau gleich weit links wie ihre Eltern, und die Liste war eine
+	   Aneinanderreihung von vierzehn gleich aussehenden Zeilen. */
+	:is(#left-area, body) .tha.tha .tha-nav__list .sub-menu {
 		position: static;
 		opacity: 1;
 		visibility: visible;
@@ -1400,18 +1502,112 @@ body.tha-typo {
 		border-radius: 0;
 		box-shadow: none;
 		background: transparent;
-		padding: 0 0 0 var(--sp-4);
+		margin: 0 0 var(--sp-2) var(--sp-2);
+		padding: 0 0 0 var(--sp-3);
+		border-left: 1px solid var(--border-onstage);
+	}
+
+	/* Unterpunkte sind leiser als ihre Eltern — sonst liest sich das Menü als
+	   eine einzige lange Liste ohne Gefälle. */
+	.tha.tha .tha-nav__list .sub-menu a {
+		min-height: 44px;
+		font-size: 15px;
+		color: var(--text-onstage-muted);
+	}
+
+	.tha.tha .tha-nav__list .sub-menu li + li {
+		border-top: 1px solid var(--border-onstage);
+	}
+
+	.tha.tha .tha-nav__list .menu-item-has-children > a {
+		font-weight: 600;
 	}
 
 	.tha.tha .tha-nav__list .menu-item-has-children > a::after {
 		display: none;
 	}
 
-	.tha.tha .tha-nav__cta {
-		margin-left: 0;
-		order: -1;
+	/* Der Hintergrund hinter dem offenen Blatt. Er verdeckt die Seite, damit
+	   klar ist, dass gerade das Menü dran ist — und fängt den Fingertipp
+	   daneben ab. */
+	.tha.tha .tha-nav__backdrop {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, .55);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity var(--dur-fast);
+	}
+
+	.tha.tha .tha-nav--offen .tha-nav__backdrop {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	/* Innerhalb der Leiste: der Hintergrund ganz unten, darüber die Leiste
+	   selbst, zuoberst das Blatt. Alle drei liegen im Stapel der Navigation
+	   und damit über der Seite. */
+	.tha.tha .tha-nav__inner {
+		position: relative;
+		z-index: 1;
+	}
+
+	.tha.tha .tha-nav__menu {
+		z-index: 2;
+	}
+
+	.tha.tha .tha-nav__toggle-label--offen,
+	.tha.tha .tha-nav__icon--offen {
+		display: none;
+	}
+
+	.tha.tha .tha-nav__toggle[aria-expanded="true"] .tha-nav__toggle-label--zu,
+	.tha.tha .tha-nav__toggle[aria-expanded="true"] .tha-nav__icon--zu {
+		display: none;
+	}
+
+	.tha.tha .tha-nav__toggle[aria-expanded="true"] .tha-nav__toggle-label--offen,
+	.tha.tha .tha-nav__toggle[aria-expanded="true"] .tha-nav__icon--offen {
+		display: inline;
+	}
+
+	.tha.tha .tha-nav__toggle[aria-expanded="true"] {
+		background: rgba(248, 246, 242, .1);
 	}
 }
+
+/* Über der Breite gibt es kein Blatt und keinen Hintergrund — dort steht das
+   Menü ohnehin offen in der Leiste. */
+@media (min-width: 861px) {
+
+	.tha.tha .tha-nav__backdrop,
+	.tha.tha .tha-nav__toggle-label--offen,
+	.tha.tha .tha-nav__icon--offen {
+		display: none;
+	}
+}
+
+/* Wer Bewegung abbestellt hat, bekommt das Menü ohne Überblendung. */
+@media (prefers-reduced-motion: reduce) {
+
+	.tha.tha .tha-nav__menu,
+	.tha.tha .tha-nav__backdrop {
+		transition: none;
+		transform: none;
+	}
+}
+
+/* KEIN `overflow: hidden` auf <html>, solange das Menü offen ist.
+
+   Das waere der uebliche Griff, um die Seite dahinter stillzustellen — und er
+   nimmt der klebenden Leiste genau den Kasten weg, an dem sie klebt. Sie
+   rutscht dann dorthin, wo sie im Dokument steht: ganz nach oben, aus dem Bild.
+   Auf einer weit heruntergescrollten Seite verschwand mit dem Antippen des
+   Menues die Leiste samt Menue.
+
+   Stattdessen faengt das JavaScript Wisch und Rad ueber dem Hintergrund ab;
+   das Blatt selbst scrollt fuer sich, `overscroll-behavior: contain` haelt den
+   Schwung am Listenende bei ihm. */
 
 @media (max-width: 640px) {
 
@@ -1517,8 +1713,14 @@ body.tha-typo {
 }
 
 /* Logos stehen fast immer auf Weiss. Deshalb eine helle Karte, `contain`
-   statt `cover` und etwas Luft — sonst werden sie beschnitten. */
-.tha.tha .tha-people--logos {
+   statt `cover` und etwas Luft — sonst werden sie beschnitten.
+
+   Das `:is(#left-area, body)` davor ist Pflicht, nicht Zierde: die Grundregel
+   von `.tha-people` traegt es auch, und damit eine ID. Ohne dasselbe Praefix
+   ist diese Regel schwaecher als die, die sie ueberschreiben soll — sie stuende
+   im Stylesheet, taete aber nichts. Genau daran haben die Spaltenzahlen fuer
+   schmale Viewports jahrelang gelitten. */
+:is(#left-area, body) .tha.tha .tha-people--logos {
 	gap: var(--sp-4);
 	align-items: stretch;
 }
@@ -1550,11 +1752,87 @@ body.tha-typo {
 	color: var(--text-muted);
 }
 
+/* ==========================================================================
+   22. Sponsoring-Anmeldung
+
+   Der Seitenkopf der Anmeldeseite («Anmeldung Sponsoring») wird in einer
+   `.tha`-Wurzel gerendert — dieselbe wie auf den übrigen Seiten, damit er
+   Seitenkopf-Stile, Tokens und Schrift erbt. Der Seiteninhalt daneben
+   (das echte Divi-Formular) liegt ausserhalb der Wurzel und behält seine
+   Theme-Stile. Nur das Ausblenden nach der Frist greift von aussen, als
+   Regel gegen das Theme — gebunden an die Körperklasse `tha-anmeldung-zu`.
+   ========================================================================== */
+
+/* Der kleine Hinweis im Seitenkopf: «Anmeldung bis …» */
+
+.tha.tha .tha-pagehead__badge {
+	display: inline-block;
+	margin: var(--sp-6) 0 0;
+	padding: var(--sp-2) var(--sp-4);
+	background: rgba(248, 246, 242, .08);
+	border: 1px solid var(--border-onstage);
+	border-radius: var(--radius-pill);
+	color: var(--text-onstage);
+	font-size: var(--text-small);
+	font-weight: 600;
+}
+
+.tha.tha .tha-pagehead__badge--zu {
+	background: transparent;
+	border-color: var(--red-600);
+	color: var(--red-100);
+}
+
+/* Die Unterzeile unter dem Titel (Bestätigungsseite). */
+
+.tha.tha .tha-pagehead__subtitle {
+	margin: var(--sp-2) 0 0;
+	color: var(--text-onstage-muted);
+	font-size: var(--text-lead);
+	font-weight: 600;
+}
+
+/* Der Aufruf auf der Hauptseite — Text und Knopf in einer Zeile. */
+
+.tha.tha .tha-anmeldung-cta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-8);
+	flex-wrap: wrap;
+}
+
+.tha.tha .tha-anmeldung-cta__copy {
+	max-width: 62ch;
+}
+
+.tha.tha .tha-anmeldung-cta__meta {
+	color: var(--text-onstage-muted);
+	margin: var(--sp-2) 0 0;
+}
+
 @media (max-width: 640px) {
 
-	.tha.tha .tha-pagehead {
-		padding: var(--sp-8) 0 var(--sp-6);
+	.tha.tha .tha-anmeldung-cta {
+		gap: var(--sp-4);
 	}
+
+	.tha.tha .tha-anmeldung-cta .tha-btn {
+		flex: 1 1 auto;
+	}
+}
+
+/* --- Nach Ablauf der Frist: das Formular verschwindet ----------------------
+   Das Formular liegt ausserhalb der `.tha`-Wurzel; ausgeblendet wird es
+   deshalb wie der Seitenrahmen in Abschnitt 23 über die Körperklasse,
+   die `Tha_Anmeldung` nur auf dieser Seite setzt. */
+
+body.tha-anmeldung.tha-anmeldung-zu .tha-anmeldung-content .et_pb_contact_form_container {
+	display: none !important;
+}
+
+body.tha-anmeldung.tha-anmeldung-zu .tha-anmeldung-content .et_pb_contact_form_container * {
+	display: none !important;
 }
 
 /* ==========================================================================
@@ -1670,7 +1948,7 @@ body.tha-full-content .tha-host {
 
 /* Auch zu zweit oder zu dritt sollen Gruppenfotos nicht briefmarkengross
    werden — deshalb weniger, dafür breitere Spalten. */
-.tha.tha .tha-people--bilder {
+:is(#left-area, body) .tha.tha .tha-people--bilder {
 	gap: var(--sp-6);
 }
 
@@ -1781,19 +2059,25 @@ body.tha-full-content .tha-host {
    Die eingestellte Spaltenzahl gilt als OBERGRENZE: `min()` senkt sie auf
    schmalen Viewports, hebt sie aber nie an. Wer zwei Spalten eingestellt hat,
    bekommt nie plötzlich drei.
+
+   JEDE Regel hier traegt `:is(#left-area, body)`. Die Grundregel von
+   `.tha-people` traegt es auch — und damit eine ID, die jede Klassenregel
+   schlaegt, Media Query hin oder her. Ohne das Praefix standen die Sponsoren
+   am Handy in fuenf Spalten, 119 px breit, und die Seite ragte ueber den
+   rechten Rand hinaus. Die Regeln waren da; sie kamen nur nie zum Zug.
    -------------------------------------------------------------------------- */
 
 @media (max-width: 1080px) {
 
-	.tha.tha .tha-people--personen {
+	:is(#left-area, body) .tha.tha .tha-people--personen {
 		grid-template-columns: repeat(min(var(--tha-cols, 4), 3), 1fr);
 	}
 
-	.tha.tha .tha-people--logos {
+	:is(#left-area, body) .tha.tha .tha-people--logos {
 		grid-template-columns: repeat(min(var(--tha-cols, 5), 4), 1fr);
 	}
 
-	.tha.tha .tha-people--bilder {
+	:is(#left-area, body) .tha.tha .tha-people--bilder {
 		grid-template-columns: repeat(min(var(--tha-cols, 2), 2), 1fr);
 	}
 
@@ -1804,16 +2088,16 @@ body.tha-full-content .tha-host {
 
 @media (max-width: 820px) {
 
-	.tha.tha .tha-people--personen {
+	:is(#left-area, body) .tha.tha .tha-people--personen {
 		grid-template-columns: repeat(min(var(--tha-cols, 4), 2), 1fr);
 	}
 
-	.tha.tha .tha-people--logos {
+	:is(#left-area, body) .tha.tha .tha-people--logos {
 		grid-template-columns: repeat(min(var(--tha-cols, 5), 3), 1fr);
 	}
 
 	/* Gruppenfotos untereinander — nebeneinander erkennt man niemanden mehr. */
-	.tha.tha .tha-people--bilder {
+	:is(#left-area, body) .tha.tha .tha-people--bilder {
 		grid-template-columns: 1fr;
 	}
 
@@ -1826,8 +2110,8 @@ body.tha-full-content .tha-host {
 
 	/* Zwei Porträts nebeneinander bleiben auch auf dem Handy lesbar —
 	   eines pro Reihe wäre eine sehr lange Seite. */
-	.tha.tha .tha-people--personen,
-	.tha.tha .tha-people--logos,
+	:is(#left-area, body) .tha.tha .tha-people--personen,
+	:is(#left-area, body) .tha.tha .tha-people--logos,
 	:is(#left-area, body) .tha.tha .tha-years {
 		grid-template-columns: repeat(2, 1fr);
 		gap: var(--sp-4);
@@ -2083,10 +2367,8 @@ body.tha-full-content .tha-host {
 /* --- Gezeichneter Saalplan ---
 
    Ein Raster aus Kästchen, kein Bild. Alle Abstände hängen an --seat-h und
-   --seat-gap: eine Zeile ist genau --seat-row hoch. Nur deshalb lässt sich
-   die Seitenreihe rechts sauber um ganze Zeilen versetzen, statt sie mit
-   Pixelwerten hinzuschieben, die beim nächsten Schriftgrad nicht mehr passen.
-
+   --seat-gap: eine Zeile ist genau --seat-row hoch, und der Gang zwischen
+   vorn und hinten misst --seat-aisle.
    Die Bühnenleiste nimmt das Theaterrot. Wer für einen Jahrgang eine andere
    Farbe will, hinterlegt sie in den Einstellungen; sie kommt als
    --seatplan-accent am Element an. */
@@ -2128,11 +2410,6 @@ body.tha-full-content .tha-host {
 	min-width: 0;
 }
 
-/* Die Seitenreihe ist nur eine Spalte breit — halb so breit wie ein Block. */
-.tha.tha .tha-seatplan__block--seite {
-	flex: .5 1 0;
-}
-
 .tha.tha .tha-seatplan__group {
 	display: flex;
 	flex-direction: column;
@@ -2142,20 +2419,6 @@ body.tha-full-content .tha-host {
 /* Zwischen vorn und hinten liegt der Gang. */
 .tha.tha .tha-seatplan__group--hinten {
 	margin-top: var(--seat-aisle);
-}
-
-/* Die drei Gruppen der Seitenreihe stehen um 1, 2 respektive 3 Zeilen tiefer
-   als ihre Nachbarn — so sitzen sie auch im Saal. */
-.tha.tha .tha-seatplan__group--seite-1 {
-	margin-top: var(--seat-row);
-}
-
-.tha.tha .tha-seatplan__group--seite-2 {
-	margin-top: calc(var(--seat-aisle) + var(--seat-row));
-}
-
-.tha.tha .tha-seatplan__group--seite-3 {
-	margin-top: calc(3 * var(--seat-row) - var(--seat-h));
 }
 
 .tha.tha .tha-seatplan__row {
@@ -2679,6 +2942,48 @@ body.tha-hide-themenav .et-search-form {
 	text-decoration: underline;
 }
 
+/* ==========================================================================
+   37. Berichte
+
+   Ein Bericht ist ein Beitrag, kein zusammengesetzter Seitentyp: der Text
+   steht so da, wie ihn jemand im Editor geschrieben hat. Abschnitt 34 nimmt
+   ihm die Blog-Seitenleiste und gibt ihm die volle Breite; genau das ist
+   hier zu viel des Guten. «Volle Breite» heisst auf einem Bildschirm mit
+   1270 px eine Zeile von 1255 px — vorher waren es 794, und die waren
+   lesbarer. Deshalb bekommt der Text seine Zeilenlaenge zurueck, jetzt aber
+   mittig statt am linken Rand neben «Neueste Beiträge».
+
+   Und der Titel bleibt stehen (siehe Tha_Pagechrome::is_bericht) — dann muss
+   er auch aussehen wie ein Theater-Titel. Abschnitt 35 fasst ihn nicht an:
+   `.entry-title` steht ausserhalb von `.entry-content`.
+   ========================================================================== */
+
+body.tha-bericht #left-area {
+	max-width: 820px;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+body.tha-bericht .entry-title {
+	font-family: var(--font-display);
+	font-weight: 700;
+	font-size: clamp(34px, 5vw, 52px);
+	line-height: 1.05;
+	letter-spacing: -0.01em;
+	color: var(--ink-900);
+}
+
+/* «by Michael | Juni 17, 2026 | Allgemein» — die Zeile darf bleiben, aber
+   leise. Sie ist Herkunftsangabe, nicht Inhalt. */
+body.tha-bericht .post-meta,
+body.tha-bericht .post-meta a {
+	font-family: var(--font-body);
+	font-size: 13px;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--gray-500);
+}
+
 </style>
 </head>
 <body>
@@ -2698,14 +3003,18 @@ body.tha-hide-themenav .et-search-form {
 
 		<button type="button" class="tha-nav__toggle" data-tha-nav-toggle
 			aria-expanded="false" aria-controls="tha-nav-menu">
-			<span class="tha-nav__toggle-label">Menü</span>
-			<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+			<span class="tha-nav__toggle-label tha-nav__toggle-label--zu">Menü</span>
+			<span class="tha-nav__toggle-label tha-nav__toggle-label--offen">Schliessen</span>
+			<svg class="tha-nav__icon tha-nav__icon--zu" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+			<svg class="tha-nav__icon tha-nav__icon--offen" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
 		</button>
 
 		<div class="tha-nav__menu" id="tha-nav-menu" data-tha-nav-panel>
 			<ul class="tha-nav__list"><li class="menu-item menu-item-has-children current-menu-item"><a href="#">Home</a><ul class="sub-menu"><li class="menu-item"><a href="#daten">Spieldaten</a></li></ul></li><li class="menu-item menu-item-has-children"><a href="#">TheaterAuw</a><ul class="sub-menu"><li class="menu-item"><a href="#stueck">Theater 2026</a></li><li class="menu-item"><a href="#">Die Schauspieler</a></li><li class="menu-item"><a href="#">Hinter den Kulissen</a></li><li class="menu-item"><a href="#">Organisation Komitee</a></li></ul></li><li class="menu-item menu-item-has-children"><a href="#">Sponsoren</a><ul class="sub-menu"><li class="menu-item"><a href="#">Sponsoren 2026</a></li></ul></li><li class="menu-item menu-item-has-children"><a href="#">Rückblick</a><ul class="sub-menu"><li class="menu-item"><a href="#rueckblick">2026 – 2008</a></li><li class="menu-item"><a href="#">2007 – 1987</a></li><li class="menu-item"><a href="#">1975 – 1937</a></li></ul></li><li class="menu-item"><a href="#">Berichte</a></li></ul>		</div>
 
 			</div>
+
+		<div class="tha-nav__backdrop" data-tha-nav-backdrop></div>
 </nav>
 <section class="tha-hero tha-hero--stage">
 	<div class="tha-hero__inner tha-wrap">
@@ -2722,7 +3031,7 @@ body.tha-hide-themenav .et-search-form {
 		<div class="tha-hero__actions">
 			<a class="tha-btn tha-btn--stage tha-btn--lg" href="#daten">Spieldaten ansehen</a>
 			<a class="tha-btn tha-btn--ghost-stage tha-btn--lg" href="#stueck">Zum Stück</a>
-		</div>
+					</div>
 
 		<div class="tha-countdown" data-tha-countdown data-target="1794682800000">
 	<div class="tha-countdown__units" aria-hidden="true">
@@ -2845,7 +3154,7 @@ body.tha-hide-themenav .et-search-form {
 				<p>Unser Küchenteam ist bei den Abendaufführungen bereit, dich kulinarisch zu verwöhnen. Am Sonntag servieren wir nach der Vorstellung.</p>
 				<p class="tha-note">
 					Abendaufführungen: 18.45 bis 19.30 Uhr.				</p>
-							</div>
+			</div>
 
 							<div class="tha-card">
 					<h3 class="tha-h3">Tombola</h3>
@@ -2972,7 +3281,7 @@ body.tha-hide-themenav .et-search-form {
 						<div class="tha-seatplan-scroll">
 	<div class="tha-seatplan"
 		role="img"
-		aria-label="Saalplan Mehrzweckhalle Auw: vorn die Bühne, davor fünf Blöcke mit den Plätzen 101 bis 550, rechts die Seitenplätze 601 bis 621."
+		aria-label="Saalplan Mehrzweckhalle Auw: vorn die Bühne, davor fünf Blöcke mit den Plätzen 101 bis 550."
 		>
 
 		<div class="tha-seatplan__stage">Bühne</div>
@@ -3524,79 +3833,7 @@ body.tha-hide-themenav .et-search-form {
 								</div>
 													</div>
 									</div>
-			
-			<div class="tha-seatplan__block tha-seatplan__block--seite">
-									<div class="tha-seatplan__group tha-seatplan__group--seite-1">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">601</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">602</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">603</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">604</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">605</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">606</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">607</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">608</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">609</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">610</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">611</span>
-							</div>
-											</div>
-									<div class="tha-seatplan__group tha-seatplan__group--seite-2">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">612</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">613</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">614</span>
-							</div>
-											</div>
-									<div class="tha-seatplan__group tha-seatplan__group--seite-3">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">615</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">616</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">617</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">618</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">619</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">620</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">621</span>
-							</div>
-											</div>
-							</div>
-		</div>
+					</div>
 	</div>
 </div>
 													<figcaption class="tha-seatmap__note">Reihen 1–6 gehören zur Kategorie A.</figcaption>
@@ -3768,7 +4005,7 @@ body.tha-hide-themenav .et-search-form {
 					Plätze reservieren					<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
 				</a>
 						<a class="tha-btn tha-btn--stage tha-btn--lg" href="#daten-2">Alle Spieldaten</a>
-		</div>
+					</div>
 
 		<div class="tha-countdown" data-tha-countdown data-target="1794682800000">
 	<div class="tha-countdown__units" aria-hidden="true">
@@ -3909,7 +4146,7 @@ body.tha-hide-themenav .et-search-form {
 				<p>Unser Küchenteam ist bei den Abendaufführungen bereit, dich kulinarisch zu verwöhnen. Am Sonntag servieren wir nach der Vorstellung.</p>
 				<p class="tha-note">
 					Abendaufführungen: 18.45 bis 19.30 Uhr.				</p>
-							</div>
+			</div>
 
 							<div class="tha-card">
 					<h3 class="tha-h3">Tombola</h3>
@@ -4036,7 +4273,7 @@ body.tha-hide-themenav .et-search-form {
 						<div class="tha-seatplan-scroll">
 	<div class="tha-seatplan"
 		role="img"
-		aria-label="Saalplan Mehrzweckhalle Auw: vorn die Bühne, davor fünf Blöcke mit den Plätzen 101 bis 550, rechts die Seitenplätze 601 bis 621."
+		aria-label="Saalplan Mehrzweckhalle Auw: vorn die Bühne, davor fünf Blöcke mit den Plätzen 101 bis 550."
 		>
 
 		<div class="tha-seatplan__stage">Bühne</div>
@@ -4588,79 +4825,7 @@ body.tha-hide-themenav .et-search-form {
 								</div>
 													</div>
 									</div>
-			
-			<div class="tha-seatplan__block tha-seatplan__block--seite">
-									<div class="tha-seatplan__group tha-seatplan__group--seite-1">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">601</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">602</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">603</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">604</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">605</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">606</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">607</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">608</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">609</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">610</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">611</span>
-							</div>
-											</div>
-									<div class="tha-seatplan__group tha-seatplan__group--seite-2">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">612</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">613</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">614</span>
-							</div>
-											</div>
-									<div class="tha-seatplan__group tha-seatplan__group--seite-3">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">615</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">616</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">617</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">618</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">619</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">620</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">621</span>
-							</div>
-											</div>
-							</div>
-		</div>
+					</div>
 	</div>
 </div>
 													<figcaption class="tha-seatmap__note">Reihen 1–6 gehören zur Kategorie A.</figcaption>
@@ -4838,7 +5003,7 @@ body.tha-hide-themenav .et-search-form {
 					Restplätze sichern					<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
 				</a>
 						<a class="tha-btn tha-btn--stage tha-btn--lg" href="#daten-3">Alle Spieldaten</a>
-		</div>
+					</div>
 
 		<div class="tha-countdown" data-tha-countdown data-target="1795719600000">
 	<div class="tha-countdown__units" aria-hidden="true">
@@ -4976,7 +5141,7 @@ body.tha-hide-themenav .et-search-form {
 				<p>Unser Küchenteam ist bei den Abendaufführungen bereit, dich kulinarisch zu verwöhnen. Am Sonntag servieren wir nach der Vorstellung.</p>
 				<p class="tha-note">
 					Abendaufführungen: 18.45 bis 19.30 Uhr.				</p>
-							</div>
+			</div>
 
 							<div class="tha-card">
 					<h3 class="tha-h3">Tombola</h3>
@@ -5103,7 +5268,7 @@ body.tha-hide-themenav .et-search-form {
 						<div class="tha-seatplan-scroll">
 	<div class="tha-seatplan"
 		role="img"
-		aria-label="Saalplan Mehrzweckhalle Auw: vorn die Bühne, davor fünf Blöcke mit den Plätzen 101 bis 550, rechts die Seitenplätze 601 bis 621."
+		aria-label="Saalplan Mehrzweckhalle Auw: vorn die Bühne, davor fünf Blöcke mit den Plätzen 101 bis 550."
 		>
 
 		<div class="tha-seatplan__stage">Bühne</div>
@@ -5655,79 +5820,7 @@ body.tha-hide-themenav .et-search-form {
 								</div>
 													</div>
 									</div>
-			
-			<div class="tha-seatplan__block tha-seatplan__block--seite">
-									<div class="tha-seatplan__group tha-seatplan__group--seite-1">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">601</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">602</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">603</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">604</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">605</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">606</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">607</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">608</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">609</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">610</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">611</span>
-							</div>
-											</div>
-									<div class="tha-seatplan__group tha-seatplan__group--seite-2">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">612</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">613</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">614</span>
-							</div>
-											</div>
-									<div class="tha-seatplan__group tha-seatplan__group--seite-3">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">615</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">616</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">617</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">618</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">619</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">620</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">621</span>
-							</div>
-											</div>
-							</div>
-		</div>
+					</div>
 	</div>
 </div>
 													<figcaption class="tha-seatmap__note">Reihen 1–6 gehören zur Kategorie A.</figcaption>
@@ -5899,7 +5992,7 @@ body.tha-hide-themenav .et-search-form {
 
 		<div class="tha-hero__actions">
 			<a class="tha-btn tha-btn--stage tha-btn--lg" href="#rueckblick-4">Rückblick ansehen</a>
-		</div>
+					</div>
 
 		<p class="tha-hero__signoff">
 			Herzliche Grüsse — bis 2027.		</p>
@@ -6026,7 +6119,7 @@ body.tha-hide-themenav .et-search-form {
 				<p>Unser Küchenteam ist bei den Abendaufführungen bereit, dich kulinarisch zu verwöhnen. Am Sonntag servieren wir nach der Vorstellung.</p>
 				<p class="tha-note">
 					Abendaufführungen: 18.45 bis 19.30 Uhr.				</p>
-							</div>
+			</div>
 
 							<div class="tha-card">
 					<h3 class="tha-h3">Tombola</h3>
@@ -6153,7 +6246,7 @@ body.tha-hide-themenav .et-search-form {
 						<div class="tha-seatplan-scroll">
 	<div class="tha-seatplan"
 		role="img"
-		aria-label="Saalplan Mehrzweckhalle Auw: vorn die Bühne, davor fünf Blöcke mit den Plätzen 101 bis 550, rechts die Seitenplätze 601 bis 621."
+		aria-label="Saalplan Mehrzweckhalle Auw: vorn die Bühne, davor fünf Blöcke mit den Plätzen 101 bis 550."
 		>
 
 		<div class="tha-seatplan__stage">Bühne</div>
@@ -6705,79 +6798,7 @@ body.tha-hide-themenav .et-search-form {
 								</div>
 													</div>
 									</div>
-			
-			<div class="tha-seatplan__block tha-seatplan__block--seite">
-									<div class="tha-seatplan__group tha-seatplan__group--seite-1">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">601</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">602</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">603</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">604</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">605</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">606</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">607</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">608</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">609</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">610</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">611</span>
-							</div>
-											</div>
-									<div class="tha-seatplan__group tha-seatplan__group--seite-2">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">612</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">613</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">614</span>
-							</div>
-											</div>
-									<div class="tha-seatplan__group tha-seatplan__group--seite-3">
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">615</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">616</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">617</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">618</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">619</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">620</span>
-							</div>
-													<div class="tha-seatplan__row">
-								<span class="tha-seatplan__seat">621</span>
-							</div>
-											</div>
-							</div>
-		</div>
+					</div>
 	</div>
 </div>
 													<figcaption class="tha-seatmap__note">Reihen 1–6 gehören zur Kategorie A.</figcaption>
@@ -7096,6 +7117,7 @@ body.tha-hide-themenav .et-search-form {
 							<b class="tha-person__name">Gabi und Gertrud Leu</b>
 															<span class="tha-person__role">Kostüme</span>
 													</p>
+													<p class="tha-person__text">Ein Dream-Team sind Gabi und Gertrud. Ihr grosses Wissen zu Garderobe, Maske und Frisuren ist Gold wert.</p>
 															</li>
 							<li class="tha-person">
 					<div class="tha-placeholder" style="--tha-ratio:3 / 4"><span>Maya Baumann</span></div>											<p class="tha-person__meta">
@@ -7922,20 +7944,82 @@ body.tha-hide-themenav .et-search-form {
 
 		var navToggle = root.querySelector( '[data-tha-nav-toggle]' );
 		var navPanel = root.querySelector( '[data-tha-nav-panel]' );
+		var navBar = root.querySelector( '.tha-nav' );
+		var navBackdrop = root.querySelector( '[data-tha-nav-backdrop]' );
 
 		if ( navToggle && navPanel ) {
-			navToggle.addEventListener( 'click', function () {
-				var open = navPanel.classList.toggle( 'is-open' );
+
+			var setNav = function ( open ) {
+				navPanel.classList.toggle( 'is-open', open );
 				navToggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+				if ( navBar ) {
+					navBar.classList.toggle( 'tha-nav--offen', open );
+				}
+			};
+
+			var istOffen = function () {
+				return navPanel.classList.contains( 'is-open' );
+			};
+
+			navToggle.addEventListener( 'click', function () {
+				setNav( ! istOffen() );
 			} );
 
-			// Nach einem Sprung innerhalb der Seite wieder schliessen, sonst
-			// verdeckt das offene Menü das angesprungene Ziel.
+			// Daneben tippen schliesst — so wie in jeder App.
+			if ( navBackdrop ) {
+				navBackdrop.addEventListener( 'click', function () {
+					setNav( false );
+				} );
+
+			}
+
+			// Wischen und Radeln über dem offenen Menü bewegt die Seite
+			// dahinter nicht. Stillgestellt wird sie NICHT über
+			// `overflow: hidden` auf <html> — das nähme der klebenden Leiste
+			// den Kasten, an dem sie klebt, und sie verschwände nach oben aus
+			// dem Bild.
+			//
+			// Durchgelassen wird nur, was das Blatt selbst scrollt: passt die
+			// Liste ganz hinein, gibt es dort nichts zu scrollen, und ohne
+			// diese Bremse scrollte stattdessen die Seite darunter weiter.
+			if ( navBar ) {
+				var haltAn = function ( e ) {
+					if ( ! istOffen() ) {
+						return;
+					}
+					var imBlatt = navPanel.contains( e.target );
+					var scrollbar = navPanel.scrollHeight > navPanel.clientHeight + 1;
+					if ( ! imBlatt || ! scrollbar ) {
+						e.preventDefault();
+					}
+				};
+				navBar.addEventListener( 'wheel', haltAn, { passive: false } );
+				navBar.addEventListener( 'touchmove', haltAn, { passive: false } );
+			}
+
+			document.addEventListener( 'keydown', function ( e ) {
+				if ( 'Escape' === e.key && istOffen() ) {
+					setNav( false );
+					navToggle.focus();
+				}
+			} );
+
+			// Jeder Menüpunkt schliesst. Bei einem Sprung innerhalb der Seite
+			// verdeckt das offene Menü sonst genau das angesprungene Ziel; bei
+			// einem echten Wechsel bleibt es beim Zurückblättern sonst offen
+			// stehen, weil der Browser die Seite aus dem Cache holt.
 			navPanel.addEventListener( 'click', function ( e ) {
 				var link = e.target.closest ? e.target.closest( 'a' ) : null;
-				if ( link && 0 === ( link.getAttribute( 'href' ) || '' ).indexOf( '#' ) ) {
-					navPanel.classList.remove( 'is-open' );
-					navToggle.setAttribute( 'aria-expanded', 'false' );
+				if ( link ) {
+					setNav( false );
+				}
+			} );
+
+			// Wird das Fenster breit genug, gibt es kein Blatt mehr — dann darf
+			// auch die Seite nicht mehr festgehalten werden.
+			window.addEventListener( 'resize', function () {
+				if ( window.innerWidth > 860 && istOffen() ) {
+					setNav( false );
 				}
 			} );
 		}
@@ -7981,6 +8065,23 @@ body.tha-hide-themenav .et-search-form {
 		var breite = window.innerWidth;
 		var alle = document.body ? document.body.querySelectorAll( '*' ) : [];
 
+		// «Ganz oben» eingeschaltet: die Leisten des Themes zaehlen nicht mehr,
+		// sie scrollen weg und die Theater-Leiste liegt darueber. Nur die
+		// Admin-Leiste von WordPress bleibt — sie zu verdecken hiesse, dass
+		// Angemeldete nicht mehr aus der Seite herauskommen. Fuer Besucher gibt
+		// es sie nicht, und am Handy scrollt sie mit; dann ist es glatt 0.
+		if ( document.querySelector( '.tha-nav--ganzoben' ) ) {
+			var adminbar = document.getElementById( 'wpadminbar' );
+			if ( ! adminbar ) {
+				return 0;
+			}
+			var abcs = window.getComputedStyle( adminbar );
+			if ( 'fixed' !== abcs.position || 'none' === abcs.display ) {
+				return 0;
+			}
+			return Math.max( 0, Math.round( adminbar.getBoundingClientRect().bottom ) );
+		}
+
 		Array.prototype.forEach.call( alle, function ( el ) {
 			// Nichts aus unserem eigenen Baum — sonst misst sich die
 			// Navigation an sich selbst.
@@ -8020,9 +8121,95 @@ body.tha-hide-themenav .et-search-form {
 		document.documentElement.style.setProperty( '--tha-sticky-top', stickyOffset() + 'px' );
 	}
 
+	/* --- Klebt die Leiste überhaupt? -------------------------------------
+	 *
+	 * `position: sticky` klebt nur innerhalb des nächsten Vorfahren, der
+	 * scrollt. Sitzt irgendwo darüber ein `overflow: hidden` — und Divi setzt
+	 * genau das auf schmalen Viewports, um waagrechtes Scrollen zu
+	 * unterbinden —, dann klebt die Leiste an einem Kasten, der selbst nie
+	 * scrollt. Sie sieht aus wie normal mitgescrollt: am Handy war sie oben
+	 * weg, am Desktop blieb sie stehen.
+	 *
+	 * Dagegen hilft kein CSS, nur Nachsehen: findet sich so ein Vorfahre,
+	 * wird die Leiste `fixed` und ein Platzhalter hält ihre Höhe frei, damit
+	 * der Inhalt nicht darunter springt.
+	 */
+	function stickyGeklemmt( el ) {
+		var p = el.parentElement;
+		while ( p && p !== document.body && p !== document.documentElement ) {
+			var cs = window.getComputedStyle( p );
+			var ov = cs.overflow + ' ' + cs.overflowX + ' ' + cs.overflowY;
+			if ( ov.indexOf( 'hidden' ) !== -1 || ov.indexOf( 'clip' ) !== -1 ) {
+				return true;
+			}
+			p = p.parentElement;
+		}
+		return false;
+	}
+
+	/* --- Hat die Leiste ueberhaupt Weg zum Kleben? ------------------------
+	 *
+	 * Der zweite Grund, aus dem `sticky` nichts tut — und der auf stvauw.ch
+	 * zutrifft: eine klebende Leiste bewegt sich NUR innerhalb des Kastens
+	 * ihres Elternteils. Steht sie in Divis Theme-Builder-Kopfbereich, ist
+	 * dieser Kasten genau so hoch wie sie selbst (gemessen: 65 px, Unterkante
+	 * bei 97 px) — waehrend die Seite 4719 px lang ist. Weg zum Kleben: null.
+	 * Sie scrollt mit, als stuende `position: static` da, und kein Blick auf
+	 * `overflow` haette das gezeigt.
+	 *
+	 * Faustregel: geht die Seite nach dem Elternteil noch nennenswert weiter,
+	 * hoert das Kleben lange vor dem Seitenende auf. Dann ist `fixed` das
+	 * ehrlichere Mittel.
+	 */
+	function stickyOhneWeg( nav ) {
+		var eltern = nav.parentElement;
+		if ( ! eltern ) {
+			return false;
+		}
+		var unten = eltern.getBoundingClientRect().bottom + window.pageYOffset;
+		var seite = Math.max(
+			document.body ? document.body.scrollHeight : 0,
+			document.documentElement.scrollHeight
+		);
+		return ( seite - unten ) > 200;
+	}
+
+	function pruefeSticky() {
+		var navs = document.querySelectorAll( '.tha-nav--sticky' );
+
+		Array.prototype.forEach.call( navs, function ( nav ) {
+			var platzhalter = nav.previousElementSibling;
+			if ( ! platzhalter || ! platzhalter.hasAttribute( 'data-tha-nav-platz' ) ) {
+				platzhalter = document.createElement( 'div' );
+				platzhalter.setAttribute( 'data-tha-nav-platz', '' );
+				platzhalter.hidden = true;
+				nav.parentNode.insertBefore( platzhalter, nav );
+			}
+
+			// Zum Messen kurz zurück in den Normalzustand — sonst misst man
+			// die eigene Reparatur.
+			nav.classList.remove( 'tha-nav--fest' );
+			platzhalter.hidden = true;
+
+			if ( ! stickyGeklemmt( nav ) && ! stickyOhneWeg( nav ) ) {
+				return;
+			}
+
+			platzhalter.style.height = nav.offsetHeight + 'px';
+			platzhalter.hidden = false;
+			nav.classList.add( 'tha-nav--fest' );
+		} );
+	}
+
 	if ( document.querySelector( '.tha-nav--sticky' ) ) {
 		applyStickyOffset();
-		window.addEventListener( 'resize', applyStickyOffset );
+		pruefeSticky();
+		window.addEventListener( 'resize', function () {
+			applyStickyOffset();
+			// Der klemmende Vorfahre ist oft eine Regel aus einer Media Query:
+			// am Handy da, am Desktop nicht. Also bei jeder Breitenänderung neu.
+			pruefeSticky();
+		} );
 		// Divi tauscht seine Kopfzeile beim Scrollen aus. Nicht bei jedem
 		// Scrollschritt nachmessen — einmal, wenn es zur Ruhe gekommen ist.
 		var timer = null;

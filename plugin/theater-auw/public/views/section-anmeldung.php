@@ -1,6 +1,6 @@
 <?php
 /**
- * Hinweis auf der Hauptseite: «Sponsoren gesucht — zur Anmeldung».
+ * Hinweis auf der Hauptseite: «Sponsoren gesucht — zur Sponsoren-Anmeldung».
  *
  * Erscheint als eigene Sektion nach «Weiteres», solange die Anmeldung offen
  * ist. Nach Ablauf der Frist verschwindet sie von selbst — niemand muss am
@@ -40,7 +40,7 @@ if ( ! $url || ! Tha_Anmeldung::is_open( $settings ) ) {
 			</p>
 		</div>
 		<a class="tha-btn tha-btn--primary tha-btn--lg" href="<?php echo esc_url( $url ); ?>">
-			<?php esc_html_e( 'Zur Anmeldung', 'theater-auw' ); ?>
+			<?php esc_html_e( 'Zur Sponsoren-Anmeldung', 'theater-auw' ); ?>
 		</a>
 	</div>
 </section>

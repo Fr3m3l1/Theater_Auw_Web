@@ -78,7 +78,7 @@ defined( 'ABSPATH' ) || exit;
 
 <h2><?php esc_html_e( 'Platz-Layout', 'theater-auw' ); ?></h2>
 <p class="description">
-	<?php esc_html_e( 'Den Saalplan zeichnet das Plugin selbst — Plätze 101–550 in fünf Blöcken und die Seitenreihe 601–621. Das ist besser als ein Scan: die Nummern bleiben auf dem Handy lesbar und lassen sich vorlesen. Nur wer umbaut, hinterlegt hier ein Bild; es ersetzt den gezeichneten Plan.', 'theater-auw' ); ?>
+	<?php esc_html_e( 'Den Saalplan zeichnet das Plugin selbst — Plätze 101–550 in fünf Blöcken. Das ist besser als ein Scan: die Nummern bleiben auf dem Handy lesbar und lassen sich vorlesen. Nur wer umbaut, hinterlegt hier ein Bild; es ersetzt den gezeichneten Plan.', 'theater-auw' ); ?>
 </p>
 <table class="form-table" role="presentation">
 	<?php

@@ -2342,10 +2342,8 @@ body.tha-full-content .tha-host {
 /* --- Gezeichneter Saalplan ---
 
    Ein Raster aus Kästchen, kein Bild. Alle Abstände hängen an --seat-h und
-   --seat-gap: eine Zeile ist genau --seat-row hoch. Nur deshalb lässt sich
-   die Seitenreihe rechts sauber um ganze Zeilen versetzen, statt sie mit
-   Pixelwerten hinzuschieben, die beim nächsten Schriftgrad nicht mehr passen.
-
+   --seat-gap: eine Zeile ist genau --seat-row hoch, und der Gang zwischen
+   vorn und hinten misst --seat-aisle.
    Die Bühnenleiste nimmt das Theaterrot. Wer für einen Jahrgang eine andere
    Farbe will, hinterlegt sie in den Einstellungen; sie kommt als
    --seatplan-accent am Element an. */
@@ -2387,11 +2385,6 @@ body.tha-full-content .tha-host {
 	min-width: 0;
 }
 
-/* Die Seitenreihe ist nur eine Spalte breit — halb so breit wie ein Block. */
-.tha.tha .tha-seatplan__block--seite {
-	flex: .5 1 0;
-}
-
 .tha.tha .tha-seatplan__group {
 	display: flex;
 	flex-direction: column;
@@ -2401,20 +2394,6 @@ body.tha-full-content .tha-host {
 /* Zwischen vorn und hinten liegt der Gang. */
 .tha.tha .tha-seatplan__group--hinten {
 	margin-top: var(--seat-aisle);
-}
-
-/* Die drei Gruppen der Seitenreihe stehen um 1, 2 respektive 3 Zeilen tiefer
-   als ihre Nachbarn — so sitzen sie auch im Saal. */
-.tha.tha .tha-seatplan__group--seite-1 {
-	margin-top: var(--seat-row);
-}
-
-.tha.tha .tha-seatplan__group--seite-2 {
-	margin-top: calc(var(--seat-aisle) + var(--seat-row));
-}
-
-.tha.tha .tha-seatplan__group--seite-3 {
-	margin-top: calc(3 * var(--seat-row) - var(--seat-h));
 }
 
 .tha.tha .tha-seatplan__row {
