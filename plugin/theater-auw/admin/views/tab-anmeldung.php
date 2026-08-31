@@ -108,3 +108,56 @@ $frist = Tha_Anmeldung::deadline_label( $settings );
 		</td>
 	</tr>
 </table>
+
+<h2><?php esc_html_e( 'Bestätigungsseite', 'theater-auw' ); ?></h2>
+<p class="description" style="max-width:74ch">
+	<?php esc_html_e( '«Anmeldung Erfolgreich» zeigt den Dank nach dem Absenden. Sie bekommt denselben Seitenkopf wie die Anmeldeseite — und sie bleibt immer sichtbar, auch nach Ablauf der Frist.', 'theater-auw' ); ?>
+</p>
+
+<table class="form-table" role="presentation">
+	<tr>
+		<th scope="row"><label for="tha-anmeldung_ok_page_id"><?php esc_html_e( 'Bestätigungsseite', 'theater-auw' ); ?></label></th>
+		<td>
+			<?php
+			wp_dropdown_pages(
+				array(
+					'name'              => Tha_Admin::name( 'anmeldung_ok_page_id' ),
+					'id'                => 'tha-anmeldung_ok_page_id',
+					'selected'          => (int) $settings['anmeldung_ok_page_id'],
+					'show_option_none'  => __( '— keine —', 'theater-auw' ),
+					'option_none_value' => 0,
+				)
+			);
+			?>
+			<p class="description">
+				<?php esc_html_e( 'Die Seite, die den Dank zeigt — üblicherweise «Anmeldung Erfolgreich». Nach Ablauf der Frist werden verspätete Anmeldungen hierher geleitet.', 'theater-auw' ); ?>
+			</p>
+		</td>
+	</tr>
+
+	<tr>
+		<th scope="row"><label for="tha-anmeldung_ok_title"><?php esc_html_e( 'Titel des Seitenkopfs', 'theater-auw' ); ?></label></th>
+		<td>
+			<input type="text" class="regular-text" id="tha-anmeldung_ok_title"
+				name="<?php echo esc_attr( Tha_Admin::name( 'anmeldung_ok_title' ) ); ?>"
+				value="<?php echo esc_attr( $settings['anmeldung_ok_title'] ); ?>">
+		</td>
+	</tr>
+
+	<tr>
+		<th scope="row"><label for="tha-anmeldung_ok_kicker"><?php esc_html_e( 'Kicker', 'theater-auw' ); ?></label></th>
+		<td>
+			<input type="text" class="regular-text" id="tha-anmeldung_ok_kicker"
+				name="<?php echo esc_attr( Tha_Admin::name( 'anmeldung_ok_kicker' ) ); ?>"
+				value="<?php echo esc_attr( $settings['anmeldung_ok_kicker'] ); ?>">
+		</td>
+	</tr>
+
+	<tr>
+		<th scope="row"><label for="tha-anmeldung_ok_lead"><?php esc_html_e( 'Vorspann', 'theater-auw' ); ?></label></th>
+		<td>
+			<textarea rows="3" class="large-text" id="tha-anmeldung_ok_lead"
+				name="<?php echo esc_attr( Tha_Admin::name( 'anmeldung_ok_lead' ) ); ?>"><?php echo esc_textarea( $settings['anmeldung_ok_lead'] ); ?></textarea>
+		</td>
+	</tr>
+</table>

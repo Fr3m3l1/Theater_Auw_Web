@@ -44,6 +44,25 @@ class Tha_Anmeldung {
 	}
 
 	/**
+	 * Die Bestätigungsseite, auf die das Formular nach dem Absenden leitet.
+	 * Eigene Nummer, damit sie sich nicht versehentlich mit der
+	 * Anmeldeseite deckt — dieselbe Erkennung, aber ohne Frist-Logik.
+	 */
+	public static function ok_page_id( array $settings = null ) {
+		$settings = $settings ? $settings : Tha_Settings::get();
+		return absint( $settings['anmeldung_ok_page_id'] );
+	}
+
+	/**
+	 * Ist die abgefragte Seite eine der beiden Sponsoring-Seiten?
+	 */
+	public static function is_anmeldung_page( $post_id ) {
+		$settings = Tha_Settings::get();
+		return (int) $post_id === self::page_id( $settings )
+			|| (int) $post_id === self::ok_page_id( $settings );
+	}
+
+	/**
 	 * Adresse der Anmeldeseite — leer, wenn keine Seite gesetzt ist oder die
 	 * gesetzte Nummer niemandem gehört.
 	 */
@@ -132,12 +151,17 @@ class Tha_Anmeldung {
 		if ( is_admin() || ! is_singular() ) {
 			return $classes;
 		}
-		if ( (int) get_queried_object_id() !== self::page_id() ) {
+		$id = (int) get_queried_object_id();
+		if ( ! self::is_anmeldung_page( $id ) ) {
 			return $classes;
 		}
 
 		$classes[] = 'tha-anmeldung';
-		$classes[] = self::is_open() ? 'tha-anmeldung-offen' : 'tha-anmeldung-zu';
+		if ( $id === self::page_id() ) {
+			// Die Frist-Schalter nur auf der Anmeldeseite selbst — die
+			// Bestätigungsseite soll nie ausgeblendet werden.
+			$classes[] = self::is_open() ? 'tha-anmeldung-offen' : 'tha-anmeldung-zu';
+		}
 
 		return $classes;
 	}
@@ -154,24 +178,23 @@ class Tha_Anmeldung {
 		if ( ! is_singular() || ! in_the_loop() || ! is_main_query() ) {
 			return $content;
 		}
-		if ( (int) get_queried_object_id() !== self::page_id() ) {
+		$id = (int) get_queried_object_id();
+		if ( ! self::is_anmeldung_page( $id ) ) {
 			return $content;
 		}
 
 		$settings = Tha_Settings::get();
 
-		// Der Seitenkopf ist ein eigener Baustein, kein Aufkleber auf dem
-		// Inhalt — er braucht die Frist-Entscheidung und die Texte.
+		// Auf welcher der beiden Seiten stehen wir? Die Anmeldeseite trägt
+		// Formular + Frist, die Bestätigungsseite nur den Dank — der Kopf
+		// ist derselbe, die Texte sind eigene.
+		$ok  = ( $id === self::ok_page_id( $settings ) );
 		$open   = self::is_open( $settings );
-		$lead   = trim( (string) $settings['anmeldung_lead'] );
-		$kicker = trim( (string) $settings['anmeldung_kicker'] );
-		$titel  = trim( (string) $settings['anmeldung_title'] );
+		$lead   = trim( $ok ? (string) $settings['anmeldung_ok_lead'] : (string) $settings['anmeldung_lead'] );
+		$kicker = trim( $ok ? (string) $settings['anmeldung_ok_kicker'] : (string) $settings['anmeldung_kicker'] );
+		$titel  = trim( $ok ? (string) $settings['anmeldung_ok_title'] : (string) $settings['anmeldung_title'] );
+		$subtitle = $ok ? trim( (string) $settings['anmeldung_title'] ) : '';
 
-		// Der Kopf ist in eine `.tha`-Wurzel gehüllt — dieselbe wie auf den
-		// übrigen Seiten. Damit gelten dort Seitenkopf-Stile, Tokens und
-		// Schrift, und die Theater-Typografie, die den REST des Seiteninhalts
-		// umstellt (body.tha-typo .entry-content … :not(.tha *)), lässt die
-		// Wurzel aus.
 		ob_start();
 		include THA_DIR . 'public/views/partial-anmeldung-pagehead.php';
 		$kopf = ob_get_clean();
@@ -181,9 +204,8 @@ class Tha_Anmeldung {
 			. $kopf
 			. '</div>';
 
-		// Der Inhalt (inklusive Formular) bleibt, wie er ist — bewusst
-		// ausserhalb der `.tha`-Wurzel: nur so behaelt das Divi-Formular
-		// seine Theme-Stile und funktioniert unveraendert weiter.
+		// Der Inhalt bleibt, wie er ist — bewusst ausserhalb der `.tha`-
+		// Wurzel: nur so behalten die Divi-Module ihre Theme-Stile.
 		return $wurzel . '<div class="tha-anmeldung-content">' . $content . '</div>';
 	}
 
@@ -223,7 +245,12 @@ class Tha_Anmeldung {
 			return;
 		}
 
-		$url = get_permalink( $id );
+		// Nach der Frist geht kein POST mehr durch — aber statt die Seite
+		// mit dem ausgeblendeten Formular zu zeigen, führen wir die Leute
+		// direkt auf die Bestätigungsseite. Wer es versucht, sieht den
+		// Dank statt eines leeren Formulars.
+		$ok_id = self::ok_page_id();
+		$url   = $ok_id ? get_permalink( $ok_id ) : get_permalink( $id );
 		if ( $url ) {
 			wp_safe_redirect( add_query_arg( 'anmeldung', 'zu', $url ) );
 			exit;

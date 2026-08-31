@@ -116,6 +116,24 @@ $html = tha_preview_shell( 'Anmeldung', 'anmeldung', $body, '2026-10-01 12:00' )
 file_put_contents( __DIR__ . '/anmeldung.html', $html );
 $written[] = 'anmeldung.html';
 
+/**
+ * Die Bestätigungsseite — dieselbe Attrappe, aber über die ok-Seiten-
+ * Einstellung erkannt, damit der Kopf die ok-Texte zeigt.
+ */
+$fix['anmeldung_page_id'] = 1829;
+$fix['anmeldung_ok_page_id'] = 0;
+update_option( Tha_Settings::OPTION, $fix );
+Tha_Settings::flush_cache();
+
+$ok_inhalt = '<h2>Anmeldung Erfolgreich</h2>'
+	. '<p>Super, deine Anmeldung als Sponsor ist bestätigt! Wir freuen uns sehr, dass du dabei bist.</p>'
+	. '<p><strong>Raiffeisenbank Reuss-Lindenberg, 5644 Auw</strong><br>IBAN: CH05 8080 8009 2597 7434 1</p>';
+
+$body = Tha_Anmeldung::render_pagehead( $ok_inhalt );
+$html = tha_preview_shell( 'Anmeldung OK', 'anmeldung-ok', $body, '2026-10-01 12:00' );
+file_put_contents( __DIR__ . '/anmeldung-ok.html', $html );
+$written[] = 'anmeldung-ok.html';
+
 echo "Gerendert: " . implode( ', ', $written ) . "\n";
 
 // ---------------------------------------------------------------------

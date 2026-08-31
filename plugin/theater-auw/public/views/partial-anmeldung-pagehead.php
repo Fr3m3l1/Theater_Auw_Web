@@ -24,6 +24,10 @@ defined( 'ABSPATH' ) || exit;
 
 		<h1 class="tha-pagehead__title"><?php echo esc_html( $titel ); ?></h1>
 
+		<?php if ( isset( $subtitle ) && '' !== $subtitle ) : ?>
+			<p class="tha-pagehead__subtitle"><?php echo esc_html( $subtitle ); ?></p>
+		<?php endif; ?>
+
 		<?php if ( '' !== $lead ) : ?>
 			<p class="tha-pagehead__lead"><?php echo esc_html( $lead ); ?></p>
 		<?php endif; ?>

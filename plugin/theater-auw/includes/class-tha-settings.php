@@ -320,6 +320,13 @@ class Tha_Settings {
 			'anmeldung_kicker'   => 'Premierenabend- & Spenderpakete',
 			'anmeldung_lead'     => 'Gold, Silber und Spenderpakete — mit reservierten Plätzen am Premierenabend und feinem Nachtessen.',
 			'anmeldung_deadline' => '2026-10-08',
+			// Die Bestätigungsseite, auf die das Formular nach dem Absenden
+			// leitet. Gleiche Behandlung: dunkler Seitenkopf, Theater-Schrift,
+			// kein Ausblenden — dieser Inhalt soll JA gelesen werden.
+			'anmeldung_ok_page_id' => 2113, // «Anmeldung Erfolgreich» auf stvauw.ch/theater
+			'anmeldung_ok_title'   => 'Anmeldung bestätigt',
+			'anmeldung_ok_kicker'  => 'Sponsoring',
+			'anmeldung_ok_lead'    => 'Vielen Dank! Deine Anmeldung als Sponsor ist eingegangen.',
 
 			// ---- Darstellung ------------------------------------------------
 			'page_id'     => 0,           // Theater-Seite; fängt Page-Builder ab
@@ -778,6 +785,14 @@ class Tha_Settings {
 		}
 		if ( $has( 'anmeldung_deadline' ) ) {
 			$out['anmeldung_deadline'] = self::clean_date( $input['anmeldung_deadline'] );
+		}
+		if ( $has( 'anmeldung_ok_page_id' ) ) {
+			$out['anmeldung_ok_page_id'] = absint( $input['anmeldung_ok_page_id'] );
+		}
+		foreach ( array( 'anmeldung_ok_title', 'anmeldung_ok_kicker', 'anmeldung_ok_lead' ) as $key ) {
+			if ( $has( $key ) ) {
+				$out[ $key ] = self::clean_text( $input[ $key ] );
+			}
 		}
 		if ( $has( 'cleanup_present' ) ) {
 			$out['hide_page_title']    = ! empty( $input['hide_page_title'] );

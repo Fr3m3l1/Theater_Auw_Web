@@ -96,7 +96,8 @@ class Tha_Assets {
 		// Aufbau kommt aus dem Divi-Builder und sie wird von aussen
 		// umgestaltet (siehe Tha_Anmeldung). Dieselbe Erkennung wie fuer
 		// `page_id`, damit sie dieselben Rahmen-Klassen und Stile bekommt.
-		if ( ! empty( $settings['anmeldung_page_id'] ) && (int) $settings['anmeldung_page_id'] === $post_id ) {
+		// Dazu die Bestaetigungsseite, auf die das Formular leitet.
+		if ( Tha_Anmeldung::is_anmeldung_page( $post_id ) ) {
 			return true;
 		}
 

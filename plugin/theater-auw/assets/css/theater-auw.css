@@ -1758,6 +1758,15 @@ body.tha-anmeldung {
 	color: var(--red-100);
 }
 
+/* Die Unterzeile unter dem Titel (Bestätigungsseite). */
+
+.tha.tha .tha-pagehead__subtitle {
+	margin: var(--sp-2) 0 0;
+	color: var(--text-onstage-muted);
+	font-size: var(--text-lead);
+	font-weight: 600;
+}
+
 /* Der Aufruf auf der Hauptseite — Text und Knopf in einer Zeile. */
 
 .tha.tha .tha-anmeldung-cta {

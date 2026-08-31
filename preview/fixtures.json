@@ -535,5 +535,9 @@
     "updates_title": "Updates",
     "venue_maps_url": "",
     "venue_name": "Mehrzweckhalle Auw",
-    "width_mode": "auto"
+    "width_mode": "auto",
+    "anmeldung_ok_page_id": 2113,
+    "anmeldung_ok_title": "Anmeldung bestätigt",
+    "anmeldung_ok_kicker": "Sponsoring",
+    "anmeldung_ok_lead": "Vielen Dank! Deine Anmeldung als Sponsor ist eingegangen."
 }
