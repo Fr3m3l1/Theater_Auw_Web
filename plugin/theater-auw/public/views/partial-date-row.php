@@ -33,6 +33,9 @@ if ( ! empty( $show['is_today'] ) && 'spielzeit' === $ctx['phase'] ) {
 
 	<span class="tha-date__meta">
 		<?php echo esc_html( tha_time_label( $show['time'] ) ); ?>
+		<?php if ( ! empty( $show['doors_time'] ) ) : ?>
+			<span class="tha-date__doors"><?php echo esc_html( sprintf( __( 'Türöffnung %s Uhr', 'theater-auw' ), $show['doors_time'] ) ); ?></span>
+		<?php endif; ?>
 		<?php if ( '' !== $show['label'] ) : ?>
 			<b class="tha-date__label"><?php echo esc_html( $show['label'] ); ?></b>
 		<?php endif; ?>

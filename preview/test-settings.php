@@ -684,6 +684,44 @@ Tha_Settings::flush_cache();
 $gelesen = Tha_Settings::get();
 check( 'gelesen: Vorpremiere zuerst',    'Vorpremiere', $gelesen['dates'][0]['label'] );
 
+echo "\nSpieldaten — Türöffnung je Vorstellung:\n\n";
+
+// Ohne eigene Türöffnung bleibt die Zeile leer — dann gilt die globale
+// Türöffnung unter «Stück & Texte».
+$du = Tha_Settings::sanitize( array(
+	'dates' => array(
+		array( 'date' => '2026-11-14', 'time' => '20.00', 'label' => 'Premiere', 'note' => 'Sponsoren-Abend', 'doors_time' => '18:00' ),
+		array( 'date' => '2026-11-18', 'time' => '20.00' ),
+		array( 'date' => '2026-11-21', 'time' => '20.00', 'doors_time' => 'halbfünf' ),
+	),
+) );
+check( 'Doppelpunkt wird Punktnotation', '18.00', $du['dates'][0]['doors_time'] );
+check( 'leer heisst wie immer',          '',      $du['dates'][1]['doors_time'] );
+check( 'Quatsch faellt auf leer',        '',      $du['dates'][2]['doors_time'] );
+// Migration v11: Zeilen aus älteren Versionen kennen den Schlüssel noch
+// nicht. Die ausgelieferte Premieren-Zeile (Sponsoren-Abend) bekommt die
+// frühe Türöffnung aus der Einladung, alle übrigen bleiben leer.
+$v11_ein = Tha_Settings::defaults();
+$v11_ein['schema_version'] = 10;
+foreach ( $v11_ein['dates'] as $i => $zeile ) {
+	unset( $v11_ein['dates'][ $i ]['doors_time'] );
+}
+update_option( Tha_Settings::OPTION, $v11_ein );
+Tha_Settings::upgrade();
+$v11_aus = get_option( Tha_Settings::OPTION );
+check( 'Migration: Premiere bekommt 18.00', '18.00', $v11_aus['dates'][0]['doors_time'] );
+check( 'Migration: übrige Zeilen leer',     '',      $v11_aus['dates'][1]['doors_time'] );
+
+// Wer schon selbst eine Türöffnung gewählt hat, behält sie — dieselbe
+// Regel wie bei den Preisen (v9): nur ausgelieferte Daten werden ergänzt.
+$v11_gesetzt = Tha_Settings::defaults();
+$v11_gesetzt['schema_version'] = 10;
+$v11_gesetzt['dates'][0]['doors_time'] = '18.30';
+update_option( Tha_Settings::OPTION, $v11_gesetzt );
+Tha_Settings::upgrade();
+$v11_gew = get_option( Tha_Settings::OPTION );
+check( 'Migration: eigene Wahl bleibt',     '18.30', $v11_gew['dates'][0]['doors_time'] );
+
 // --- Sponsoring-Anmeldung ----------------------------------------------
 
 echo "\nSponsoring-Anmeldung:\n";

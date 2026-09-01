@@ -30,10 +30,17 @@ if ( ! $shows ) {
 
 			<p class="tha-note">
 				<?php
-				$bits = array();
+				$bits  = array();
+				$doors = '';
 				foreach ( $shows as $show ) {
 					if ( '' !== $show['note'] ) {
 						$bits[] = $show['note'];
+						// Eine abweichende Türöffnung gehört zu dieser
+						// Vorstellung — am Premierenabend öffnet die Halle
+						// laut Einladung früher.
+						if ( ! empty( $show['doors_time'] ) ) {
+							$doors = $show['doors_time'];
+						}
 						break;
 					}
 				}
@@ -46,7 +53,13 @@ if ( ! $shows ) {
 					)
 				);
 				if ( $bits ) {
-					echo ' · ' . esc_html( sprintf( __( 'Premiere mit %s', 'theater-auw' ), $bits[0] ) );
+					/* translators: 1: Zusatz, z. B. «Sponsoren-Abend» */
+					$premiere = sprintf( __( 'Premiere mit %s', 'theater-auw' ), $bits[0] );
+					if ( '' !== $doors ) {
+						/* translators: 1: Zusatz, 2: Türöffnung dieser Vorstellung */
+						$premiere = sprintf( __( '%1$s: Türöffnung %2$s Uhr', 'theater-auw' ), $premiere, $doors );
+					}
+					echo ' · ' . esc_html( $premiere );
 				}
 				?>
 			</p>

@@ -12,7 +12,7 @@ class Tha_Settings {
 
 	const OPTION         = 'theater_auw_settings';
 	const GROUP          = 'theater_auw';
-	const SCHEMA_VERSION = 10;
+	const SCHEMA_VERSION = 11;
 
 	const PHASES   = array( 'vorbereitung', 'vorverkauf', 'spielzeit', 'danke' );
 	const STATUSES = array( 'offen', 'wenige', 'ausverkauft', 'vorbei' );
@@ -207,14 +207,16 @@ class Tha_Settings {
 			'updates_intro'  => '',
 			'updates'        => array(),
 
-			// ---- Spieldaten ------------------------------------------------
+			// Die Türöffnung kann je Vorstellung abweichen — leer heisst «wie
+			// unter Ort & Ablauf» (18.30). Der Premierenabend mit dem
+			// Sponsoren-Abend öffnet laut Einladung eine halbe Stunde früher.
 			'dates' => array(
-				array( 'date' => '2026-11-14', 'time' => '20.00', 'label' => 'Premiere', 'note' => 'Sponsoren-Abend', 'status' => 'offen', 'ticket_url' => '' ),
-				array( 'date' => '2026-11-18', 'time' => '20.00', 'label' => '', 'note' => '', 'status' => 'offen', 'ticket_url' => '' ),
-				array( 'date' => '2026-11-21', 'time' => '20.00', 'label' => '', 'note' => '', 'status' => 'offen', 'ticket_url' => '' ),
-				array( 'date' => '2026-11-22', 'time' => '14.00', 'label' => '', 'note' => '', 'status' => 'offen', 'ticket_url' => '' ),
-				array( 'date' => '2026-11-26', 'time' => '20.00', 'label' => '', 'note' => '', 'status' => 'offen', 'ticket_url' => '' ),
-				array( 'date' => '2026-11-28', 'time' => '20.00', 'label' => 'Derniere', 'note' => '', 'status' => 'offen', 'ticket_url' => '' ),
+				array( 'date' => '2026-11-14', 'time' => '20.00', 'label' => 'Premiere', 'note' => 'Sponsoren-Abend', 'doors_time' => '18.00', 'status' => 'offen', 'ticket_url' => '' ),
+				array( 'date' => '2026-11-18', 'time' => '20.00', 'label' => '', 'note' => '', 'doors_time' => '', 'status' => 'offen', 'ticket_url' => '' ),
+				array( 'date' => '2026-11-21', 'time' => '20.00', 'label' => '', 'note' => '', 'doors_time' => '', 'status' => 'offen', 'ticket_url' => '' ),
+				array( 'date' => '2026-11-22', 'time' => '14.00', 'label' => '', 'note' => '', 'doors_time' => '', 'status' => 'offen', 'ticket_url' => '' ),
+				array( 'date' => '2026-11-26', 'time' => '20.00', 'label' => '', 'note' => '', 'doors_time' => '', 'status' => 'offen', 'ticket_url' => '' ),
+				array( 'date' => '2026-11-28', 'time' => '20.00', 'label' => 'Derniere', 'note' => '', 'doors_time' => '', 'status' => 'offen', 'ticket_url' => '' ),
 			),
 
 			// ---- Navigation --------------------------------------------------
@@ -512,7 +514,12 @@ class Tha_Settings {
 					'date'       => $date,
 					'time'       => self::clean_time( isset( $row['time'] ) ? $row['time'] : '', '20.00' ),
 					'label'      => self::clean_text( isset( $row['label'] ) ? $row['label'] : '' ),
-					'note'       => self::clean_text( isset( $row['note'] ) ? $row['note'] : '' ),
+					// Abweichende Türöffnung nur für diese eine Vorstellung —
+					// leer heisst «wie unter Ort & Ablauf». Der
+					// Sponsoren-Abend am Premierentag öffnet früher.
+					'doors_time' => '' === trim( isset( $row['doors_time'] ) ? (string) $row['doors_time'] : '' )
+						? ''
+						: self::clean_time( $row['doors_time'], '' ),
 					'status'     => in_array( isset( $row['status'] ) ? $row['status'] : '', self::STATUSES, true ) ? $row['status'] : 'offen',
 					'ticket_url' => self::clean_url( isset( $row['ticket_url'] ) ? $row['ticket_url'] : '' ),
 				);
@@ -1041,12 +1048,21 @@ class Tha_Settings {
 			$stored['prices'] = self::defaults()['prices'];
 		}
 
-		// v10 — die Sponsoring-Anmeldung. Kein Umbau nötig: die neuen Felder
-		// stammen aus den Defaults, die weiter unten daruebergelegt werden.
-		// Der Fristwert faellt NICHT in die Migration — die Frist 2026
-		// (8. Oktober) soll ein Jahr spaeter nicht stillschweigend die
-		// naechste Saison drosseln. Sie bleibt stehen, bis sie in den
-		// Einstellungen geaendert oder die Verlaengerung abgeschaltet wird.
+		// v11 — Türöffnung je Vorstellung. Der Sponsoren-Abend am
+		// Premierenabend öffnet laut Einladung schon um 18.00 statt um
+		// 18.30. Alte Zeilen kennen den Schlüssel noch nicht; er wird
+		// ergänzt — leer heisst «wie immer». Nur die Zeile, die als Premiere
+		// mit Sponsoren-Abend ausgeliefert wurde, bekommt die frühe Zeit;
+		// wer eigene Spieldaten hat, behält seine.
+		if ( $version < 11 && ! empty( $stored['dates'] ) && is_array( $stored['dates'] ) ) {
+			foreach ( $stored['dates'] as $i => $row ) {
+				if ( ! is_array( $row ) || isset( $row['doors_time'] ) ) {
+					continue;
+				}
+				$stored['dates'][ $i ]['doors_time'] = ( isset( $row['label'] ) && 'Premiere' === $row['label']
+					&& isset( $row['note'] ) && 'Sponsoren-Abend' === $row['note'] ) ? '18.00' : '';
+			}
+		}
 
 		$stored['schema_version'] = self::SCHEMA_VERSION;
 		update_option( self::OPTION, wp_parse_args( $stored, self::defaults() ) );

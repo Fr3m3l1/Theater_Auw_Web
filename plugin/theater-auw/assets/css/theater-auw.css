@@ -737,10 +737,8 @@ body.tha-anmeldung {
 	min-width: 0;
 }
 
-.tha.tha .tha-date__label {
+.tha.tha .tha-date__doors {
 	margin-left: var(--sp-2);
-	font-weight: 600;
-	color: var(--red-600);
 }
 
 .tha.tha .tha-date__today {

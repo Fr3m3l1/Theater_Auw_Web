@@ -20,6 +20,7 @@ $rows = $settings['dates'];
 <h2><?php esc_html_e( 'Spieldaten', 'theater-auw' ); ?></h2>
 <p class="description">
 	<?php esc_html_e( 'Die Reihenfolge wird beim Speichern automatisch nach Datum sortiert. Vergangene Vorstellungen erscheinen von selbst als «Vorbei».', 'theater-auw' ); ?>
+	<?php esc_html_e( 'Die Türöffnung gilt für alle Vorstellungen und steht unter «Stück & Texte». Wer abweicht — etwa der Sponsoren-Abend am Premierentag — trägt die eigene Zeit ein; leer heisst: wie angegeben.', 'theater-auw' ); ?>
 </p>
 
 <table class="widefat tha-repeat" data-tha-repeat="dates">
@@ -27,6 +28,7 @@ $rows = $settings['dates'];
 		<tr>
 			<th><?php esc_html_e( 'Datum', 'theater-auw' ); ?></th>
 			<th><?php esc_html_e( 'Zeit', 'theater-auw' ); ?></th>
+			<th><?php esc_html_e( 'Türöffnung', 'theater-auw' ); ?></th>
 			<th><?php esc_html_e( 'Bezeichnung', 'theater-auw' ); ?></th>
 			<th><?php esc_html_e( 'Notiz', 'theater-auw' ); ?></th>
 			<th><?php esc_html_e( 'Status', 'theater-auw' ); ?></th>
@@ -39,6 +41,7 @@ $rows = $settings['dates'];
 			<tr data-tha-repeat-row>
 				<td><input type="date" name="<?php echo esc_attr( Tha_Settings::OPTION ); ?>[dates][<?php echo (int) $i; ?>][date]" value="<?php echo esc_attr( $row['date'] ); ?>"></td>
 				<td><input type="text" size="6" name="<?php echo esc_attr( Tha_Settings::OPTION ); ?>[dates][<?php echo (int) $i; ?>][time]" value="<?php echo esc_attr( $row['time'] ); ?>" placeholder="20.00"></td>
+				<td><input type="text" size="6" name="<?php echo esc_attr( Tha_Settings::OPTION ); ?>[dates][<?php echo (int) $i; ?>][doors_time]" value="<?php echo esc_attr( $row['doors_time'] ); ?>" placeholder="<?php echo esc_attr( $settings['doors_time'] ); ?>"></td>
 				<td><input type="text" size="12" name="<?php echo esc_attr( Tha_Settings::OPTION ); ?>[dates][<?php echo (int) $i; ?>][label]" value="<?php echo esc_attr( $row['label'] ); ?>" placeholder="<?php esc_attr_e( 'Premiere', 'theater-auw' ); ?>"></td>
 				<td><input type="text" size="14" name="<?php echo esc_attr( Tha_Settings::OPTION ); ?>[dates][<?php echo (int) $i; ?>][note]" value="<?php echo esc_attr( $row['note'] ); ?>" placeholder="<?php esc_attr_e( 'Sponsoren-Abend', 'theater-auw' ); ?>"></td>
 				<td>
