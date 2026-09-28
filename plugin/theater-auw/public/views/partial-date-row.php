@@ -52,7 +52,7 @@ if ( ! empty( $show['is_today'] ) && 'spielzeit' === $ctx['phase'] ) {
 
 	<?php if ( ! empty( $show['bookable'] ) && $url ) : ?>
 		<a class="tha-btn tha-btn--primary tha-btn--sm tha-date__cta"
-			href="<?php echo esc_url( $url ); ?>" data-tha-tickets target="_blank" rel="noopener">
+			href="<?php echo esc_url( $url ); ?>" target="_blank" rel="noopener">
 			<?php echo esc_html( 'kaufen' === $settings['ticket_cta_mode'] ? __( 'Tickets', 'theater-auw' ) : __( 'Reservieren', 'theater-auw' ) ); ?>
 		</a>
 	<?php endif; ?>

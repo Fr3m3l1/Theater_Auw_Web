@@ -118,17 +118,87 @@ class Tha_Assets {
 		// falsche Stelle, und beim naechsten Bericht faengt es von vorne an.
 		// Erkannt wird deshalb am Beitragstyp.
 		//
-		// Dass das gefahrlos alle Beitraege trifft, liegt an dieser Website:
-		// stvauw.ch/theater ist eine eigene Site im Netzwerk. Der Vereinsblog
-		// mit Turnfesten und Matchberichten liegt auf stvauw.ch und hat mit
-		// dieser Installation nichts zu tun.
+		// Frueher traf das ALLE Beitraege der Website. Das setzte voraus,
+		// dass auf ihr nur Theater steht. Auf stvauw.ch liegt aber der
+		// Vereinsblog auf derselben Website unter /blog/ — dessen Beitraege
+		// bekamen dadurch Theater-Schrift und Papierhintergrund. Getroffen
+		// wird deshalb nur, was unter der Adresse der Theater-Seite liegt
+		// (siehe theater_prefix()).
 		if ( ! empty( $settings['post_singles'] )
 			&& function_exists( 'is_singular' )
-			&& is_singular( 'post' ) ) {
+			&& is_singular( 'post' )
+			&& self::post_in_theater( $post_id, $settings ) ) {
 			return true;
 		}
 
 		return false;
+	}
+
+	/**
+	 * Liegt ein Beitrag unter der Adresse der Theater-Seite?
+	 *
+	 * Die Theater-Adresse wird nicht an den Beitraegen erraten, sondern aus
+	 * den Referenzen in den Einstellungen abgeleitet: die Theater-Seite
+	 * selbst, die beiden Anmeldeseiten und die Rueckblick-Archivseite. Aus
+	 * deren Adressen ergibt sich der gemeinsame Pfad — auf stvauw.ch
+	 * `/theater/`. Ein Beitrag wie /theater/2026/06/2738/ liegt darunter
+	 * und ist ein Bericht; /blog/2026/09/06/gruempi-merenschwand/ liegt
+	 * daneben und bleibt ein gewoehnlicher Blogbeitrag.
+	 *
+	 * Kennt die Installation keine der Referenzen, gilt der ganze Bestand
+	 * als Theater — eine Website, auf der nur Theater steht, braucht keine
+	 * Abgrenzung. So bleibt das alte Verhalten fuer reine Theater-Seiten
+	 * erhalten, und erst der gemischte Fall wird eingegrenzt.
+	 */
+	public static function post_in_theater( $post_id, $settings = null ) {
+		$prefix = self::theater_prefix( $settings );
+		if ( '/' === $prefix ) {
+			return true;
+		}
+		$pfad = tha_url_path( (string) get_permalink( (int) $post_id ) );
+		return $pfad === $prefix || 0 === strpos( $pfad, $prefix );
+	}
+
+	/**
+	 * Der gemeinsame Pfad der Theater-Seiten, aus den Referenzen in den
+	 * Einstellungen gezogen. Er endet immer auf `/` — `/theater/` statt
+	 * `/theater` —, damit ein danebenliegendes `/theaterfest/` nicht mit
+	 * erwischt wird. Ohne verwertbare Referenz bleibt `/` und meint: alles.
+	 */
+	public static function theater_prefix( $settings = null ) {
+		$settings = $settings ? $settings : Tha_Settings::get();
+		foreach ( self::theater_references( $settings ) as $url ) {
+			$dir = tha_dir_prefix( tha_url_path( $url ) );
+			if ( '/' !== $dir ) {
+				return $dir;
+			}
+		}
+		return '/';
+	}
+
+	/**
+	 * Die konfigurierten Adressen, an denen die Theater-Seite erkennbar ist.
+	 * Leere oder unbrauchbare Eintraege fallen weg — eine Seiten-Nummer, die
+	 * auf nichts zeigt, darf die Abgrenzung nicht aufhalten.
+	 */
+	private static function theater_references( $settings ) {
+		$refs = array();
+
+		foreach ( array( 'page_id', 'anmeldung_page_id', 'anmeldung_ok_page_id' ) as $key ) {
+			if ( empty( $settings[ $key ] ) ) {
+				continue;
+			}
+			$url = trim( (string) get_permalink( (int) $settings[ $key ] ) );
+			if ( false !== strpos( $url, '/' ) ) {
+				$refs[] = $url;
+			}
+		}
+
+		if ( ! empty( $settings['rueckblick_archive_url'] ) ) {
+			$refs[] = (string) $settings['rueckblick_archive_url'];
+		}
+
+		return $refs;
 	}
 
 	/**

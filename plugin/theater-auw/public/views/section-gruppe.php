@@ -42,6 +42,20 @@ $size  = Tha_Groups::image_size( $type );
 $ratio = Tha_Groups::ratio( $type );
 $dark  = ! empty( $group['dark'] );
 
+// Logos darf man gross ansehen: in der Wand sind sie eine Reihe, im Dialog
+// eine Information. Bei Porträts und Gruppenfotos bleibt der Klick aus — dort
+// ist das Gesicht in der Kachel schon zu sehen, und ein Dialog, der nichts
+// Neues zeigt, ist nur ein Umweg.
+$zoom    = ( 'logos' === $type );
+$zoombar = array();
+if ( $zoom ) {
+	foreach ( $items as $item ) {
+		if ( ! empty( $item['full'] ) ) {
+			$zoombar[] = $item;
+		}
+	}
+}
+
 $section_classes = 'tha-section ' . ( $dark ? 'tha-section--stage' : 'tha-section--page' );
 ?>
 <section class="<?php echo esc_attr( $section_classes ); ?>" id="gruppe-<?php echo esc_attr( $group['key'] . $ctx['uid'] ); ?>">
@@ -129,13 +143,44 @@ $section_classes = 'tha-section ' . ( $dark ? 'tha-section--stage' : 'tha-sectio
 					// Breite Bilder sind Gruppenaufnahmen — die behalten ihr
 					// eigenes Format, sonst würden die Aussenstehenden
 					// weggeschnitten.
-					echo Tha_Renderer::image( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					$kachel = Tha_Renderer::image(
 						$item['id'],
 						empty( $item['wide'] ) ? $size : 'large',
 						$item['name'] ? $item['name'] : __( 'Bild', 'theater-auw' ),
 						$dark,
 						empty( $item['wide'] ) ? $ratio : ''
 					);
+
+					// Eine Logokachel ist ein Link auf das Bild in voller
+					// Grösse. Der Dialog ist Komfort; ohne JavaScript öffnet
+					// der Link das Bild wie jeder andere Link.
+					//
+					// Die Masse der grossen Fassung stehen im Link, damit der
+					// Dialog sofort die richtige Grösse hat: ein 300px breites
+					// Logo wird nicht auf Kastenbreite gezogen.
+					$ziel = $zoom ? $item['full'] : '';
+					if ( '' !== $ziel ) :
+						?>
+						<a class="tha-zoom" href="<?php echo esc_url( $ziel ); ?>"
+							data-tha-zoom
+							data-tha-w="<?php echo (int) $item['full_w']; ?>"
+							data-tha-h="<?php echo (int) $item['full_h']; ?>"
+							data-tha-name="<?php echo esc_attr( $item['name'] ); ?>"
+							data-tha-role="<?php echo esc_attr( $item['role'] ); ?>"
+							aria-label="<?php
+								echo esc_attr(
+									'' !== $item['name']
+										/* translators: %s: Name des Sponsors */
+										? sprintf( __( '%s — in gross ansehen', 'theater-auw' ), $item['name'] )
+										: __( 'Bild in gross ansehen', 'theater-auw' )
+								);
+							?>">
+							<?php echo $kachel; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+						</a>
+						<?php
+					else :
+						echo $kachel; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					endif;
 					?>
 					<?php if ( '' !== $item['name'] ) : ?>
 						<p class="tha-person__meta">
@@ -151,6 +196,32 @@ $section_classes = 'tha-section ' . ( $dark ? 'tha-section--stage' : 'tha-sectio
 				</li>
 			<?php endforeach; ?>
 		</ul>
+		<?php endif; ?>
+
+		<?php if ( $zoombar ) : ?>
+			<?php
+			// Ein Dialog für die ganze Wand, nicht einer je Kachel: ein
+			// Sponsorenraster hat schnell dreissig Logos, und dreissig
+			// Dialoge wären dreissigmal dasselbe Markup.
+			//
+			// `<dialog>` statt eines eigenen Overlays: Escape, die
+			// Fokussperre und das Zurückgeben des Fokus bringt der Browser
+			// mit. Gefüllt wird er im JavaScript; hier steht nur das Gerüst.
+			?>
+			<dialog class="tha-lightbox" data-tha-lightbox
+				aria-label="<?php esc_attr_e( 'Sponsorenlogo in voller Grösse', 'theater-auw' ); ?>">
+				<figure class="tha-lightbox__figure">
+					<img class="tha-lightbox__img" data-tha-lightbox-img alt="" decoding="async">
+					<figcaption class="tha-lightbox__caption" data-tha-lightbox-caption hidden>
+						<b class="tha-lightbox__name" data-tha-lightbox-name></b>
+						<span class="tha-lightbox__role" data-tha-lightbox-role></span>
+					</figcaption>
+				</figure>
+				<button type="button" class="tha-lightbox__close" data-tha-lightbox-close
+					aria-label="<?php esc_attr_e( 'Schliessen', 'theater-auw' ); ?>">
+					<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+				</button>
+			</dialog>
 		<?php endif; ?>
 	</div>
 </section>

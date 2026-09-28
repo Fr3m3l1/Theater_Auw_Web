@@ -114,72 +114,139 @@
 	);
 
 	/* ------------------------------------------------------------------
-	   Ticketleo-Handoff-Dialog und Sticky-CTA — pro `.tha`-Wurzel.
+	   Logos gross ansehen
+
+	   Der Dialog ist ein `<dialog>` — Escape, Fokussperre und das Zurückgeben
+	   des Fokus bringt der Browser mit. Hier wird nur gefüllt, geöffnet und
+	   geschlossen.
+
+	   Zuerst kommt die Kachel ins Bild, die längst im Browser liegt; erst
+	   wenn die grosse Fassung geladen ist, wird getauscht. Sonst starrt man
+	   nach dem Klick auf einen leeren Rahmen, bis das Foto da ist.
+
+	   Fehlt `showModal()` (alter Browser), geschieht nichts — und der Link
+	   öffnet das Bild wie jeder andere Link.
+	   ------------------------------------------------------------------ */
+
+	document.addEventListener( 'click', function ( event ) {
+		var link = event.target && event.target.closest
+			? event.target.closest( '[data-tha-zoom]' )
+			: null;
+
+		if ( ! link ) {
+			return;
+		}
+
+		var ziel   = link.getAttribute( 'href' );
+		var umfeld = link.closest( '.tha-wrap' ) || document;
+		var dialog = umfeld.querySelector( '[data-tha-lightbox]' );
+
+		if ( ! ziel || ! dialog || typeof dialog.showModal !== 'function' ) {
+			return; // Der Link tut, was er sagt.
+		}
+
+		var bild   = dialog.querySelector( '[data-tha-lightbox-img]' );
+		var kachel = link.querySelector( 'img' );
+		var name   = dialog.querySelector( '[data-tha-lightbox-name]' );
+		var role   = dialog.querySelector( '[data-tha-lightbox-role]' );
+		var note   = dialog.querySelector( '[data-tha-lightbox-caption]' );
+
+		if ( ! bild ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		// Die Grösse des Bildes steht im Link — damit hat der Dialog gleich
+		// beim ersten Bildaufbau seine richtige Grösse und springt nachher
+		// nicht. Ein 300px breites Logo wird nicht auf Kastenbreite gezogen.
+		// Der Server schreibt die Masse nur mit, wenn es wirklich ein Bild
+		// ist; fehlen sie, gilt die Grundeinstellung des Stylesheets.
+		var breit = parseInt( link.getAttribute( 'data-tha-w' ), 10 );
+		var hoch  = parseInt( link.getAttribute( 'data-tha-h' ), 10 );
+
+		if ( breit > 0 && hoch > 0 ) {
+			dialog.style.setProperty( '--tha-zoom-px', breit + 'px' );
+			dialog.style.setProperty( '--tha-zoom-ratio', breit + ' / ' + hoch );
+		}
+
+		bild.alt = kachel && kachel.alt ? kachel.alt : '';
+
+		if ( kachel ) {
+			bild.src = kachel.currentSrc || kachel.src;
+		}
+
+		if ( name ) {
+			name.textContent = link.getAttribute( 'data-tha-name' ) || '';
+		}
+		if ( role ) {
+			role.textContent = link.getAttribute( 'data-tha-role' ) || '';
+		}
+		if ( note ) {
+			note.hidden = ( ! name || '' === name.textContent ) && ( ! role || '' === role.textContent );
+		}
+
+		// Merken, was gerade gezeigt werden soll: klickt jemand während des
+		// Ladens ein zweites Logo an, darf das erste die Anzeige nicht mehr
+		// überschreiben.
+		dialog.setAttribute( 'data-tha-ziel', ziel );
+
+		var gross = new Image();
+		gross.onload = function () {
+			if ( dialog.open && dialog.getAttribute( 'data-tha-ziel' ) === ziel ) {
+				bild.src = ziel;
+			}
+		};
+		gross.src = ziel;
+
+		if ( ! dialog.open ) {
+			dialog.showModal();
+		}
+	} );
+
+	Array.prototype.forEach.call(
+		document.querySelectorAll( '[data-tha-lightbox]' ),
+		function ( dialog ) {
+			var knopf = dialog.querySelector( '[data-tha-lightbox-close]' );
+
+			if ( knopf ) {
+				knopf.addEventListener( 'click', function () {
+					dialog.close();
+				} );
+			}
+
+			// Nur ein Klick auf den Rand trifft das `<dialog>` selbst; ein
+			// Klick auf das Bild trifft das Bild.
+			dialog.addEventListener( 'click', function ( event ) {
+				if ( event.target === dialog ) {
+					dialog.close();
+				}
+			} );
+
+			// Nach dem Schliessen das grosse Bild aus dem Speicher werfen —
+			// eine Sponsorenwand hat schnell dreissig davon.
+			dialog.addEventListener( 'close', function () {
+				var bild = dialog.querySelector( '[data-tha-lightbox-img]' );
+				dialog.removeAttribute( 'data-tha-ziel' );
+				dialog.style.removeProperty( '--tha-zoom-px' );
+				dialog.style.removeProperty( '--tha-zoom-ratio' );
+				if ( bild ) {
+					bild.removeAttribute( 'src' );
+				}
+			} );
+		}
+	);
+
+	/* ------------------------------------------------------------------
+	   Pro `.tha`-Wurzel.
 
 	   Alles wird bewusst innerhalb der jeweiligen Wurzel gesucht statt global.
-	   Sonst greift ein Klick in der zweiten Instanz auf den Dialog der ersten
+	   Sonst greift ein Klick in der zweiten Instanz auf die Leiste der ersten
 	   zu — was auf einer Seite mit mehreren Shortcodes und in der
 	   Phasen-Vorschau sofort auffällt.
 	   ------------------------------------------------------------------ */
 
 	function initRoot( root ) {
-
-		/* --- Dialog --- */
-
-		var dialog = root.querySelector( '[data-tha-dialog]' );
-
-		if ( dialog ) {
-			var goLink = dialog.querySelector( '[data-tha-dialog-go]' );
-			var lastFocus = null;
-
-			var openDialog = function ( url ) {
-				if ( url && goLink ) {
-					goLink.setAttribute( 'href', url );
-				}
-				lastFocus = document.activeElement;
-				dialog.removeAttribute( 'hidden' );
-				document.documentElement.style.overflow = 'hidden';
-				if ( goLink ) {
-					goLink.focus();
-				}
-			};
-
-			var closeDialog = function () {
-				dialog.setAttribute( 'hidden', '' );
-				document.documentElement.style.overflow = '';
-				if ( lastFocus && lastFocus.focus ) {
-					lastFocus.focus();
-				}
-			};
-
-			Array.prototype.forEach.call(
-				dialog.querySelectorAll( '[data-tha-dialog-close]' ),
-				function ( btn ) {
-					btn.addEventListener( 'click', closeDialog );
-				}
-			);
-
-			document.addEventListener( 'keydown', function ( e ) {
-				if ( 'Escape' === e.key && ! dialog.hasAttribute( 'hidden' ) ) {
-					closeDialog();
-				}
-			} );
-
-			// Ticket-Links abfangen und erst erklären, wohin es geht.
-			// Cmd/Ctrl/Shift/Mittelklick bleiben unangetastet — wer in einem
-			// neuen Tab öffnen will, soll das können.
-			root.addEventListener( 'click', function ( e ) {
-				var link = e.target.closest ? e.target.closest( '[data-tha-tickets]' ) : null;
-				if ( ! link || ! root.contains( link ) ) {
-					return;
-				}
-				if ( e.metaKey || e.ctrlKey || e.shiftKey || 1 === e.button ) {
-					return;
-				}
-				e.preventDefault();
-				openDialog( link.getAttribute( 'href' ) );
-			} );
-		}
 
 		/* --- Navigation: Menü auf schmalen Viewports auf/zu --- */
 

@@ -63,7 +63,6 @@ class Tha_Settings {
 			'ticket_sale_start' => '2026-09-15 09:00',
 			'ticket_cta_mode'   => 'reservieren',  // reservieren | kaufen
 			'ticket_url'        => '',
-			'ticket_note'       => 'An der Abendkasse: Bargeld, Karte oder Twint.',
 
 			// ---- Stück ----------------------------------------------------
 			'season_year'   => 2026,
@@ -251,14 +250,22 @@ class Tha_Settings {
 			'content_typo' => true,
 
 			// Die Berichte — normale Beitraege (`post`) unter
-			// /theater/2026/06/2738/. stvauw.ch/theater ist eine eigene
-			// Website im Netzwerk; was hier als Beitrag liegt, gehoert zum
-			// Theater, es gibt keinen fremden Vereinsblog daneben. Trotzdem
-			// erkannte das Plugin sie nicht: kein Shortcode im Inhalt, nicht
-			// die Hauptseite, nicht der Portfolio-Typ. Folge am 26.07.2026:
-			// Navigationsleiste im Theater-Look, darunter aber 794 von 1270
-			// Pixeln Inhalt neben «Neueste Beiträge», «Archiv», «Kategorien»,
-			// «Meta» — und Open Sans in Grau.
+			// /theater/2026/06/2738/. Frueher erkannte das Plugin sie
+			// nicht: kein Shortcode im Inhalt, nicht die Hauptseite, nicht
+			// der Portfolio-Typ. Folge am 26.07.2026: Navigationsleiste im
+			// Theater-Look, darunter aber 794 von 1270 Pixeln Inhalt neben
+			// «Neueste Beiträge», «Archiv», «Kategorien», «Meta» — und Open
+			// Sans in Grau.
+			//
+			// Die Erkennung traf dafuer ALLE Beitraege der Website — und
+			// damit am 06.09.2026 auch den Blogbeitrag «Gruempi
+			// Merenschwand» unter /blog/: Theater-Schrift und
+			// Papierhintergrund, obwohl er nicht zum Theater gehoert.
+			// Getroffen wird jetzt nur, was unter der Adresse der
+			// Theater-Seite liegt (siehe Tha_Assets::theater_prefix); ohne
+			// Referenzen (Seiten, Rueckblick-Archiv) gilt der ganze
+			// Bestand als Theater — eine Website, auf der nur Theater
+			// steht, braucht keine Abgrenzung.
 			'post_singles' => true,
 
 			// ---- Rückblick ----------------------------------------------------
@@ -468,9 +475,6 @@ class Tha_Settings {
 		}
 		if ( $has( 'ticket_url' ) ) {
 			$out['ticket_url'] = self::clean_url( $input['ticket_url'] );
-		}
-		if ( $has( 'ticket_note' ) ) {
-			$out['ticket_note'] = self::clean_text( $input['ticket_note'] );
 		}
 
 		// --- Stück ---------------------------------------------------------

@@ -73,8 +73,6 @@ if ( $ctx['is_preview'] ) {
 		Tha_Renderer::part( 'section-kontakt', $ctx );
 	}
 
-	Tha_Renderer::part( 'partial-ticket-dialog', $ctx );
-
 	if ( ! empty( $settings['sticky_cta'] ) && in_array( $phase, array( 'vorverkauf', 'spielzeit' ), true ) && $ctx['sale_live'] ) {
 		Tha_Renderer::part( 'partial-sticky-cta', $ctx );
 	}

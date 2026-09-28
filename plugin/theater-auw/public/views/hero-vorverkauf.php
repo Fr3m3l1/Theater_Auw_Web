@@ -64,7 +64,7 @@ $url       = $settings['ticket_url'];
 		<div class="tha-hero__actions">
 			<?php if ( $sale_live && $url ) : ?>
 				<a class="tha-btn tha-btn--primary tha-btn--lg" href="<?php echo esc_url( $url ); ?>"
-					data-tha-tickets target="_blank" rel="noopener">
+					target="_blank" rel="noopener">
 					<?php echo esc_html( $ctx['cta_label'] ); ?>
 					<?php Tha_Renderer::part( 'partial-icon-external', $ctx ); ?>
 				</a>

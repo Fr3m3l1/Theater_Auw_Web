@@ -243,6 +243,9 @@ $suggest_for = static function ( $title ) use ( $suggestions, $ist_funktionsseit
 <p class="description" style="max-width:76ch">
 	<?php esc_html_e( 'Berichte sind Beiträge, keine Seiten — sie stehen unter Adressen wie /theater/2026/06/2738/ und tauchen deshalb in der Liste oben nicht auf. Im Menü kommen sie ebenfalls nicht vor: «Berichte» zeigt auf die Update-Seite. Genau darum sind sie beim Umbau übrig geblieben.', 'theater-auw' ); ?>
 </p>
+<p class="description" style="max-width:76ch">
+	<?php esc_html_e( 'Erfasst werden nur Beiträge unter der Adresse der Theater-Seite. Ein Blog neben dem Theater — auf stvauw.ch der Vereinsblog unter /blog/ — bleibt unangetastet.', 'theater-auw' ); ?>
+</p>
 
 <table class="form-table" role="presentation">
 	<tr>
@@ -279,6 +282,15 @@ $berichte = get_posts(
 		'post_status' => array( 'publish', 'draft', 'private' ),
 		'numberposts' => 50,
 	)
+);
+// Dieselbe Abgrenzung wie in der Erkennung: nur Beiträge unter der
+// Theater-Adresse sind Berichte. Blogbeiträge daneben gehoeren nicht in
+// diese Liste — sie bekommen auch keine Theater-Stile.
+$berichte = array_filter(
+	$berichte,
+	static function ( $b ) use ( $settings ) {
+		return Tha_Assets::post_in_theater( (int) $b->ID, $settings );
+	}
 );
 ?>
 <?php if ( $berichte ) : ?>

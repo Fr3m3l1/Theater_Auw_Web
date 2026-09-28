@@ -66,5 +66,4 @@ if ( 'stark' === $settings['isolation'] ) {
 		?>
 		<?php Tha_Renderer::part( 'section-kontakt', $ctx ); ?>
 	<?php endif; ?>
-	<?php Tha_Renderer::part( 'partial-ticket-dialog', $ctx ); ?>
 </div>

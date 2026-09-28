@@ -70,7 +70,7 @@ $nav_id = 'tha-nav-menu' . $ctx['uid'];
 			?>
 			<a class="tha-btn tha-btn--primary tha-btn--sm tha-nav__cta"
 				href="<?php echo esc_url( $settings['ticket_url'] ); ?>"
-				data-tha-tickets target="_blank" rel="noopener"><?php echo esc_html( $ctx['cta_label'] ); ?></a>
+				target="_blank" rel="noopener"><?php echo esc_html( $ctx['cta_label'] ); ?></a>
 		<?php endif; ?>
 	</div>
 

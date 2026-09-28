@@ -762,10 +762,8 @@ body.tha-anmeldung {
 	min-width: 0;
 }
 
-.tha.tha .tha-date__label {
+.tha.tha .tha-date__doors {
 	margin-left: var(--sp-2);
-	font-weight: 600;
-	color: var(--red-600);
 }
 
 .tha.tha .tha-date__today {
@@ -881,69 +879,6 @@ body.tha-anmeldung {
 	font-size: var(--text-caption);
 	color: var(--text-onstage-muted);
 	margin: var(--sp-6) 0 0;
-}
-
-/* --------------------------------------------------------------------------
-   13. Dialog (Ticketleo-Handoff)
-   -------------------------------------------------------------------------- */
-
-.tha.tha .tha-dialog[hidden] {
-	display: none;
-}
-
-.tha.tha .tha-dialog {
-	position: fixed;
-	inset: 0;
-	z-index: 100000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: var(--sp-6);
-}
-
-.tha.tha .tha-dialog__scrim {
-	position: absolute;
-	inset: 0;
-	background: rgba(21, 17, 18, .62);
-}
-
-.tha.tha .tha-dialog__panel {
-	position: relative;
-	background: var(--surface-card);
-	border-radius: var(--radius-lg);
-	box-shadow: var(--shadow-raised);
-	max-width: 480px;
-	width: 100%;
-	padding: var(--sp-8);
-}
-
-.tha.tha .tha-dialog__head {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: var(--sp-4);
-	margin-bottom: var(--sp-3);
-}
-
-.tha.tha .tha-dialog__close {
-	background: none;
-	border: none;
-	cursor: pointer;
-	padding: var(--sp-1);
-	color: var(--gray-500);
-	line-height: 0;
-}
-
-.tha.tha .tha-dialog__body p {
-	font-size: 15px;
-}
-
-.tha.tha .tha-dialog__actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: var(--sp-3);
-	margin-top: var(--sp-6);
-	flex-wrap: wrap;
 }
 
 /* --------------------------------------------------------------------------
@@ -1750,6 +1685,138 @@ body.tha-anmeldung {
 	text-transform: none;
 	letter-spacing: 0;
 	color: var(--text-muted);
+}
+
+/* --- Logos gross ansehen --------------------------------------------------
+
+   In der Wand ist ein Logo eine Reihe, keine Information. Ein Klick öffnet es
+   über der Seite — gross, solange das Bild gross genug ist. Hochskaliert wird
+   nichts: ein 400px-Logo auf 1100px gezogen ist nicht gross, nur unscharf.
+   Deshalb `max-width` statt `width`.
+
+   Der Dialog ist ein `<dialog>`. Escape, die Fokussperre und das Zurückgeben
+   des Fokus bringt der Browser mit; eigenes JavaScript füllt nur Bild und
+   Beschriftung. Ohne JavaScript bleibt der Klick ein gewöhnlicher Link auf
+   das Bild — er funktioniert weiterhin, nur ohne Rahmen drumherum.
+   -------------------------------------------------------------------------- */
+
+.tha.tha .tha-zoom {
+	display: block;
+	color: inherit;
+	text-decoration: none;
+	cursor: zoom-in;
+}
+
+/* Der Rahmen blendet über, statt zu springen. Nur Rahmen und Schatten — die
+   Karte selbst wächst nicht. */
+.tha.tha .tha-people--logos .tha-media,
+.tha.tha .tha-people--logos .tha-placeholder {
+	transition: border-color var(--dur-fast) var(--ease-out),
+		box-shadow var(--dur-fast) var(--ease-out);
+}
+
+/* Nur der Rahmen der Karte reagiert auf das Zeigen. Die Karte selbst wächst
+   nicht — ein Raster, das unter dem Zeiger zappelt, ist unruhig.
+   Das `:is(#left-area, body)` davor ist Pflicht: ohne es verliert der
+   Schatten gegen die Regel des Gruppenbildes weiter unten, die dieselbe
+   Kachel meint und schwerer wiegt. */
+:is(#left-area, body) .tha.tha .tha-zoom:hover .tha-media,
+:is(#left-area, body) .tha.tha .tha-zoom:hover .tha-placeholder {
+	border-color: var(--border-strong);
+	box-shadow: var(--shadow-card);
+}
+
+.tha.tha .tha-lightbox {
+	/* `fit-content` rahmt genau das Bild. Die Grösse kommt aus dem Bild
+	   selbst (siehe unten), nicht aus einer festen Kastenbreite — sonst
+	   stünde ein 300px-Logo in einem 1100px-Kasten. */
+	width: fit-content;
+	max-width: calc(100vw - 24px);
+	max-height: 92vh;
+	padding: var(--sp-4);
+	border: 0;
+	border-radius: var(--radius-lg);
+	background: var(--paper-0);
+	box-shadow: var(--shadow-stage);
+	color: var(--text-body);
+	/* Der Rand bleibt sichtbar: der Schliessen-Knopf sitzt in der Ecke und
+	   würde von einem eigenen Rollbalken angeschnitten. */
+	overflow: visible;
+}
+
+/* Der Vorhang über der Seite. Das Theme hat hier keine Meinung, aber die
+   Standard-Abdunklung des Browsers ist schwächer als das Bühnenbild. */
+.tha.tha .tha-lightbox::backdrop {
+	background: rgba(21, 17, 18, .72);
+}
+
+.tha.tha .tha-lightbox__figure {
+	margin: 0;
+}
+
+/* Das Bild gibt die Grösse vor, gedeckelt von drei Seiten:
+   — die Breite der Datei (`--tha-zoom-px`), damit nichts hochskaliert wird,
+   — die Höhe des Fensters (`72vh`, über das Seitenverhältnis umgerechnet),
+   — die Breite des Fensters für schmale Geräte.
+   Die beiden Werte setzt das JavaScript beim Öffnen aus dem Link; ohne sie
+   gilt ein Kasten, in dem jeder Sponsor Platz hat. */
+.tha.tha .tha-lightbox__img {
+	display: block;
+	width: min(
+		var(--tha-zoom-px, 720px),
+		calc(72vh * var(--tha-zoom-ratio, 4 / 3)),
+		1080px,
+		calc(100vw - 64px)
+	);
+	height: auto;
+	margin: 0 auto;
+	border-radius: var(--radius-sm);
+}
+
+.tha.tha .tha-lightbox__caption {
+	margin: var(--sp-3) 0 0;
+	text-align: center;
+	font-size: var(--text-small);
+	line-height: var(--leading-tight);
+}
+
+.tha.tha .tha-lightbox__name {
+	display: block;
+	font-weight: 600;
+	color: var(--text-body);
+}
+
+.tha.tha .tha-lightbox__role {
+	color: var(--text-muted);
+}
+
+.tha.tha .tha-lightbox__close {
+	position: absolute;
+	top: var(--sp-3);
+	right: var(--sp-3);
+	width: 40px;
+	height: 40px;
+	display: grid;
+	place-items: center;
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-pill);
+	background: var(--ink-950);
+	color: var(--paper-0);
+	cursor: pointer;
+	transition: background var(--dur-fast) var(--ease-out);
+}
+
+.tha.tha .tha-lightbox__close:hover {
+	background: var(--red-600);
+}
+
+/* Am Handy zählt jeder Pixel: weniger Rand, das Bild nimmt den Rest. */
+@media (max-width: 560px) {
+
+	.tha.tha .tha-lightbox {
+		padding: var(--sp-2);
+	}
 }
 
 /* ==========================================================================
@@ -3059,7 +3126,8 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">14.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					<b class="tha-date__label">Premiere</b>
+		20.00 Uhr					<span class="tha-date__doors">Türöffnung 18.00 Uhr</span>
+							<b class="tha-date__label">Premiere</b>
 					</span>
 
 	
@@ -3069,7 +3137,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">18.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					</span>
+		20.00 Uhr							</span>
 
 	
 	</li>
@@ -3078,7 +3146,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">21.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					</span>
+		20.00 Uhr							</span>
 
 	
 	</li>
@@ -3087,7 +3155,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">22.11.</span>
 
 	<span class="tha-date__meta">
-		14.00 Uhr					</span>
+		14.00 Uhr							</span>
 
 	
 	</li>
@@ -3096,7 +3164,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">26.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					</span>
+		20.00 Uhr							</span>
 
 	
 	</li>
@@ -3105,7 +3173,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">28.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					<b class="tha-date__label">Derniere</b>
+		20.00 Uhr							<b class="tha-date__label">Derniere</b>
 					</span>
 
 	
@@ -3113,7 +3181,7 @@ body.tha-bericht .post-meta a {
 							</ul>
 
 			<p class="tha-note">
-				Türöffnung 18.30 Uhr · Mehrzweckhalle Auw · Premiere mit Sponsoren-Abend			</p>
+				Türöffnung 18.30 Uhr · Mehrzweckhalle Auw · Premiere mit Sponsoren-Abend: Türöffnung 18.00 Uhr			</p>
 
 					</div>
 	</div>
@@ -3955,34 +4023,6 @@ body.tha-bericht .post-meta a {
 		<p class="tha-contact__signoff">Herzliche Grüsse, Theater Auw</p>
 	</div>
 </section>
-<div class="tha-dialog" data-tha-dialog hidden>
-	<div class="tha-dialog__scrim" data-tha-dialog-close></div>
-	<div class="tha-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="tha-dialog-title">
-		<div class="tha-dialog__head">
-			<h2 class="tha-h3" id="tha-dialog-title">Weiter zu Ticketleo</h2>
-			<button type="button" class="tha-dialog__close" data-tha-dialog-close aria-label="Schliessen">
-				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-			</button>
-		</div>
-
-		<div class="tha-dialog__body">
-			<p>
-				Der Ticketverkauf läuft über unseren Partner Ticketleo. Dort wählst du Vorstellung, Plätze und Kategorie — die Bestätigung kommt direkt per E-Mail.			</p>
-			<p class="tha-tags">
-				<span class="tha-tag">Platzwahl im Saalplan</span>
-				<span class="tha-tag">Kat. A / Kat. B</span>
-			</p>
-							<p class="tha-note">An der Abendkasse: Bargeld, Karte oder Twint.</p>
-					</div>
-
-		<div class="tha-dialog__actions">
-			<button type="button" class="tha-btn tha-btn--secondary" data-tha-dialog-close>Abbrechen</button>
-			<a class="tha-btn tha-btn--primary" data-tha-dialog-go href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
-				Zu Ticketleo				<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-			</a>
-		</div>
-	</div>
-</div>
 </div>
 </div><div class="pv-panel" data-panel="vorverkauf" hidden><div class="tha tha--vorverkauf tha--width-auto" data-phase="vorverkauf" id="theater-2">
 
@@ -4001,7 +4041,7 @@ body.tha-bericht .post-meta a {
 
 		<div class="tha-hero__actions">
 							<a class="tha-btn tha-btn--primary tha-btn--lg" href="https://reservation.ticketleo.com/event/33310/karriere"
-					data-tha-tickets target="_blank" rel="noopener">
+					target="_blank" rel="noopener">
 					Plätze reservieren					<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
 				</a>
 						<a class="tha-btn tha-btn--stage tha-btn--lg" href="#daten-2">Alle Spieldaten</a>
@@ -4033,12 +4073,13 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">14.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					<b class="tha-date__label">Premiere</b>
+		20.00 Uhr					<span class="tha-date__doors">Türöffnung 18.00 Uhr</span>
+							<b class="tha-date__label">Premiere</b>
 					</span>
 
 	
 			<a class="tha-btn tha-btn--primary tha-btn--sm tha-date__cta"
-			href="https://reservation.ticketleo.com/event/33310/karriere" data-tha-tickets target="_blank" rel="noopener">
+			href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
 			Reservieren		</a>
 	</li>
 									<li class="tha-date">
@@ -4046,11 +4087,11 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">18.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					</span>
+		20.00 Uhr							</span>
 
 	
 			<a class="tha-btn tha-btn--primary tha-btn--sm tha-date__cta"
-			href="https://reservation.ticketleo.com/event/33310/karriere" data-tha-tickets target="_blank" rel="noopener">
+			href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
 			Reservieren		</a>
 	</li>
 									<li class="tha-date">
@@ -4058,11 +4099,11 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">21.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					</span>
+		20.00 Uhr							</span>
 
 	
 			<a class="tha-btn tha-btn--primary tha-btn--sm tha-date__cta"
-			href="https://reservation.ticketleo.com/event/33310/karriere" data-tha-tickets target="_blank" rel="noopener">
+			href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
 			Reservieren		</a>
 	</li>
 									<li class="tha-date">
@@ -4070,11 +4111,11 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">22.11.</span>
 
 	<span class="tha-date__meta">
-		14.00 Uhr					</span>
+		14.00 Uhr							</span>
 
 	
 			<a class="tha-btn tha-btn--primary tha-btn--sm tha-date__cta"
-			href="https://reservation.ticketleo.com/event/33310/karriere" data-tha-tickets target="_blank" rel="noopener">
+			href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
 			Reservieren		</a>
 	</li>
 									<li class="tha-date">
@@ -4082,11 +4123,11 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">26.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					</span>
+		20.00 Uhr							</span>
 
 	
 			<a class="tha-btn tha-btn--primary tha-btn--sm tha-date__cta"
-			href="https://reservation.ticketleo.com/event/33310/karriere" data-tha-tickets target="_blank" rel="noopener">
+			href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
 			Reservieren		</a>
 	</li>
 									<li class="tha-date">
@@ -4094,18 +4135,18 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">28.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					<b class="tha-date__label">Derniere</b>
+		20.00 Uhr							<b class="tha-date__label">Derniere</b>
 					</span>
 
 	
 			<a class="tha-btn tha-btn--primary tha-btn--sm tha-date__cta"
-			href="https://reservation.ticketleo.com/event/33310/karriere" data-tha-tickets target="_blank" rel="noopener">
+			href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
 			Reservieren		</a>
 	</li>
 							</ul>
 
 			<p class="tha-note">
-				Türöffnung 18.30 Uhr · Mehrzweckhalle Auw · Premiere mit Sponsoren-Abend			</p>
+				Türöffnung 18.30 Uhr · Mehrzweckhalle Auw · Premiere mit Sponsoren-Abend: Türöffnung 18.00 Uhr			</p>
 
 					</div>
 	</div>
@@ -4947,38 +4988,10 @@ body.tha-bericht .post-meta a {
 		<p class="tha-contact__signoff">Herzliche Grüsse, Theater Auw</p>
 	</div>
 </section>
-<div class="tha-dialog" data-tha-dialog hidden>
-	<div class="tha-dialog__scrim" data-tha-dialog-close></div>
-	<div class="tha-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="tha-dialog-title-2">
-		<div class="tha-dialog__head">
-			<h2 class="tha-h3" id="tha-dialog-title-2">Weiter zu Ticketleo</h2>
-			<button type="button" class="tha-dialog__close" data-tha-dialog-close aria-label="Schliessen">
-				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-			</button>
-		</div>
-
-		<div class="tha-dialog__body">
-			<p>
-				Der Ticketverkauf läuft über unseren Partner Ticketleo. Dort wählst du Vorstellung, Plätze und Kategorie — die Bestätigung kommt direkt per E-Mail.			</p>
-			<p class="tha-tags">
-				<span class="tha-tag">Platzwahl im Saalplan</span>
-				<span class="tha-tag">Kat. A / Kat. B</span>
-			</p>
-							<p class="tha-note">An der Abendkasse: Bargeld, Karte oder Twint.</p>
-					</div>
-
-		<div class="tha-dialog__actions">
-			<button type="button" class="tha-btn tha-btn--secondary" data-tha-dialog-close>Abbrechen</button>
-			<a class="tha-btn tha-btn--primary" data-tha-dialog-go href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
-				Zu Ticketleo				<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-			</a>
-		</div>
-	</div>
-</div>
 <div class="tha-sticky" data-tha-sticky hidden>
 	<span class="tha-sticky__text">«s&#039;Jubiläum»</span>
 	<a class="tha-btn tha-btn--primary tha-btn--sm" href="https://reservation.ticketleo.com/event/33310/karriere"
-		data-tha-tickets target="_blank" rel="noopener">Plätze reservieren</a>
+		target="_blank" rel="noopener">Plätze reservieren</a>
 </div>
 </div>
 </div><div class="pv-panel" data-panel="spielzeit" hidden><div class="tha tha--spielzeit tha--width-auto" data-phase="spielzeit" id="theater-3">
@@ -4999,7 +5012,7 @@ body.tha-bericht .post-meta a {
 
 		<div class="tha-hero__actions">
 							<a class="tha-btn tha-btn--primary tha-btn--lg" href="https://reservation.ticketleo.com/event/33310/karriere"
-					data-tha-tickets target="_blank" rel="noopener">
+					target="_blank" rel="noopener">
 					Restplätze sichern					<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
 				</a>
 						<a class="tha-btn tha-btn--stage tha-btn--lg" href="#daten-3">Alle Spieldaten</a>
@@ -5031,7 +5044,8 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">14.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					<b class="tha-date__label">Premiere</b>
+		20.00 Uhr					<span class="tha-date__doors">Türöffnung 18.00 Uhr</span>
+							<b class="tha-date__label">Premiere</b>
 					</span>
 
 			<span class="tha-date__status tha-date__status--vorbei">
@@ -5043,7 +5057,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">18.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					</span>
+		20.00 Uhr							</span>
 
 			<span class="tha-date__status tha-date__status--vorbei">
 			Vorbei		</span>
@@ -5054,7 +5068,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">21.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					</span>
+		20.00 Uhr							</span>
 
 			<span class="tha-date__status tha-date__status--vorbei">
 			Vorbei		</span>
@@ -5065,7 +5079,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">22.11.</span>
 
 	<span class="tha-date__meta">
-		14.00 Uhr					</span>
+		14.00 Uhr							</span>
 
 			<span class="tha-date__status tha-date__status--vorbei">
 			Vorbei		</span>
@@ -5076,12 +5090,12 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">26.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr							<b class="tha-date__today">Heute</b>
+		20.00 Uhr									<b class="tha-date__today">Heute</b>
 			</span>
 
 	
 			<a class="tha-btn tha-btn--primary tha-btn--sm tha-date__cta"
-			href="https://reservation.ticketleo.com/event/33310/karriere" data-tha-tickets target="_blank" rel="noopener">
+			href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
 			Reservieren		</a>
 	</li>
 									<li class="tha-date">
@@ -5089,18 +5103,18 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">28.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					<b class="tha-date__label">Derniere</b>
+		20.00 Uhr							<b class="tha-date__label">Derniere</b>
 					</span>
 
 	
 			<a class="tha-btn tha-btn--primary tha-btn--sm tha-date__cta"
-			href="https://reservation.ticketleo.com/event/33310/karriere" data-tha-tickets target="_blank" rel="noopener">
+			href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
 			Reservieren		</a>
 	</li>
 							</ul>
 
 			<p class="tha-note">
-				Türöffnung 18.30 Uhr · Mehrzweckhalle Auw · Premiere mit Sponsoren-Abend			</p>
+				Türöffnung 18.30 Uhr · Mehrzweckhalle Auw · Premiere mit Sponsoren-Abend: Türöffnung 18.00 Uhr			</p>
 
 					</div>
 	</div>
@@ -5942,38 +5956,10 @@ body.tha-bericht .post-meta a {
 		<p class="tha-contact__signoff">Herzliche Grüsse, Theater Auw</p>
 	</div>
 </section>
-<div class="tha-dialog" data-tha-dialog hidden>
-	<div class="tha-dialog__scrim" data-tha-dialog-close></div>
-	<div class="tha-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="tha-dialog-title-3">
-		<div class="tha-dialog__head">
-			<h2 class="tha-h3" id="tha-dialog-title-3">Weiter zu Ticketleo</h2>
-			<button type="button" class="tha-dialog__close" data-tha-dialog-close aria-label="Schliessen">
-				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-			</button>
-		</div>
-
-		<div class="tha-dialog__body">
-			<p>
-				Der Ticketverkauf läuft über unseren Partner Ticketleo. Dort wählst du Vorstellung, Plätze und Kategorie — die Bestätigung kommt direkt per E-Mail.			</p>
-			<p class="tha-tags">
-				<span class="tha-tag">Platzwahl im Saalplan</span>
-				<span class="tha-tag">Kat. A / Kat. B</span>
-			</p>
-							<p class="tha-note">An der Abendkasse: Bargeld, Karte oder Twint.</p>
-					</div>
-
-		<div class="tha-dialog__actions">
-			<button type="button" class="tha-btn tha-btn--secondary" data-tha-dialog-close>Abbrechen</button>
-			<a class="tha-btn tha-btn--primary" data-tha-dialog-go href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
-				Zu Ticketleo				<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-			</a>
-		</div>
-	</div>
-</div>
 <div class="tha-sticky" data-tha-sticky hidden>
 	<span class="tha-sticky__text">«s&#039;Jubiläum»</span>
 	<a class="tha-btn tha-btn--primary tha-btn--sm" href="https://reservation.ticketleo.com/event/33310/karriere"
-		data-tha-tickets target="_blank" rel="noopener">Plätze reservieren</a>
+		target="_blank" rel="noopener">Plätze reservieren</a>
 </div>
 </div>
 </div><div class="pv-panel" data-panel="danke" hidden><div class="tha tha--danke tha--width-auto" data-phase="danke" id="theater-4">
@@ -6012,7 +5998,8 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">14.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					<b class="tha-date__label">Premiere</b>
+		20.00 Uhr					<span class="tha-date__doors">Türöffnung 18.00 Uhr</span>
+							<b class="tha-date__label">Premiere</b>
 					</span>
 
 			<span class="tha-date__status tha-date__status--vorbei">
@@ -6024,7 +6011,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">18.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					</span>
+		20.00 Uhr							</span>
 
 			<span class="tha-date__status tha-date__status--vorbei">
 			Vorbei		</span>
@@ -6035,7 +6022,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">21.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					</span>
+		20.00 Uhr							</span>
 
 			<span class="tha-date__status tha-date__status--vorbei">
 			Vorbei		</span>
@@ -6046,7 +6033,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">22.11.</span>
 
 	<span class="tha-date__meta">
-		14.00 Uhr					</span>
+		14.00 Uhr							</span>
 
 			<span class="tha-date__status tha-date__status--vorbei">
 			Vorbei		</span>
@@ -6057,7 +6044,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">26.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					</span>
+		20.00 Uhr							</span>
 
 			<span class="tha-date__status tha-date__status--vorbei">
 			Vorbei		</span>
@@ -6068,7 +6055,7 @@ body.tha-bericht .post-meta a {
 	<span class="tha-date__d">28.11.</span>
 
 	<span class="tha-date__meta">
-		20.00 Uhr					<b class="tha-date__label">Derniere</b>
+		20.00 Uhr							<b class="tha-date__label">Derniere</b>
 					</span>
 
 			<span class="tha-date__status tha-date__status--vorbei">
@@ -6078,7 +6065,7 @@ body.tha-bericht .post-meta a {
 							</ul>
 
 			<p class="tha-note">
-				Türöffnung 18.30 Uhr · Mehrzweckhalle Auw · Premiere mit Sponsoren-Abend			</p>
+				Türöffnung 18.30 Uhr · Mehrzweckhalle Auw · Premiere mit Sponsoren-Abend: Türöffnung 18.00 Uhr			</p>
 
 					</div>
 	</div>
@@ -6920,34 +6907,6 @@ body.tha-bericht .post-meta a {
 		<p class="tha-contact__signoff">Herzliche Grüsse, Theater Auw</p>
 	</div>
 </section>
-<div class="tha-dialog" data-tha-dialog hidden>
-	<div class="tha-dialog__scrim" data-tha-dialog-close></div>
-	<div class="tha-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="tha-dialog-title-4">
-		<div class="tha-dialog__head">
-			<h2 class="tha-h3" id="tha-dialog-title-4">Weiter zu Ticketleo</h2>
-			<button type="button" class="tha-dialog__close" data-tha-dialog-close aria-label="Schliessen">
-				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-			</button>
-		</div>
-
-		<div class="tha-dialog__body">
-			<p>
-				Der Ticketverkauf läuft über unseren Partner Ticketleo. Dort wählst du Vorstellung, Plätze und Kategorie — die Bestätigung kommt direkt per E-Mail.			</p>
-			<p class="tha-tags">
-				<span class="tha-tag">Platzwahl im Saalplan</span>
-				<span class="tha-tag">Kat. A / Kat. B</span>
-			</p>
-							<p class="tha-note">An der Abendkasse: Bargeld, Karte oder Twint.</p>
-					</div>
-
-		<div class="tha-dialog__actions">
-			<button type="button" class="tha-btn tha-btn--secondary" data-tha-dialog-close>Abbrechen</button>
-			<a class="tha-btn tha-btn--primary" data-tha-dialog-go href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
-				Zu Ticketleo				<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-			</a>
-		</div>
-	</div>
-</div>
 </div>
 </div><div class="pv-panel" data-panel="schauspieler" hidden><div class="tha tha--vorbereitung tha--width-auto tha--sub" data-phase="vorbereitung">
 
@@ -7040,6 +6999,7 @@ body.tha-bericht .post-meta a {
 													</p>
 															</li>
 					</ul>
+		
 			</div>
 </section>
 	
@@ -7055,35 +7015,7 @@ body.tha-bericht .post-meta a {
 		<p class="tha-contact__signoff">Herzliche Grüsse, Theater Auw</p>
 	</div>
 </section>
-		<div class="tha-dialog" data-tha-dialog hidden>
-	<div class="tha-dialog__scrim" data-tha-dialog-close></div>
-	<div class="tha-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="tha-dialog-title-5">
-		<div class="tha-dialog__head">
-			<h2 class="tha-h3" id="tha-dialog-title-5">Weiter zu Ticketleo</h2>
-			<button type="button" class="tha-dialog__close" data-tha-dialog-close aria-label="Schliessen">
-				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-			</button>
-		</div>
-
-		<div class="tha-dialog__body">
-			<p>
-				Der Ticketverkauf läuft über unseren Partner Ticketleo. Dort wählst du Vorstellung, Plätze und Kategorie — die Bestätigung kommt direkt per E-Mail.			</p>
-			<p class="tha-tags">
-				<span class="tha-tag">Platzwahl im Saalplan</span>
-				<span class="tha-tag">Kat. A / Kat. B</span>
-			</p>
-							<p class="tha-note">An der Abendkasse: Bargeld, Karte oder Twint.</p>
-					</div>
-
-		<div class="tha-dialog__actions">
-			<button type="button" class="tha-btn tha-btn--secondary" data-tha-dialog-close>Abbrechen</button>
-			<a class="tha-btn tha-btn--primary" data-tha-dialog-go href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
-				Zu Ticketleo				<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-			</a>
-		</div>
 	</div>
-</div>
-</div>
 </div><div class="pv-panel" data-panel="kulissen" hidden><div class="tha tha--vorbereitung tha--width-auto tha--sub" data-phase="vorbereitung">
 
 	
@@ -7160,6 +7092,7 @@ body.tha-bericht .post-meta a {
 													</p>
 															</li>
 					</ul>
+		
 			</div>
 </section>
 	
@@ -7175,35 +7108,7 @@ body.tha-bericht .post-meta a {
 		<p class="tha-contact__signoff">Herzliche Grüsse, Theater Auw</p>
 	</div>
 </section>
-		<div class="tha-dialog" data-tha-dialog hidden>
-	<div class="tha-dialog__scrim" data-tha-dialog-close></div>
-	<div class="tha-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="tha-dialog-title-6">
-		<div class="tha-dialog__head">
-			<h2 class="tha-h3" id="tha-dialog-title-6">Weiter zu Ticketleo</h2>
-			<button type="button" class="tha-dialog__close" data-tha-dialog-close aria-label="Schliessen">
-				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-			</button>
-		</div>
-
-		<div class="tha-dialog__body">
-			<p>
-				Der Ticketverkauf läuft über unseren Partner Ticketleo. Dort wählst du Vorstellung, Plätze und Kategorie — die Bestätigung kommt direkt per E-Mail.			</p>
-			<p class="tha-tags">
-				<span class="tha-tag">Platzwahl im Saalplan</span>
-				<span class="tha-tag">Kat. A / Kat. B</span>
-			</p>
-							<p class="tha-note">An der Abendkasse: Bargeld, Karte oder Twint.</p>
-					</div>
-
-		<div class="tha-dialog__actions">
-			<button type="button" class="tha-btn tha-btn--secondary" data-tha-dialog-close>Abbrechen</button>
-			<a class="tha-btn tha-btn--primary" data-tha-dialog-go href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
-				Zu Ticketleo				<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-			</a>
-		</div>
 	</div>
-</div>
-</div>
 </div><div class="pv-panel" data-panel="sponsoren" hidden><div class="tha tha--vorbereitung tha--width-auto tha--sub" data-phase="vorbereitung">
 
 	
@@ -7302,6 +7207,7 @@ body.tha-bericht .post-meta a {
 													</p>
 															</li>
 					</ul>
+		
 			</div>
 </section>
 	
@@ -7317,35 +7223,7 @@ body.tha-bericht .post-meta a {
 		<p class="tha-contact__signoff">Herzliche Grüsse, Theater Auw</p>
 	</div>
 </section>
-		<div class="tha-dialog" data-tha-dialog hidden>
-	<div class="tha-dialog__scrim" data-tha-dialog-close></div>
-	<div class="tha-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="tha-dialog-title-7">
-		<div class="tha-dialog__head">
-			<h2 class="tha-h3" id="tha-dialog-title-7">Weiter zu Ticketleo</h2>
-			<button type="button" class="tha-dialog__close" data-tha-dialog-close aria-label="Schliessen">
-				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-			</button>
-		</div>
-
-		<div class="tha-dialog__body">
-			<p>
-				Der Ticketverkauf läuft über unseren Partner Ticketleo. Dort wählst du Vorstellung, Plätze und Kategorie — die Bestätigung kommt direkt per E-Mail.			</p>
-			<p class="tha-tags">
-				<span class="tha-tag">Platzwahl im Saalplan</span>
-				<span class="tha-tag">Kat. A / Kat. B</span>
-			</p>
-							<p class="tha-note">An der Abendkasse: Bargeld, Karte oder Twint.</p>
-					</div>
-
-		<div class="tha-dialog__actions">
-			<button type="button" class="tha-btn tha-btn--secondary" data-tha-dialog-close>Abbrechen</button>
-			<a class="tha-btn tha-btn--primary" data-tha-dialog-go href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
-				Zu Ticketleo				<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-			</a>
-		</div>
 	</div>
-</div>
-</div>
 </div><div class="pv-panel" data-panel="karte" hidden><div class="tha tha--vorbereitung tha--width-auto tha--sub" data-phase="vorbereitung">
 
 	
@@ -7604,35 +7482,7 @@ body.tha-bericht .post-meta a {
 		<p class="tha-contact__signoff">Herzliche Grüsse, Theater Auw</p>
 	</div>
 </section>
-		<div class="tha-dialog" data-tha-dialog hidden>
-	<div class="tha-dialog__scrim" data-tha-dialog-close></div>
-	<div class="tha-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="tha-dialog-title-8">
-		<div class="tha-dialog__head">
-			<h2 class="tha-h3" id="tha-dialog-title-8">Weiter zu Ticketleo</h2>
-			<button type="button" class="tha-dialog__close" data-tha-dialog-close aria-label="Schliessen">
-				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-			</button>
-		</div>
-
-		<div class="tha-dialog__body">
-			<p>
-				Der Ticketverkauf läuft über unseren Partner Ticketleo. Dort wählst du Vorstellung, Plätze und Kategorie — die Bestätigung kommt direkt per E-Mail.			</p>
-			<p class="tha-tags">
-				<span class="tha-tag">Platzwahl im Saalplan</span>
-				<span class="tha-tag">Kat. A / Kat. B</span>
-			</p>
-							<p class="tha-note">An der Abendkasse: Bargeld, Karte oder Twint.</p>
-					</div>
-
-		<div class="tha-dialog__actions">
-			<button type="button" class="tha-btn tha-btn--secondary" data-tha-dialog-close>Abbrechen</button>
-			<a class="tha-btn tha-btn--primary" data-tha-dialog-go href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
-				Zu Ticketleo				<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-			</a>
-		</div>
 	</div>
-</div>
-</div>
 </div><div class="pv-panel" data-panel="updates" hidden><div class="tha tha--vorbereitung tha--width-auto tha--sub" data-phase="vorbereitung">
 
 	
@@ -7727,35 +7577,7 @@ body.tha-bericht .post-meta a {
 		<p class="tha-contact__signoff">Herzliche Grüsse, Theater Auw</p>
 	</div>
 </section>
-		<div class="tha-dialog" data-tha-dialog hidden>
-	<div class="tha-dialog__scrim" data-tha-dialog-close></div>
-	<div class="tha-dialog__panel" role="dialog" aria-modal="true" aria-labelledby="tha-dialog-title-9">
-		<div class="tha-dialog__head">
-			<h2 class="tha-h3" id="tha-dialog-title-9">Weiter zu Ticketleo</h2>
-			<button type="button" class="tha-dialog__close" data-tha-dialog-close aria-label="Schliessen">
-				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-			</button>
-		</div>
-
-		<div class="tha-dialog__body">
-			<p>
-				Der Ticketverkauf läuft über unseren Partner Ticketleo. Dort wählst du Vorstellung, Plätze und Kategorie — die Bestätigung kommt direkt per E-Mail.			</p>
-			<p class="tha-tags">
-				<span class="tha-tag">Platzwahl im Saalplan</span>
-				<span class="tha-tag">Kat. A / Kat. B</span>
-			</p>
-							<p class="tha-note">An der Abendkasse: Bargeld, Karte oder Twint.</p>
-					</div>
-
-		<div class="tha-dialog__actions">
-			<button type="button" class="tha-btn tha-btn--secondary" data-tha-dialog-close>Abbrechen</button>
-			<a class="tha-btn tha-btn--primary" data-tha-dialog-go href="https://reservation.ticketleo.com/event/33310/karriere" target="_blank" rel="noopener">
-				Zu Ticketleo				<svg class="tha-icon" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-			</a>
-		</div>
 	</div>
-</div>
-</div>
 </div>
 <script>/**
  * Theater Auw — Frontend.
@@ -7873,72 +7695,139 @@ body.tha-bericht .post-meta a {
 	);
 
 	/* ------------------------------------------------------------------
-	   Ticketleo-Handoff-Dialog und Sticky-CTA — pro `.tha`-Wurzel.
+	   Logos gross ansehen
+
+	   Der Dialog ist ein `<dialog>` — Escape, Fokussperre und das Zurückgeben
+	   des Fokus bringt der Browser mit. Hier wird nur gefüllt, geöffnet und
+	   geschlossen.
+
+	   Zuerst kommt die Kachel ins Bild, die längst im Browser liegt; erst
+	   wenn die grosse Fassung geladen ist, wird getauscht. Sonst starrt man
+	   nach dem Klick auf einen leeren Rahmen, bis das Foto da ist.
+
+	   Fehlt `showModal()` (alter Browser), geschieht nichts — und der Link
+	   öffnet das Bild wie jeder andere Link.
+	   ------------------------------------------------------------------ */
+
+	document.addEventListener( 'click', function ( event ) {
+		var link = event.target && event.target.closest
+			? event.target.closest( '[data-tha-zoom]' )
+			: null;
+
+		if ( ! link ) {
+			return;
+		}
+
+		var ziel   = link.getAttribute( 'href' );
+		var umfeld = link.closest( '.tha-wrap' ) || document;
+		var dialog = umfeld.querySelector( '[data-tha-lightbox]' );
+
+		if ( ! ziel || ! dialog || typeof dialog.showModal !== 'function' ) {
+			return; // Der Link tut, was er sagt.
+		}
+
+		var bild   = dialog.querySelector( '[data-tha-lightbox-img]' );
+		var kachel = link.querySelector( 'img' );
+		var name   = dialog.querySelector( '[data-tha-lightbox-name]' );
+		var role   = dialog.querySelector( '[data-tha-lightbox-role]' );
+		var note   = dialog.querySelector( '[data-tha-lightbox-caption]' );
+
+		if ( ! bild ) {
+			return;
+		}
+
+		event.preventDefault();
+
+		// Die Grösse des Bildes steht im Link — damit hat der Dialog gleich
+		// beim ersten Bildaufbau seine richtige Grösse und springt nachher
+		// nicht. Ein 300px breites Logo wird nicht auf Kastenbreite gezogen.
+		// Der Server schreibt die Masse nur mit, wenn es wirklich ein Bild
+		// ist; fehlen sie, gilt die Grundeinstellung des Stylesheets.
+		var breit = parseInt( link.getAttribute( 'data-tha-w' ), 10 );
+		var hoch  = parseInt( link.getAttribute( 'data-tha-h' ), 10 );
+
+		if ( breit > 0 && hoch > 0 ) {
+			dialog.style.setProperty( '--tha-zoom-px', breit + 'px' );
+			dialog.style.setProperty( '--tha-zoom-ratio', breit + ' / ' + hoch );
+		}
+
+		bild.alt = kachel && kachel.alt ? kachel.alt : '';
+
+		if ( kachel ) {
+			bild.src = kachel.currentSrc || kachel.src;
+		}
+
+		if ( name ) {
+			name.textContent = link.getAttribute( 'data-tha-name' ) || '';
+		}
+		if ( role ) {
+			role.textContent = link.getAttribute( 'data-tha-role' ) || '';
+		}
+		if ( note ) {
+			note.hidden = ( ! name || '' === name.textContent ) && ( ! role || '' === role.textContent );
+		}
+
+		// Merken, was gerade gezeigt werden soll: klickt jemand während des
+		// Ladens ein zweites Logo an, darf das erste die Anzeige nicht mehr
+		// überschreiben.
+		dialog.setAttribute( 'data-tha-ziel', ziel );
+
+		var gross = new Image();
+		gross.onload = function () {
+			if ( dialog.open && dialog.getAttribute( 'data-tha-ziel' ) === ziel ) {
+				bild.src = ziel;
+			}
+		};
+		gross.src = ziel;
+
+		if ( ! dialog.open ) {
+			dialog.showModal();
+		}
+	} );
+
+	Array.prototype.forEach.call(
+		document.querySelectorAll( '[data-tha-lightbox]' ),
+		function ( dialog ) {
+			var knopf = dialog.querySelector( '[data-tha-lightbox-close]' );
+
+			if ( knopf ) {
+				knopf.addEventListener( 'click', function () {
+					dialog.close();
+				} );
+			}
+
+			// Nur ein Klick auf den Rand trifft das `<dialog>` selbst; ein
+			// Klick auf das Bild trifft das Bild.
+			dialog.addEventListener( 'click', function ( event ) {
+				if ( event.target === dialog ) {
+					dialog.close();
+				}
+			} );
+
+			// Nach dem Schliessen das grosse Bild aus dem Speicher werfen —
+			// eine Sponsorenwand hat schnell dreissig davon.
+			dialog.addEventListener( 'close', function () {
+				var bild = dialog.querySelector( '[data-tha-lightbox-img]' );
+				dialog.removeAttribute( 'data-tha-ziel' );
+				dialog.style.removeProperty( '--tha-zoom-px' );
+				dialog.style.removeProperty( '--tha-zoom-ratio' );
+				if ( bild ) {
+					bild.removeAttribute( 'src' );
+				}
+			} );
+		}
+	);
+
+	/* ------------------------------------------------------------------
+	   Pro `.tha`-Wurzel.
 
 	   Alles wird bewusst innerhalb der jeweiligen Wurzel gesucht statt global.
-	   Sonst greift ein Klick in der zweiten Instanz auf den Dialog der ersten
+	   Sonst greift ein Klick in der zweiten Instanz auf die Leiste der ersten
 	   zu — was auf einer Seite mit mehreren Shortcodes und in der
 	   Phasen-Vorschau sofort auffällt.
 	   ------------------------------------------------------------------ */
 
 	function initRoot( root ) {
-
-		/* --- Dialog --- */
-
-		var dialog = root.querySelector( '[data-tha-dialog]' );
-
-		if ( dialog ) {
-			var goLink = dialog.querySelector( '[data-tha-dialog-go]' );
-			var lastFocus = null;
-
-			var openDialog = function ( url ) {
-				if ( url && goLink ) {
-					goLink.setAttribute( 'href', url );
-				}
-				lastFocus = document.activeElement;
-				dialog.removeAttribute( 'hidden' );
-				document.documentElement.style.overflow = 'hidden';
-				if ( goLink ) {
-					goLink.focus();
-				}
-			};
-
-			var closeDialog = function () {
-				dialog.setAttribute( 'hidden', '' );
-				document.documentElement.style.overflow = '';
-				if ( lastFocus && lastFocus.focus ) {
-					lastFocus.focus();
-				}
-			};
-
-			Array.prototype.forEach.call(
-				dialog.querySelectorAll( '[data-tha-dialog-close]' ),
-				function ( btn ) {
-					btn.addEventListener( 'click', closeDialog );
-				}
-			);
-
-			document.addEventListener( 'keydown', function ( e ) {
-				if ( 'Escape' === e.key && ! dialog.hasAttribute( 'hidden' ) ) {
-					closeDialog();
-				}
-			} );
-
-			// Ticket-Links abfangen und erst erklären, wohin es geht.
-			// Cmd/Ctrl/Shift/Mittelklick bleiben unangetastet — wer in einem
-			// neuen Tab öffnen will, soll das können.
-			root.addEventListener( 'click', function ( e ) {
-				var link = e.target.closest ? e.target.closest( '[data-tha-tickets]' ) : null;
-				if ( ! link || ! root.contains( link ) ) {
-					return;
-				}
-				if ( e.metaKey || e.ctrlKey || e.shiftKey || 1 === e.button ) {
-					return;
-				}
-				e.preventDefault();
-				openDialog( link.getAttribute( 'href' ) );
-			} );
-		}
 
 		/* --- Navigation: Menü auf schmalen Viewports auf/zu --- */
 

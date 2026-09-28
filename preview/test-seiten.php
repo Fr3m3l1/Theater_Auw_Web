@@ -25,6 +25,7 @@ require THA_DIR . 'includes/class-tha-groups.php';
 require THA_DIR . 'includes/class-tha-chronik.php';
 require THA_DIR . 'includes/class-tha-renderer.php';
 require THA_DIR . 'includes/class-tha-shortcode.php';
+require THA_DIR . 'includes/class-tha-assets.php';
 // Die Uebersicht rendert inzwischen auch Formularfelder — dafuer braucht sie
 // die Feld-Helfer aus Tha_Admin. Nur die Klasse laden, nichts registrieren.
 require THA_DIR . 'admin/class-tha-admin.php';

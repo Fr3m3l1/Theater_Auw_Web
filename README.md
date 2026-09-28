@@ -37,6 +37,16 @@ php preview/test-phase.php
 Prüft die Phasenlogik: Schwellen, manuelle Übersteuerung, abgeleitete Zustände, Countdown — und die Zeitumstellung Ende Oktober, die mitten in die Saison fällt.
 
 ```bash
+php preview/test-seiten.php
+```
+Prüft die Shortcode-Vorschläge an den echten Seitentiteln von stvauw.ch — «Anmeldung Sponsoring» bekommt keinen Galerie-Vorschlag, «Sponsoren» schon.
+
+```bash
+php preview/test-galerie.php
+```
+Prüft die Sponsorenwand: jede Kachel verlinkt ihr eigenes Bild gross, Porträts und Gruppenfotos bleiben Kacheln, und ein Bild ohne Adresse bekommt keinen toten Link.
+
+```bash
 php preview/render.php
 ```
 Rendert `preview/{vorbereitung,vorverkauf,spielzeit,danke}.html`, jede zu einem Zeitpunkt, an dem sie auch wirklich gälte.
@@ -62,7 +72,7 @@ Kein npm, kein Build-Toolchain. Das hier ist die Website eines Dorfvereins — s
 
 ## Entscheidungen, die nicht offensichtlich sind
 
-**Serverseitiges PHP statt React.** Das UI-Kit im Design-System ist ein React-Prototyp mit Babel-im-Browser von einem CDN — eine Design-Vorlage, kein Auslieferungsformat. Die Seite ist statischer Inhalt aus rund zehn Optionen; Suchmaschinen und WhatsApp-Vorschauen brauchen Titel, Daten und Ort im HTML. JavaScript bleibt auf Countdown, Dialog und Sticky-Leiste beschränkt, alles davon reiner Komfort.
+**Serverseitiges PHP statt React.** Das UI-Kit im Design-System ist ein React-Prototyp mit Babel-im-Browser von einem CDN — eine Design-Vorlage, kein Auslieferungsformat. Die Seite ist statischer Inhalt aus rund zehn Optionen; Suchmaschinen und WhatsApp-Vorschauen brauchen Titel, Daten und Ort im HTML. JavaScript bleibt auf Countdown, Sticky-Leiste und den Bilddialog beschränkt, alles davon reiner Komfort.
 
 **Keine Cascade Layers.** Ungelayerte Autoren-Stile schlagen *alle* gelayerten. Das Theme ist mit grosser Sicherheit ungelayert — in einem Layer würden wir jeden Konflikt verlieren. Stattdessen: `all: revert` als Grenze mit `:where()` (null Spezifität) und durchgehend doppelt geklasste Selektoren `.tha.tha …`, was (0,2,x) ergibt und `.entry-content h1` (0,1,1) schlägt.
 
@@ -77,6 +87,8 @@ Kein npm, kein Build-Toolchain. Das hier ist die Website eines Dorfvereins — s
 **Kleine Knöpfe, grosse Wirkung verlangen nach einer Frist.** Solange gesammelt wird, steht auf der Hauptseite eine dunkle Sektion «Sponsoren gesucht» mit einem Knopf auf die Anmeldeseite. Sie rechnet mit dem Kalender — niemand muss am Tag nach dem Stichtag daran denken, sie abzuschalten.
 
 **`ß` ist ein Build-Fehler.** `build.sh` bricht ab, wenn im Quelltext ein Eszett auftaucht, und der Sanitizer ersetzt es in allen Backend-Eingaben durch «ss». Schweizer Rechtschreibung, automatisch durchgesetzt.
+
+**Ein Sponsorenlogo darf man gross ansehen.** In der Wand ist ein Logo eine Reihe; ein Klick öffnet es in einem `<dialog>`. Escape, Fokussperre und das Zurückgeben des Fokus bringt der Browser mit — eigenes JavaScript füllt nur Bild und Beschriftung. Der Klick ist ein echter `<a href>` auf das Bild in voller Grösse: ohne JavaScript öffnet er das Bild wie jeder andere Link. Die Grösse des Dialogs kommt aus den Massen der Datei, die im Link stehen — ein 300px-Logo wird nicht auf Kastenbreite gezogen, denn grösser als die Datei wird es nur unscharf. Nur Logo-Gruppen sind anklickbar; Porträts und Gruppenfotos sind in der Kachel schon zu sehen.
 
 ---
 

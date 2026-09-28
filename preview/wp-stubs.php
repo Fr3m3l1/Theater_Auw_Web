@@ -187,12 +187,24 @@ function current_user_can( $cap ) {
 	return false;
 }
 function get_queried_object_id() {
+	if ( array_key_exists( 'tha_preview_post_id', $GLOBALS ) ) {
+		return (int) $GLOBALS['tha_preview_post_id'];
+	}
 	return 0;
 }
 // Template-Abfragen: die Vorschau steht immer mitten auf einer Seite im Loop.
 // Das genuegt fuer die Anmeldeseite, deren Seitenkopf sich daran orientiert.
-function is_singular() {
-	return true;
+// Tests koennen mit $GLOBALS['tha_preview_singular'] eine konkrete
+// Beitragsart vorgeben — dann antwortet die Abfrage nur noch auf diese.
+function is_singular( $type = null ) {
+	if ( ! array_key_exists( 'tha_preview_singular', $GLOBALS ) ) {
+		return true;
+	}
+	$current = $GLOBALS['tha_preview_singular'];
+	if ( null === $type ) {
+		return (bool) $current;
+	}
+	return is_string( $current ) ? $current === (string) $type : (bool) $current;
 }
 function in_the_loop() {
 	return true;
@@ -227,9 +239,25 @@ function wp_get_attachment_image( $id, $size = 'thumbnail', $icon = false, $attr
 	return '';
 }
 function wp_get_attachment_image_url( $id, $size = 'thumbnail' ) {
-	return '';
+	// In der Vorschau gibt es keine Mediathek — also auch keine Adresse, und
+	// die Kacheln bleiben Platzhalter. Ein Test kann hier Adressen
+	// hinterlegen, um zu prüfen, was das Plugin daraus baut.
+	$id = (int) $id;
+
+	return isset( $GLOBALS['tha_preview_urls'][ $id ] ) ? $GLOBALS['tha_preview_urls'][ $id ] : '';
+}
+function wp_get_attachment_image_src( $id, $size = 'thumbnail', $icon = false ) {
+	// Dasselbe Bild wie oben, mit festen Massen: 1600 × 1200. Wer die Masse
+	// prüfen will, prüft genau diese.
+	$url = wp_get_attachment_image_url( $id, $size );
+
+	return '' === $url ? false : array( $url, 1600, 1200, false );
 }
 function get_permalink( $id = 0 ) {
+	if ( array_key_exists( 'tha_preview_permalinks', $GLOBALS )
+		&& array_key_exists( (int) $id, $GLOBALS['tha_preview_permalinks'] ) ) {
+		return $GLOBALS['tha_preview_permalinks'][ (int) $id ];
+	}
 	return '#';
 }
 

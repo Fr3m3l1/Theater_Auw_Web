@@ -16,5 +16,5 @@ if ( ! $settings['ticket_url'] ) {
 <div class="tha-sticky" data-tha-sticky hidden>
 	<span class="tha-sticky__text"><?php echo esc_html( tha_guillemets( $settings['play_title'] ) ); ?></span>
 	<a class="tha-btn tha-btn--primary tha-btn--sm" href="<?php echo esc_url( $settings['ticket_url'] ); ?>"
-		data-tha-tickets target="_blank" rel="noopener"><?php echo esc_html( $ctx['cta_label'] ); ?></a>
+		target="_blank" rel="noopener"><?php echo esc_html( $ctx['cta_label'] ); ?></a>
 </div>

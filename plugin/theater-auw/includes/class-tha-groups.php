@@ -56,7 +56,7 @@ class Tha_Groups {
 	/**
 	 * Die Einträge einer Gruppe, fertig aufbereitet.
 	 *
-	 * @return array Liste aus id, name, role, url.
+	 * @return array Liste aus id, name, role, text, wide, full, full_w, full_h.
 	 */
 	public static function items( array $group ) {
 		$out = array();
@@ -76,6 +76,7 @@ class Tha_Groups {
 			// selbst bleibt unverändert, es kann anderswo noch verwendet werden.
 			$auto  = self::label_for( $id );
 			$eigen = isset( $labels[ $id ] ) ? self::normalize_label( $labels[ $id ] ) : self::empty_label();
+			$voll  = self::full_size( $id );
 
 			$label = array();
 			foreach ( array( 'name', 'role', 'text' ) as $feld ) {
@@ -89,6 +90,11 @@ class Tha_Groups {
 				'text' => $label['text'],
 				// Gruppenaufnahmen stehen breiter und behalten ihr Format.
 				'wide' => in_array( $id, $wide, true ),
+				// Die Fassung für den Dialog: Adresse und Masse. Ohne Adresse
+				// bleibt die Kachel eine Kachel — siehe Vorlage.
+				'full'   => $voll['url'],
+				'full_w' => $voll['width'],
+				'full_h' => $voll['height'],
 			);
 		}
 
@@ -257,6 +263,53 @@ class Tha_Groups {
 			'name' => isset( $parts[0] ) ? trim( $parts[0] ) : '',
 			'role' => isset( $parts[1] ) ? trim( $parts[1] ) : '',
 			'text' => isset( $parts[2] ) ? trim( $parts[2] ) : '',
+		);
+	}
+
+	/**
+	 * Adresse und Masse des Bildes in voller Grösse.
+	 *
+	 * Das ist das Ziel beim Anklicken einer Kachel. Die Masse kommen gleich
+	 * mit: der Dialog richtet sich nach ihnen, statt das Bild auf Kastenbreite
+	 * zu ziehen. Ein 300px breites Logo würde dabei nur unscharf — gross ist
+	 * es erst, wenn die Datei es hergibt.
+	 *
+	 * Gibt es kein Bild — etwa weil es aus der Mediathek verschwunden ist —,
+	 * bleibt alles leer und der Klick unterbleibt. Ein Link ins Leere wäre
+	 * schlimmer als gar keiner.
+	 *
+	 * @return array url, width, height.
+	 */
+	public static function full_size( $id ) {
+		$leer = array(
+			'url'    => '',
+			'width'  => 0,
+			'height' => 0,
+		);
+
+		$id = absint( $id );
+		if ( ! $id || ! function_exists( 'wp_get_attachment_image_src' ) ) {
+			return $leer;
+		}
+
+		$src = wp_get_attachment_image_src( $id, 'full' );
+		if ( ! is_array( $src ) || empty( $src[0] ) ) {
+			return $leer;
+		}
+
+		// Ohne Masse ist es kein Bild, das sich vergrössern liesse — etwa eine
+		// hochgeladene PDF-Datei. Was sich nicht messen lässt, wird nicht
+		// angeklickt.
+		$width  = isset( $src[1] ) ? (int) $src[1] : 0;
+		$height = isset( $src[2] ) ? (int) $src[2] : 0;
+		if ( $width < 1 || $height < 1 ) {
+			return $leer;
+		}
+
+		return array(
+			'url'    => (string) $src[0],
+			'width'  => $width,
+			'height' => $height,
 		);
 	}
 

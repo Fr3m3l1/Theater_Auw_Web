@@ -178,3 +178,45 @@ function tha_ticket_url( $show = array() ) {
 	$settings = Tha_Settings::get();
 	return $settings['ticket_url'];
 }
+
+/**
+ * Der Weg aus einer Adresse: `https://stvauw.ch/theater/2025-2008/` →
+ * `/theater/2025-2008/`. Relative Adressen («/theater/…») kommen
+ * unveraendert durch, eine Adresse ohne Pfad ergibt `/`.
+ *
+ * Die Erkennung der Theater-Seite vergleicht damit Adressen aus den
+ * Einstellungen mit denen von Beitraegen — beide koennen absolut oder
+ * relativ dastehen, hier landen sie beim selben Mass.
+ */
+function tha_url_path( $url ) {
+	$url = trim( (string) $url );
+
+	// Schema und Rechner weg: «https://stvauw.ch/theater/…» und
+	// «//stvauw.ch/theater/…» werden beide zu «/theater/…».
+	if ( preg_match( '/^(?:[a-z][a-z0-9+.-]*:\/\/|\/\/)[^\/]*/i', $url, $hit ) ) {
+		$url = substr( $url, strlen( $hit[0] ) );
+	}
+
+	if ( '' === $url ) {
+		return '/';
+	}
+	return 0 === strpos( $url, '/' ) ? $url : '/' . $url;
+}
+
+/**
+ * Das Verzeichnis einer Adresse: `/theater/anmeldung-sponsoring/` und
+ * `/theater/2025-2008/` liegen beide in `/theater/`. Die Theater-Seite ist
+ * ein Verzeichnis der Website, kein Stueck Pfad — ohne Verzeichnis
+ * (Adresse der Startseite) bleibt `/`.
+ */
+function tha_dir_prefix( $path ) {
+	$path = rtrim( (string) $path, '/' );
+	if ( '' === $path ) {
+		return '/';
+	}
+	$pos = strpos( $path, '/', 1 );
+	if ( false === $pos ) {
+		return $path . '/';
+	}
+	return substr( $path, 0, $pos + 1 );
+}

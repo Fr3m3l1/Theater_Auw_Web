@@ -68,7 +68,7 @@ if ( $today ) {
 		<div class="tha-hero__actions">
 			<?php if ( $url ) : ?>
 				<a class="tha-btn tha-btn--primary tha-btn--lg" href="<?php echo esc_url( $url ); ?>"
-					data-tha-tickets target="_blank" rel="noopener">
+					target="_blank" rel="noopener">
 					<?php esc_html_e( 'Restplätze sichern', 'theater-auw' ); ?>
 					<?php Tha_Renderer::part( 'partial-icon-external', $ctx ); ?>
 				</a>

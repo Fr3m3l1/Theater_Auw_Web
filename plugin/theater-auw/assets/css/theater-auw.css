@@ -857,69 +857,6 @@ body.tha-anmeldung {
 }
 
 /* --------------------------------------------------------------------------
-   13. Dialog (Ticketleo-Handoff)
-   -------------------------------------------------------------------------- */
-
-.tha.tha .tha-dialog[hidden] {
-	display: none;
-}
-
-.tha.tha .tha-dialog {
-	position: fixed;
-	inset: 0;
-	z-index: 100000;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: var(--sp-6);
-}
-
-.tha.tha .tha-dialog__scrim {
-	position: absolute;
-	inset: 0;
-	background: rgba(21, 17, 18, .62);
-}
-
-.tha.tha .tha-dialog__panel {
-	position: relative;
-	background: var(--surface-card);
-	border-radius: var(--radius-lg);
-	box-shadow: var(--shadow-raised);
-	max-width: 480px;
-	width: 100%;
-	padding: var(--sp-8);
-}
-
-.tha.tha .tha-dialog__head {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: var(--sp-4);
-	margin-bottom: var(--sp-3);
-}
-
-.tha.tha .tha-dialog__close {
-	background: none;
-	border: none;
-	cursor: pointer;
-	padding: var(--sp-1);
-	color: var(--gray-500);
-	line-height: 0;
-}
-
-.tha.tha .tha-dialog__body p {
-	font-size: 15px;
-}
-
-.tha.tha .tha-dialog__actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: var(--sp-3);
-	margin-top: var(--sp-6);
-	flex-wrap: wrap;
-}
-
-/* --------------------------------------------------------------------------
    14. Sticky CTA
    -------------------------------------------------------------------------- */
 
@@ -1723,6 +1660,138 @@ body.tha-anmeldung {
 	text-transform: none;
 	letter-spacing: 0;
 	color: var(--text-muted);
+}
+
+/* --- Logos gross ansehen --------------------------------------------------
+
+   In der Wand ist ein Logo eine Reihe, keine Information. Ein Klick öffnet es
+   über der Seite — gross, solange das Bild gross genug ist. Hochskaliert wird
+   nichts: ein 400px-Logo auf 1100px gezogen ist nicht gross, nur unscharf.
+   Deshalb `max-width` statt `width`.
+
+   Der Dialog ist ein `<dialog>`. Escape, die Fokussperre und das Zurückgeben
+   des Fokus bringt der Browser mit; eigenes JavaScript füllt nur Bild und
+   Beschriftung. Ohne JavaScript bleibt der Klick ein gewöhnlicher Link auf
+   das Bild — er funktioniert weiterhin, nur ohne Rahmen drumherum.
+   -------------------------------------------------------------------------- */
+
+.tha.tha .tha-zoom {
+	display: block;
+	color: inherit;
+	text-decoration: none;
+	cursor: zoom-in;
+}
+
+/* Der Rahmen blendet über, statt zu springen. Nur Rahmen und Schatten — die
+   Karte selbst wächst nicht. */
+.tha.tha .tha-people--logos .tha-media,
+.tha.tha .tha-people--logos .tha-placeholder {
+	transition: border-color var(--dur-fast) var(--ease-out),
+		box-shadow var(--dur-fast) var(--ease-out);
+}
+
+/* Nur der Rahmen der Karte reagiert auf das Zeigen. Die Karte selbst wächst
+   nicht — ein Raster, das unter dem Zeiger zappelt, ist unruhig.
+   Das `:is(#left-area, body)` davor ist Pflicht: ohne es verliert der
+   Schatten gegen die Regel des Gruppenbildes weiter unten, die dieselbe
+   Kachel meint und schwerer wiegt. */
+:is(#left-area, body) .tha.tha .tha-zoom:hover .tha-media,
+:is(#left-area, body) .tha.tha .tha-zoom:hover .tha-placeholder {
+	border-color: var(--border-strong);
+	box-shadow: var(--shadow-card);
+}
+
+.tha.tha .tha-lightbox {
+	/* `fit-content` rahmt genau das Bild. Die Grösse kommt aus dem Bild
+	   selbst (siehe unten), nicht aus einer festen Kastenbreite — sonst
+	   stünde ein 300px-Logo in einem 1100px-Kasten. */
+	width: fit-content;
+	max-width: calc(100vw - 24px);
+	max-height: 92vh;
+	padding: var(--sp-4);
+	border: 0;
+	border-radius: var(--radius-lg);
+	background: var(--paper-0);
+	box-shadow: var(--shadow-stage);
+	color: var(--text-body);
+	/* Der Rand bleibt sichtbar: der Schliessen-Knopf sitzt in der Ecke und
+	   würde von einem eigenen Rollbalken angeschnitten. */
+	overflow: visible;
+}
+
+/* Der Vorhang über der Seite. Das Theme hat hier keine Meinung, aber die
+   Standard-Abdunklung des Browsers ist schwächer als das Bühnenbild. */
+.tha.tha .tha-lightbox::backdrop {
+	background: rgba(21, 17, 18, .72);
+}
+
+.tha.tha .tha-lightbox__figure {
+	margin: 0;
+}
+
+/* Das Bild gibt die Grösse vor, gedeckelt von drei Seiten:
+   — die Breite der Datei (`--tha-zoom-px`), damit nichts hochskaliert wird,
+   — die Höhe des Fensters (`72vh`, über das Seitenverhältnis umgerechnet),
+   — die Breite des Fensters für schmale Geräte.
+   Die beiden Werte setzt das JavaScript beim Öffnen aus dem Link; ohne sie
+   gilt ein Kasten, in dem jeder Sponsor Platz hat. */
+.tha.tha .tha-lightbox__img {
+	display: block;
+	width: min(
+		var(--tha-zoom-px, 720px),
+		calc(72vh * var(--tha-zoom-ratio, 4 / 3)),
+		1080px,
+		calc(100vw - 64px)
+	);
+	height: auto;
+	margin: 0 auto;
+	border-radius: var(--radius-sm);
+}
+
+.tha.tha .tha-lightbox__caption {
+	margin: var(--sp-3) 0 0;
+	text-align: center;
+	font-size: var(--text-small);
+	line-height: var(--leading-tight);
+}
+
+.tha.tha .tha-lightbox__name {
+	display: block;
+	font-weight: 600;
+	color: var(--text-body);
+}
+
+.tha.tha .tha-lightbox__role {
+	color: var(--text-muted);
+}
+
+.tha.tha .tha-lightbox__close {
+	position: absolute;
+	top: var(--sp-3);
+	right: var(--sp-3);
+	width: 40px;
+	height: 40px;
+	display: grid;
+	place-items: center;
+	padding: 0;
+	border: 0;
+	border-radius: var(--radius-pill);
+	background: var(--ink-950);
+	color: var(--paper-0);
+	cursor: pointer;
+	transition: background var(--dur-fast) var(--ease-out);
+}
+
+.tha.tha .tha-lightbox__close:hover {
+	background: var(--red-600);
+}
+
+/* Am Handy zählt jeder Pixel: weniger Rand, das Bild nimmt den Rest. */
+@media (max-width: 560px) {
+
+	.tha.tha .tha-lightbox {
+		padding: var(--sp-2);
+	}
 }
 
 /* ==========================================================================

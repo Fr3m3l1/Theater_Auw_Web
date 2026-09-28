@@ -96,7 +96,7 @@ https://reservation.ticketleo.com/event/33310/karriere
 
 Für 2026 bekommst du von Ticketleo eine neue Adresse. Bis die drin steht, zeigen die Ticket-Knöpfe «Ticketlink folgt» und sind nicht klickbar — es kann also niemand ins Leere klicken.
 
-**Auf dieser Seite wird nie verkauft.** Jeder Ticket-Knopf öffnet einen kurzen Hinweis («Du wirst zu Ticketleo weitergeleitet») und führt dann zu Ticketleo. Das ist Absicht: keine Zahlungsabwicklung auf der Vereinsseite, keine Daten, um die sich jemand kümmern muss.
+**Auf dieser Seite wird nie verkauft.** Jeder Ticket-Knopf ist ein Link und öffnet Ticketleo in einem neuen Tab. Das ist Absicht: keine Zahlungsabwicklung auf der Vereinsseite, keine Daten, um die sich jemand kümmern muss.
 
 Unter **Beschriftung** wählst du zwischen «Plätze reservieren» und «Tickets kaufen» — je nachdem, ob bei Ticketleo nur reserviert und an der Abendkasse gezahlt wird.
 
@@ -253,6 +253,14 @@ Die mittlere Zeile heisst je nach Gruppe anders, ist aber dasselbe Feld: bei den
 Einen senkrechten Strich musst du im Backend nirgends mehr tippen — der gilt nur noch für die Bildunterschriften in der Mediathek.
 
 Kein Feld ist je nach Gruppe versteckt: was auf der Seite erscheinen kann, lässt sich hier auch ändern.
+
+### Logos gross ansehen
+
+Auf der Sponsorenseite ist jedes Logo anklickbar: ein Klick öffnet es gross über der Seite, mit dem Firmennamen darunter. Escape oder ein Klick neben das Bild schliesst es wieder.
+
+Gezeigt wird das Bild in **voller Grösse** aus der Mediathek — also genau das, was du hochgeladen hast. Ein Logo, das nur 300 Pixel breit ist, wird nicht aufgeblasen; es würde dabei nur unscharf. Willst du es grösser, lade eine grössere Datei hoch.
+
+Bei den Schauspielern, beim OK-Team und bei den Kulissen ist nichts anklickbar — dort ist das Bild in der Kachel schon zu sehen.
 
 ### Auf die Seite setzen
 

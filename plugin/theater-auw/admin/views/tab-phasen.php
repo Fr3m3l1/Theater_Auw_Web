@@ -112,12 +112,4 @@ $sched = $settings['phase_schedule'];
 			<p class="description"><?php esc_html_e( 'Wählt bei Ticketleo nur reserviert und zahlt an der Abendkasse, passt «reservieren» besser.', 'theater-auw' ); ?></p>
 		</td>
 	</tr>
-	<?php
-	Tha_Admin::text_field(
-		'ticket_note',
-		$settings['ticket_note'],
-		__( 'Hinweis im Dialog', 'theater-auw' ),
-		__( 'Erscheint klein unter dem Erklärtext im Ticketleo-Hinweis.', 'theater-auw' )
-	);
-	?>
 </table>
