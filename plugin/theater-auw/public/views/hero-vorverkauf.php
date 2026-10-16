@@ -57,6 +57,21 @@ $url       = $settings['ticket_url'];
 			}
 			if ( $sale_live ) {
 				echo ' ' . esc_html__( 'Premiere und Sonntag sind erfahrungsgemäss schnell weg.', 'theater-auw' );
+			} else {
+				// Vor dem Verkaufsstart gehört der Termin ausgeschrieben auf die
+				// Seite: «noch 14 Tage bis zum Vorverkauf» allein sagt niemandem,
+				// wann genau es losgeht.
+				$sale_start = tha_parse_datetime( $settings['ticket_sale_start'] );
+				if ( $sale_start ) {
+					echo ' ' . esc_html(
+						sprintf(
+							/* translators: 1: Datum ausgeschrieben, z. B. «Freitag, 30. Oktober 2026», 2: Uhrzeit, z. B. «18.00 Uhr» */
+							__( 'Der Vorverkauf startet am %1$s um %2$s.', 'theater-auw' ),
+							tha_date_long( $sale_start->format( 'Y-m-d' ) ),
+							tha_time_label( $sale_start->format( 'H.i' ) )
+						)
+					);
+				}
 			}
 			?>
 		</p>

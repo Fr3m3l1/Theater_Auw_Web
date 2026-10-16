@@ -30,7 +30,7 @@ require THA_DIR . 'includes/class-tha-renderer.php';
 require THA_DIR . 'includes/class-tha-assets.php';
 
 update_option( Tha_Settings::OPTION, json_decode( file_get_contents( __DIR__ . '/fixtures.json' ), true ) );
-$GLOBALS['tha_fake_now'] = '2026-10-01 12:00';
+$GLOBALS['tha_fake_now'] = '2026-11-01 12:00';
 
 $body = Tha_Renderer::render( array( 'phase' => 'vorverkauf', 'width' => 'viewport' ) );
 

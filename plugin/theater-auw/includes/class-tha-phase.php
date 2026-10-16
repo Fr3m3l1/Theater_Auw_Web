@@ -196,7 +196,13 @@ class Tha_Phase {
 			if ( ! self::sale_is_live( $settings ) ) {
 				$target = tha_parse_datetime( $settings['ticket_sale_start'] );
 				$label  = __( 'bis zum Vorverkauf', 'theater-auw' );
-				$zero   = __( 'Der Vorverkauf startet heute', 'theater-auw' );
+				$zero   = $target
+					? sprintf(
+						/* translators: %s: Uhrzeit, z. B. «18.00 Uhr» */
+						__( 'Der Vorverkauf startet heute um %s', 'theater-auw' ),
+						tha_time_label( $target->format( 'H.i' ) )
+					)
+					: __( 'Der Vorverkauf startet heute', 'theater-auw' );
 			} else {
 				$premiere = self::premiere( $settings );
 				if ( $premiere ) {

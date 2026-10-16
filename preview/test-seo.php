@@ -65,8 +65,8 @@ check( 'Angebot zeigt auf Ticketleo',    'https://reservation.ticketleo.com/even
 check( 'eigener Link der Zeile gewinnt', 'https://reservation.ticketleo.com/event/99999/x?d=2', $ev[1]['offers']['url'] );
 check( 'ausverkauft wird gemeldet',      'https://schema.org/SoldOut', $ev[0]['offers']['availability'] );
 check( 'wenige Plätze ebenso',           'https://schema.org/LimitedAvailability', $ev[1]['offers']['availability'] );
-// September ist Sommerzeit: der Verkaufsstart trägt +02:00.
-check( 'Verkaufsstart mit Sommerzeit',   '2026-09-15T09:00:00+02:00', $ev[0]['offers']['validFrom'] );
+// Ende Oktober ist bereits Winterzeit: der Verkaufsstart trägt +01:00.
+check( 'Verkaufsstart mit Winterzeit',   '2026-10-30T18:00:00+01:00', $ev[0]['offers']['validFrom'] );
 
 echo "\nVergangene Vorstellungen fallen weg:\n\n";
 

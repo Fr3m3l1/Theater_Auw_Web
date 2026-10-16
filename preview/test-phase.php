@@ -44,13 +44,13 @@ function at( $when ) {
 	return new DateTimeImmutable( $when, new DateTimeZone( 'Europe/Zurich' ) );
 }
 
-echo "Fahrplan: Vorverkauf 15.09.2026 09:00 · Spielzeit 14.11.2026 00:00 · Danke 29.11.2026 00:00\n\n";
+echo "Fahrplan: Vorverkauf ab 13.10.2026 00:00 · Spielzeit 14.11.2026 00:00 · Danke 29.11.2026 00:00\n\n";
 
 // --- Kalenderlogik ---------------------------------------------------
 
 check( 'lange davor',                         'vorbereitung', Tha_Phase::from_schedule( $settings, at( '2026-07-25 12:00' ) ) );
-check( 'eine Minute vor Vorverkauf',          'vorbereitung', Tha_Phase::from_schedule( $settings, at( '2026-09-15 08:59' ) ) );
-check( 'exakt zum Vorverkauf',                'vorverkauf',   Tha_Phase::from_schedule( $settings, at( '2026-09-15 09:00' ) ) );
+check( 'eine Minute vor Vorverkauf',          'vorbereitung', Tha_Phase::from_schedule( $settings, at( '2026-10-12 23:59' ) ) );
+check( 'exakt zum Vorverkauf',                'vorverkauf',   Tha_Phase::from_schedule( $settings, at( '2026-10-13 00:00' ) ) );
 check( 'mitten im Vorverkauf',                'vorverkauf',   Tha_Phase::from_schedule( $settings, at( '2026-10-20 12:00' ) ) );
 check( 'Vorabend der Premiere',               'vorverkauf',   Tha_Phase::from_schedule( $settings, at( '2026-11-13 23:59' ) ) );
 check( 'Premierentag 00:00',                  'spielzeit',    Tha_Phase::from_schedule( $settings, at( '2026-11-14 00:00' ) ) );
@@ -62,7 +62,8 @@ check( 'Wochen danach',                       'danke',        Tha_Phase::from_sc
 
 // --- Zeitumstellung ---------------------------------------------------
 // Die Saison liegt hinter dem Wechsel auf Winterzeit (letzter Sonntag im
-// Oktober). Wenn die Zeitzone falsch behandelt würde, fiele es genau hier auf.
+// Oktober) und der Vorverkauf läuft über die Umstellung hinweg. Wenn die
+// Zeitzone falsch behandelt würde, fiele es genau hier auf.
 
 echo "\nZeitumstellung (25.10.2026, 03:00 → 02:00):\n";
 check( 'vor der Umstellung',                  'vorverkauf',   Tha_Phase::from_schedule( $settings, at( '2026-10-24 12:00' ) ) );
@@ -89,7 +90,16 @@ echo "\nAbgeleitete Zustände:\n";
 $GLOBALS['tha_fake_now'] = '2026-09-01 12:00';
 check( 'Verkauf vor Verkaufsstart nicht live', 'nein',        Tha_Phase::sale_is_live( $settings ) ? 'ja' : 'nein' );
 
-$GLOBALS['tha_fake_now'] = '2026-10-01 12:00';
+// Zwischen Phasenbeginn und Verkaufsstart: die Phase läuft, der Verkauf noch
+// nicht — die Startseite zeigt hier «Vorverkauf startet bald» samt Countdown
+// auf den Verkaufsstart.
+$GLOBALS['tha_fake_now'] = '2026-10-20 12:00';
+check( 'Phase läuft vor dem Verkaufsstart',   'vorverkauf',   Tha_Phase::from_schedule( $settings, at( '2026-10-20 12:00' ) ) );
+check( 'und der Verkauf ist noch nicht offen', 'nein',       Tha_Phase::sale_is_live( $settings ) ? 'ja' : 'nein' );
+$cd = Tha_Phase::countdown( 'vorverkauf', $settings );
+check( 'Countdown zielt auf den Verkaufsstart', 'noch 10 Tage', $cd['fallback'] );
+
+$GLOBALS['tha_fake_now'] = '2026-11-01 12:00';
 check( 'Verkauf nach Verkaufsstart live',      'ja',          Tha_Phase::sale_is_live( $settings ) ? 'ja' : 'nein' );
 
 $GLOBALS['tha_fake_now'] = '2026-11-26 15:00';
@@ -134,6 +144,12 @@ check( 'in Vorbereitung ist nichts buchbar',   'ja',          $any_book ? 'nein'
 // --- Countdown ---------------------------------------------------------
 
 echo "\nCountdown:\n";
+
+// Am Verkaufsstart selbst steht der Termin mit Uhrzeit — «noch 0 Tage»
+// wäre technisch richtig und menschlich falsch.
+$GLOBALS['tha_fake_now'] = '2026-10-30 12:00';
+$cd = Tha_Phase::countdown( 'vorverkauf', $settings );
+check( 'am Verkaufsstart mit Uhrzeit',        'Der Vorverkauf startet heute um 18.00 Uhr', $cd['fallback'] );
 
 $GLOBALS['tha_fake_now'] = '2026-11-13 12:00';
 $cd = Tha_Phase::countdown( 'vorverkauf', $settings );

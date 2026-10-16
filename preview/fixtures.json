@@ -413,7 +413,7 @@
     "phase_manual": "vorbereitung",
     "phase_mode": "auto",
     "phase_schedule": {
-        "vorverkauf_start": "2026-09-15 09:00",
+        "vorverkauf_start": "2026-10-13 00:00",
         "spielzeit_start": "2026-11-14 00:00",
         "danke_start": "2026-11-29 00:00"
     },
@@ -498,12 +498,12 @@
     "sticky_cta": true,
     "stueck_image_id": 0,
     "ticket_cta_mode": "reservieren",
-    "ticket_sale_start": "2026-09-15 09:00",
+    "ticket_sale_start": "2026-10-30 18:00",
     "ticket_url": "https://reservation.ticketleo.com/event/33310/karriere",
     "tombola_note": "Auch dieses Jahr gibt es unsere beliebte Tombola. Beim Loskauf wünschen wir dir das nötige Glück zum Soforttreffer — tolle Preise warten auf dich.",
     "updates": [
         {
-            "date": "2026-09-15",
+            "date": "2026-10-30",
             "title": "Der Vorverkauf läuft",
             "text": "Ab heute lassen sich Plätze über Ticketleo reservieren. Wer telefonisch reservieren möchte, erreicht uns Mittwoch bis Freitag von 18 bis 19.30 Uhr.",
             "image_id": 0,

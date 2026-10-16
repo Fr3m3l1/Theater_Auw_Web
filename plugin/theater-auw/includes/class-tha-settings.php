@@ -12,7 +12,7 @@ class Tha_Settings {
 
 	const OPTION         = 'theater_auw_settings';
 	const GROUP          = 'theater_auw';
-	const SCHEMA_VERSION = 11;
+	const SCHEMA_VERSION = 13;
 
 	const PHASES   = array( 'vorbereitung', 'vorverkauf', 'spielzeit', 'danke' );
 	const STATUSES = array( 'offen', 'wenige', 'ausverkauft', 'vorbei' );
@@ -54,13 +54,13 @@ class Tha_Settings {
 			'phase_mode'     => 'auto',            // auto | manual
 			'phase_manual'   => 'vorbereitung',
 			'phase_schedule' => array(
-				'vorverkauf_start' => '2026-09-15 09:00',
+				'vorverkauf_start' => '2026-10-13 00:00',
 				'spielzeit_start'  => '2026-11-14 00:00', // Premierentag
 				'danke_start'      => '2026-11-29 00:00', // Tag nach der Derniere
 			),
 
 			// ---- Ticketing ------------------------------------------------
-			'ticket_sale_start' => '2026-09-15 09:00',
+			'ticket_sale_start' => '2026-10-30 18:00',
 			'ticket_cta_mode'   => 'reservieren',  // reservieren | kaufen
 			'ticket_url'        => '',
 
@@ -1065,6 +1065,37 @@ class Tha_Settings {
 				}
 				$stored['dates'][ $i ]['doors_time'] = ( isset( $row['label'] ) && 'Premiere' === $row['label']
 					&& isset( $row['note'] ) && 'Sponsoren-Abend' === $row['note'] ) ? '18.00' : '';
+			}
+		}
+
+		// v12 — der Vorverkauf 2026 beginnt nicht im September, sondern am
+		// Freitag, 30. Oktober um 18.00 Uhr. Die ausgelieferten Standarddaten
+		// trugen noch den alten Termin; wer ihn unverändert stehen hat, bekommt
+		// den neuen. Wer selbst ein Datum eingetragen hat, behält es — dieselbe
+		// Regel wie bei den Preisen (v3, v9) und der Speisekarte (v6).
+		if ( $version < 12 ) {
+			if ( isset( $stored['phase_schedule']['vorverkauf_start'] )
+				&& '2026-09-15 09:00' === $stored['phase_schedule']['vorverkauf_start'] ) {
+				$stored['phase_schedule']['vorverkauf_start'] = '2026-10-30 18:00';
+			}
+			if ( isset( $stored['ticket_sale_start'] )
+				&& '2026-09-15 09:00' === $stored['ticket_sale_start'] ) {
+				$stored['ticket_sale_start'] = '2026-10-30 18:00';
+			}
+		}
+
+		// v13 — die Vorverkaufs-Phase soll schon vor dem Verkaufsstart laufen,
+		// damit die Startseite bis dahin «Vorverkauf startet bald» mit einem
+		// Countdown auf den Start zeigt; erst der Verkaufsstart aktiviert den
+		// Reservier-Knopf. Wer den ausgelieferten Phasentermin noch unverändert
+		// stehen hat (aus dem alten September-Fahrplan oder aus v12), bekommt
+		// den 13. Oktober; der Verkaufsstart bleibt der 30. Oktober um 18.00
+		// Uhr. Eigene Termine bleiben unberührt.
+		if ( $version < 13 ) {
+			$ausgeliefert = array( '2026-09-15 09:00', '2026-10-30 18:00' );
+			if ( isset( $stored['phase_schedule']['vorverkauf_start'] )
+				&& in_array( $stored['phase_schedule']['vorverkauf_start'], $ausgeliefert, true ) ) {
+				$stored['phase_schedule']['vorverkauf_start'] = '2026-10-13 00:00';
 			}
 		}
 

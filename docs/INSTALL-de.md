@@ -59,8 +59,8 @@ Jetzt siehst du die Seite mit den echten Daten von 2026. Schau sie dir auch auf 
 
 | Phase | Wann | Was man sieht |
 |---|---|---|
-| **Vorbereitung** | jetzt, bis der Verkauf startet | Teaser zum Stück, Countdown auf die Premiere, keine Ticket-Knöpfe |
-| **Vorverkauf** | ab Verkaufsstart bis Premiere | roter «Plätze reservieren»-Knopf, Spieldaten mit Verfügbarkeit |
+| **Vorbereitung** | jetzt, bis die Vorverkaufs-Phase beginnt | Teaser zum Stück, Countdown auf die Premiere, keine Ticket-Knöpfe |
+| **Vorverkauf** | ab «Vorverkauf ab» bis Premiere | vor dem Verkaufsstart Countdown auf den Start; danach roter «Plätze reservieren»-Knopf und Spieldaten mit Verfügbarkeit |
 | **Spielzeit** | Premiere bis Derniere | Gold-Akzent, «Heute Vorstellung», Restplätze |
 | **Danke** | nach der Derniere | «Merci villmal!», Rückblick, alle Daten als «Vorbei» |
 
@@ -68,7 +68,7 @@ Jetzt siehst du die Seite mit den echten Daten von 2026. Schau sie dir auch auf 
 
 Unter **Phasen & Tickets** stehen drei Daten:
 
-- **Vorverkauf ab** — z.B. 15.09.2026, 09:00
+- **Vorverkauf ab** — z.B. 13.10.2026, 00:00
 - **Spielzeit ab** — der Premierentag, 00:00
 - **Danke ab** — der Tag nach der Derniere, 00:00
 

@@ -722,6 +722,44 @@ Tha_Settings::upgrade();
 $v11_gew = get_option( Tha_Settings::OPTION );
 check( 'Migration: eigene Wahl bleibt',     '18.30', $v11_gew['dates'][0]['doors_time'] );
 
+// Migration v12/v13 — der Vorverkauf 2026 beginnt nicht im September: der
+// Verkaufsstart liegt am 30. Oktober, die Vorverkaufs-Phase läuft aber schon
+// ab dem 13. Oktober, damit die Startseite bis dahin den Countdown zeigt.
+// Eine Installation mit den ausgelieferten Terminen bekommt die neuen; wer
+// selbst etwas eingetragen hat, behält es — dieselbe Regel wie bei den
+// Preisen (v9) und der Türöffnung (v11).
+$alt12 = Tha_Settings::defaults();
+$alt12['schema_version'] = 11;
+$alt12['phase_schedule']['vorverkauf_start'] = '2026-09-15 09:00';
+$alt12['ticket_sale_start'] = '2026-09-15 09:00';
+update_option( Tha_Settings::OPTION, $alt12 );
+Tha_Settings::upgrade();
+$nach12 = get_option( Tha_Settings::OPTION );
+check( 'v12/v13 starten die Phase frueher', '2026-10-13 00:00', $nach12['phase_schedule']['vorverkauf_start'] );
+check( 'v13 verschiebt den Verkaufsstart',  '2026-10-30 18:00', $nach12['ticket_sale_start'] );
+
+// Eine Installation, die schon mit 1.13.1 lief: dort beginnt die Phase noch
+// am Verkaufsstart. v13 zieht sie nach vorn, der Verkaufsstart bleibt.
+$v1213 = Tha_Settings::defaults();
+$v1213['schema_version'] = 12;
+$v1213['phase_schedule']['vorverkauf_start'] = '2026-10-30 18:00';
+$v1213['ticket_sale_start'] = '2026-10-30 18:00';
+update_option( Tha_Settings::OPTION, $v1213 );
+Tha_Settings::upgrade();
+$nach13 = get_option( Tha_Settings::OPTION );
+check( 'v13 holt die Phase vor den Start',  '2026-10-13 00:00', $nach13['phase_schedule']['vorverkauf_start'] );
+check( 'v13 laesst den Verkaufsstart',      '2026-10-30 18:00', $nach13['ticket_sale_start'] );
+
+$eigen12 = Tha_Settings::defaults();
+$eigen12['schema_version'] = 11;
+$eigen12['phase_schedule']['vorverkauf_start'] = '2026-10-01 08:00';
+$eigen12['ticket_sale_start'] = '2026-10-05 20:00';
+update_option( Tha_Settings::OPTION, $eigen12 );
+Tha_Settings::upgrade();
+$gew12 = get_option( Tha_Settings::OPTION );
+check( 'eigener Vorverkauf bleibt',         '2026-10-01 08:00', $gew12['phase_schedule']['vorverkauf_start'] );
+check( 'eigener Verkaufsstart bleibt',      '2026-10-05 20:00', $gew12['ticket_sale_start'] );
+
 // --- Sponsoring-Anmeldung ----------------------------------------------
 
 echo "\nSponsoring-Anmeldung:\n";

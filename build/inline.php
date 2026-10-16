@@ -47,7 +47,7 @@ $fonts = 'https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..7
 
 $phases = array(
 	'vorbereitung' => array( 'Vorbereitung', '2026-08-01 12:00', 'Vor dem Theater — wo wir jetzt stehen' ),
-	'vorverkauf'   => array( 'Vorverkauf', '2026-10-01 12:00', 'Verkauf läuft, Countdown auf die Premiere' ),
+	'vorverkauf'   => array( 'Vorverkauf', '2026-10-20 12:00', 'Countdown auf den Verkauf, noch kein Kaufknopf' ),
 	'spielzeit'    => array( 'Spielzeit', '2026-11-26 15:00', 'Während des Theaters, heute Vorstellung' ),
 	'danke'        => array( 'Danke', '2026-12-05 12:00', 'Nach der Derniere' ),
 );

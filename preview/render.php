@@ -48,7 +48,7 @@ $phases = array(
  */
 $when = array(
 	'vorbereitung' => '2026-08-01 12:00',
-	'vorverkauf'   => '2026-10-01 12:00',
+	'vorverkauf'   => '2026-10-20 12:00',
 	'spielzeit'    => '2026-11-26 15:00', // Tag mit Vorstellung
 	'danke'        => '2026-12-05 12:00',
 );
@@ -73,7 +73,7 @@ foreach ( $phases as $slug => $label ) {
  * Vorverkauf, weil dann die Navigation ihren Ticket-Knopf zeigt und man sieht,
  * wie die Seite mit Leiste aussieht.
  */
-tha_preview_set_now( '2026-10-01 12:00' );
+tha_preview_set_now( '2026-11-01 12:00' );
 
 $seiten = array(
 	'karte'   => array( 'label' => 'Speisekarte', 'section' => 'karte' ),
@@ -90,7 +90,7 @@ foreach ( $seiten as $slug => $seite ) {
 			'section' => $seite['section'],
 		)
 	);
-	$html = tha_preview_shell( $seite['label'], $slug, $body, '2026-10-01 12:00' );
+	$html = tha_preview_shell( $seite['label'], $slug, $body, '2026-11-01 12:00' );
 
 	$file = __DIR__ . '/' . $slug . '.html';
 	file_put_contents( $file, $html );
@@ -106,6 +106,10 @@ foreach ( $seiten as $slug => $seite ) {
 $fix['anmeldung_page_id'] = 0;
 update_option( Tha_Settings::OPTION, $fix );
 Tha_Settings::flush_cache();
+
+// Die Anmeldung ist ein eigener Zustand: gezeigt wird sie mit offener Frist
+// (der 8. Oktober), nicht im Vorverkauf danach.
+tha_preview_set_now( '2026-10-01 12:00' );
 
 $anmelde_inhalt = '<h2>Sponsor Anmeldung</h2>'
 	. '<p>Platzhalter für das Divi-Formular — auf der echten Seite steht hier das Anmeldeformular.</p>'
